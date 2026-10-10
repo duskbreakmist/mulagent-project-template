@@ -1,0 +1,790 @@
+{
+  "version": 1,
+  "date": "2026-10-11",
+  "source_repository": "live2d_normalDrive",
+  "source_commit": "8fb0739f499012cd9d7b1ce2df0e9c4c270d4a85",
+  "archive": [
+    {
+      "source": ".agents/PROTOCOL.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/.agents/PROTOCOL.md",
+      "sha256": "7466dd91acea818f0d13a2c6aa3f0602aab5578982f1b3244673c74ab916b9f1",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": ".agents/coordination.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/.agents/coordination.md",
+      "sha256": "967fd679c7920a47f0093ba7036859b6de46b4ded03b26310f5557310c216e0a",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": ".agents/feedback/gpt/2026-10-01-native-subagent-scope.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/.agents/feedback/gpt/2026-10-01-native-subagent-scope.md",
+      "sha256": "5d743257953a0af5b3795ea512cb70ae2f4af2ef395c1eb5fd29cebf5c75c838",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": ".agents/feedback/gpt/2026-10-10-wb-template-review.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/.agents/feedback/gpt/2026-10-10-wb-template-review.md",
+      "sha256": "48fe99ccee73d98d6878504a5efe02867473ec8b3005da21e616039ac0187e5f",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": ".agents/handoffs/COLLAB001/gpt.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/.agents/handoffs/COLLAB001/gpt.md",
+      "sha256": "1d5bb36ea5d61cb6a582dfb113bf931d1ac02db8e671c3a7b77be6f8337d803a",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": ".agents/handoffs/COLLAB002/gpt.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/.agents/handoffs/COLLAB002/gpt.md",
+      "sha256": "2097d726869a682eaa872552711bbf7d4150afde4fe63e21800c399029405220",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": ".agents/handoffs/COLLAB003/gpt.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/.agents/handoffs/COLLAB003/gpt.md",
+      "sha256": "56aa27df11422331d6f29b071d32a1c835f31195eb4d00903168f1b3058d81f4",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": ".agents/handoffs/COLLAB004/gpt.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/.agents/handoffs/COLLAB004/gpt.md",
+      "sha256": "26d861022585126adb274d74f4de603d5ae89d4a6df1447a7029aa742d0655e0",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": ".agents/handoffs/COLLAB005/gpt.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/.agents/handoffs/COLLAB005/gpt.md",
+      "sha256": "e8e797a361f2e56fad353c3d126a7c4a0eb78040d8185d31b17bd8bd44b6979f",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": ".agents/handoffs/RELAY001/gpt-relay.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/.agents/handoffs/RELAY001/gpt-relay.md",
+      "sha256": "37662f5987994308eef149dc02a2fbbb3e592244c8e33ba99d7bf08346a2fdf3",
+      "tracked": false,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": ".agents/messages/COLLAB003/gpt.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/.agents/messages/COLLAB003/gpt.md",
+      "sha256": "1e6b13f478923c7a935da231751f39c2de591779863c89411a76357592432762",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": ".agents/messages/COLLAB003/wb.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/.agents/messages/COLLAB003/wb.md",
+      "sha256": "e4bc61e1ae416fbb11e3cd7035807fed5a5c0379bd440b6ee1f3489135e3fc9f",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": ".agents/messages/RELAY001/gpt-relay.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/.agents/messages/RELAY001/gpt-relay.md",
+      "sha256": "e684bd5d6ee9e5ae2d7d6e8289550e5f7ab5af618c8f377ad4744f94aee05400",
+      "tracked": false,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": ".agents/tasks/COLLAB001.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/.agents/tasks/COLLAB001.md",
+      "sha256": "402c11e1a2c7a492e8b82db44561810455e57b97d6402bef2ea5ac41146bca26",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": ".agents/tasks/COLLAB002.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/.agents/tasks/COLLAB002.md",
+      "sha256": "920452b3b209347a10c3816b1677fd8352aef59c395f9ff609bb8171dc75532b",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": ".agents/tasks/COLLAB003.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/.agents/tasks/COLLAB003.md",
+      "sha256": "cf054f5c52b88a4c87db984f4991824602559abb121e145807e78fed0e98d7d2",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": ".agents/tasks/COLLAB004.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/.agents/tasks/COLLAB004.md",
+      "sha256": "fda33f6a9c98de4e239001888c754822c9ad53320497a03d15a798eebba659ad",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": ".agents/tasks/COLLAB005.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/.agents/tasks/COLLAB005.md",
+      "sha256": "6c3efbab250ee89d3f828a8319eb358bd08f7df0688337143a4d076770f76522",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": ".agents/tasks/COLLAB006.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/.agents/tasks/COLLAB006.md",
+      "sha256": "ca4aa74a05eb4ed735fa2cc8c57ef319dd614040d7bdd908b0d34ef00db3ec1b",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": ".agents/tasks/COLLAB007.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/.agents/tasks/COLLAB007.md",
+      "sha256": "53dbc0b7b5ab356501c6bf33ef82f13bc651a54f32738c462416698e7a0373d8",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": ".agents/tasks/README.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/.agents/tasks/README.md",
+      "sha256": "b2acbe136fbaae6be6f60a398c52dd932dcec96307aa69314f6b17ed581c3172",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": ".agents/tasks/RELAY001.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/.agents/tasks/RELAY001.md",
+      "sha256": "9de183156586999aeaa56f08da059b77ed4643a6eea90224557c8be933d8820c",
+      "tracked": false,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "AGENTS.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/AGENTS.md",
+      "sha256": "3b97759a44fa8ece7d51106d03e254691e6c4549a28eccfd2e6416e79a57e27a",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "README.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/README.md",
+      "sha256": "b5fb1d6def8c19bb929b1e77489ca0b33098080a5f3f6a6af81cada79387f3b2",
+      "tracked": true,
+      "working_tree_differs_from_head": true
+    },
+    {
+      "source": "agents_list.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/agents_list.md",
+      "sha256": "971f2a0c25b675fffadf4e303f3499fe62313faad025fa66d1fe2f6b9ce8c29c",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "docs/CURRENT.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/docs/CURRENT.md",
+      "sha256": "62f145caa9a35e991fcf14aec902123ec72d3e6e170fc6e8f58ed48016a0d7a9",
+      "tracked": true,
+      "working_tree_differs_from_head": true
+    },
+    {
+      "source": "docs/collaboration/README.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/docs/collaboration/README.md",
+      "sha256": "94f944ea249534988206ecfc431760027f87ff999dddb0305cfc1600bef89b9b",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "docs/collaboration/TEMPLATE.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/docs/collaboration/TEMPLATE.md",
+      "sha256": "612f872535b51d63860a13dc4097700990ed350eb177ed8300af85c07818ba4a",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "docs/collaboration/agent-relay-prompt.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/docs/collaboration/agent-relay-prompt.md",
+      "sha256": "9fbce4f0ac7eca49e9013ddc834db526259d4a4163cd5c6956c340e64fc3ff58",
+      "tracked": false,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "docs/collaboration/agent-relay.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/docs/collaboration/agent-relay.md",
+      "sha256": "5a9f7fcb020e5b2f5828d5127150822057e84eedc72df574a511e295193130aa",
+      "tracked": false,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "docs/decisions/001-task-centered-collaboration.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/docs/decisions/001-task-centered-collaboration.md",
+      "sha256": "72efe6f4f0137841199ae9b6b0a8d4bfe9c15c579b5abbf843ef47dd122585a8",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "docs/decisions/002-integrator-succession.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/docs/decisions/002-integrator-succession.md",
+      "sha256": "8f97202e6b505bed14866be7015092ef5677e57e78f272497df5e76e7cbede59",
+      "tracked": true,
+      "working_tree_differs_from_head": true
+    },
+    {
+      "source": "docs/history/CURRENT-2026-10.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/docs/history/CURRENT-2026-10.md",
+      "sha256": "a1a3a8fb39fd632358883d9ef4c7bec6aa04b54df5b516eb3b3b85db62fbdf5c",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "gpt/CURRENT.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/CURRENT.md",
+      "sha256": "61ab0d71943a22f1b7e0e8d9a381bf63ce7db813f50ae808bfa329e7a128a350",
+      "tracked": true,
+      "working_tree_differs_from_head": true
+    },
+    {
+      "source": "gpt/research/multi-agent-protocol-review.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/research/multi-agent-protocol-review.md",
+      "sha256": "d5ffba1f3dba741b7271e81181c50a60c528e5c5a1062576e6b3aba33dc578f4",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "gpt/templates/AGENTS.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/templates/AGENTS.md",
+      "sha256": "fd08ae02deccaf1a1ec9d275c6f604f360c5ab5f412dd844b7c0a59083cdf745",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "tests/test_agent_bootstrap.py",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/tests/test_agent_bootstrap.py",
+      "sha256": "43da5230a4d0dd89556ee1622f4bc6e5ae99a6e21521858dc755acd51cbd3362",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "tests/test_agent_relay.py",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/tests/test_agent_relay.py",
+      "sha256": "231f9500d1e3b6e2d2b3cc662186d2324fee978f3e727a227db798f69ded43bc",
+      "tracked": false,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "tests/test_project_template.py",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/tests/test_project_template.py",
+      "sha256": "190271c98dbc826188beac541bce38e621954b4379a1837f55c9d35f8f72b6a2",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "tests/test_template_manager.py",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/tests/test_template_manager.py",
+      "sha256": "5cf2e41fadb314817fa7d5ac21a01ac0049a921afd5db9b875ac91a14be18ea4",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "tools/agent_bootstrap.py",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/tools/agent_bootstrap.py",
+      "sha256": "ae5d5a81647ed1cb5e2a9fc455c0b3885b6df45170e008ab57f0f9c34b1aedc9",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "tools/agent_relay.py",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/tools/agent_relay.py",
+      "sha256": "18a7f572b9d5f54d5e37c8805dfbf5d9b47d1a5ecec5a930c7438a7d1775b06b",
+      "tracked": false,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "tools/start_agent_relay.cmd",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/tools/start_agent_relay.cmd",
+      "sha256": "e52aabd4d4d17590155de743b385e98c0f22769a54a1a8f8275c4b225e6253e0",
+      "tracked": false,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "gpt/project_templateA/.agents/coordination.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.agents/coordination.md",
+      "sha256": "e7291615c3d530565639da1da6918c238736da1a90574284af7d25fe29943536",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "gpt/project_templateA/.agents/feedback/README.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.agents/feedback/README.md",
+      "sha256": "fe981b0c0b7ae9620d4fce73a112ec717406867cfa0bdfdf2820090cb2f849fd",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "gpt/project_templateA/.agents/feedback/TEMPLATE.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.agents/feedback/TEMPLATE.md",
+      "sha256": "505f8f38df77927bd2a004d793c62b5ba52dc472de398f27addff4a9d51625a2",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "gpt/project_templateA/.agents/guides/coordination.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.agents/guides/coordination.md",
+      "sha256": "b11739b9c3395bdb69ba0442a8700bb87d4612f494fb08acb3e7108740b1f045",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "gpt/project_templateA/.agents/guides/git.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.agents/guides/git.md",
+      "sha256": "d854c99a31b3925b1b93d496035130f7d9dafbb85b14d1916560358978b059ad",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "gpt/project_templateA/.agents/guides/modes.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.agents/guides/modes.md",
+      "sha256": "59cfc9ef72477bb3f58d9ca8ada9ff1a897e6f7a3e128a70919bc934e8479a8b",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "gpt/project_templateA/.agents/guides/records.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.agents/guides/records.md",
+      "sha256": "d25c453e757ca14c8cd5670332c5758e38cdf0511e30c43dbcd0f5000ef1d655",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "gpt/project_templateA/.agents/guides/tools.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.agents/guides/tools.md",
+      "sha256": "4d48b8c85244796373981616f202a84bdf4800e9cc53e7940692e1d6e153791d",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "gpt/project_templateA/.agents/handoffs/README.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.agents/handoffs/README.md",
+      "sha256": "9ea9057837d938567cb172c1b58eb0c839faaf47ac2b0e1f174c500610dd1f04",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "gpt/project_templateA/.agents/handoffs/TEMPLATE.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.agents/handoffs/TEMPLATE.md",
+      "sha256": "b9d9b7b74b0cdb4b17b261e687f23fe22a9fc4b9423f8be710483d4aec0da091",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "gpt/project_templateA/.agents/messages/README.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.agents/messages/README.md",
+      "sha256": "690c090c8f4b8b690e5bfc5448bdad434fc52cdd73df4e53c7e2fe6beb60d1ef",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "gpt/project_templateA/.agents/messages/TEMPLATE.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.agents/messages/TEMPLATE.md",
+      "sha256": "76afe2df3c25cd73410c4680ddd7b96a4449c5c32beb80a53ee9388832294ad2",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "gpt/project_templateA/.agents/plans/README.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.agents/plans/README.md",
+      "sha256": "8cbd5005b6f2870f7ea3ad3bcfeb9fa4871e60f4d41f4c788ebee5c69bcd4cf2",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "gpt/project_templateA/.agents/PROTOCOL.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.agents/PROTOCOL.md",
+      "sha256": "9706cc2d414b1032b8d5dfcb7e7df25d8a0fcdef433661633c4104f189bfba70",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "gpt/project_templateA/.agents/runs/TEMPLATE.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.agents/runs/TEMPLATE.md",
+      "sha256": "a45ba21076c2ee58013a23f553fd6b890ea0988064df9d2ad33bc9d41d482a12",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "gpt/project_templateA/.agents/scratch/README.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.agents/scratch/README.md",
+      "sha256": "55da71e83adc373f967c4cd51c59770d8d76a36430d740e013867166bab9bc1e",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "gpt/project_templateA/.agents/tasks/README.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.agents/tasks/README.md",
+      "sha256": "19655942ad9b428c3e019a2c3fcb968169c884f4999d824aea7b3012b168837a",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "gpt/project_templateA/.agents/tasks/TEMPLATE-lite.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.agents/tasks/TEMPLATE-lite.md",
+      "sha256": "6c4ff31f44d0b72229e81f06ee82391f77d222e35d4cc8f960b457ff833e1c6d",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "gpt/project_templateA/.agents/tasks/TEMPLATE.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.agents/tasks/TEMPLATE.md",
+      "sha256": "8b7659f822c4e552ea39323690cde115fbee857753b89a8a34b0c65ca38aac07",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "gpt/project_templateA/.agents/template_manifest.json",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.agents/template_manifest.json",
+      "sha256": "50fab2e1d36d35bd240e5d359256c6beb377b6afdfb76b73df3f0bd7430edf29",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "gpt/project_templateA/.gitattributes",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.gitattributes",
+      "sha256": "46a0f9c11e12e10a674d20703143a24776068ad191fb6e07a54073c4490f818d",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "gpt/project_templateA/.gitignore",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.gitignore",
+      "sha256": "1ddf4ddf14dabbcefcb43d368c1a804c2c85828fdbcce30ec830e07e1227f97b",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "gpt/project_templateA/agents_list.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/agents_list.md",
+      "sha256": "8438be31d9879f813f6de4beb61ff24620f1633f8874603d311eac63f7740852",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "gpt/project_templateA/AGENTS.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/AGENTS.md",
+      "sha256": "ca193e28f13c59a3ea0c0006cac604a19bb13b65b20644f10b689f712e2d985a",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "gpt/project_templateA/docs/CURRENT.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/docs/CURRENT.md",
+      "sha256": "23227636f6de078a917ca05ec9f520fc5b0472fa79b50d813b3d72a470a44cd6",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "gpt/project_templateA/docs/history/README.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/docs/history/README.md",
+      "sha256": "bb0e4a72b73885214f680aa4de92133c943ac1c11f3492418d8c51c2977aeb92",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "gpt/project_templateA/docs/template-usage.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/docs/template-usage.md",
+      "sha256": "386117d1c64c27091414e5285bce7a4b14f82380f8ea59207585211edc857cce",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "gpt/project_templateA/README.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/README.md",
+      "sha256": "acbef8d4148374877ebdb3c4bdc53901cda3017e0727e7b25441806a6e2b561a",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "gpt/project_templateA/results/README.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/results/README.md",
+      "sha256": "36d27c300cc283a85ba882bffd4ec4d7e3c10fb35f9066d110677fbc77fea9d3",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "gpt/project_templateA/template_readme.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/template_readme.md",
+      "sha256": "c116f945009852548547aa175a6370dd34e94f3bfa7d67c80afe8e786fceaf34",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "gpt/project_templateA/tools/check_template.py",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/tools/check_template.py",
+      "sha256": "e9fb8357ebb74cfba48c460d5a2d66ac84f8ba67ead3af413d91ad26f6930217",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    },
+    {
+      "source": "gpt/project_templateA/tools/template_manager.py",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/tools/template_manager.py",
+      "sha256": "05755aa52ce1218839c8176ff5c12b72294aa7967ae6e85da23d68f432107339",
+      "tracked": true,
+      "working_tree_differs_from_head": false
+    }
+  ],
+  "remove_after_archive": [
+    {
+      "source": "gpt/project_templateA/.agents/coordination.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.agents/coordination.md",
+      "sha256": "e7291615c3d530565639da1da6918c238736da1a90574284af7d25fe29943536"
+    },
+    {
+      "source": "gpt/project_templateA/.agents/feedback/README.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.agents/feedback/README.md",
+      "sha256": "fe981b0c0b7ae9620d4fce73a112ec717406867cfa0bdfdf2820090cb2f849fd"
+    },
+    {
+      "source": "gpt/project_templateA/.agents/feedback/TEMPLATE.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.agents/feedback/TEMPLATE.md",
+      "sha256": "505f8f38df77927bd2a004d793c62b5ba52dc472de398f27addff4a9d51625a2"
+    },
+    {
+      "source": "gpt/project_templateA/.agents/guides/coordination.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.agents/guides/coordination.md",
+      "sha256": "b11739b9c3395bdb69ba0442a8700bb87d4612f494fb08acb3e7108740b1f045"
+    },
+    {
+      "source": "gpt/project_templateA/.agents/guides/git.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.agents/guides/git.md",
+      "sha256": "d854c99a31b3925b1b93d496035130f7d9dafbb85b14d1916560358978b059ad"
+    },
+    {
+      "source": "gpt/project_templateA/.agents/guides/modes.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.agents/guides/modes.md",
+      "sha256": "59cfc9ef72477bb3f58d9ca8ada9ff1a897e6f7a3e128a70919bc934e8479a8b"
+    },
+    {
+      "source": "gpt/project_templateA/.agents/guides/records.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.agents/guides/records.md",
+      "sha256": "d25c453e757ca14c8cd5670332c5758e38cdf0511e30c43dbcd0f5000ef1d655"
+    },
+    {
+      "source": "gpt/project_templateA/.agents/guides/tools.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.agents/guides/tools.md",
+      "sha256": "4d48b8c85244796373981616f202a84bdf4800e9cc53e7940692e1d6e153791d"
+    },
+    {
+      "source": "gpt/project_templateA/.agents/handoffs/README.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.agents/handoffs/README.md",
+      "sha256": "9ea9057837d938567cb172c1b58eb0c839faaf47ac2b0e1f174c500610dd1f04"
+    },
+    {
+      "source": "gpt/project_templateA/.agents/handoffs/TEMPLATE.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.agents/handoffs/TEMPLATE.md",
+      "sha256": "b9d9b7b74b0cdb4b17b261e687f23fe22a9fc4b9423f8be710483d4aec0da091"
+    },
+    {
+      "source": "gpt/project_templateA/.agents/messages/README.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.agents/messages/README.md",
+      "sha256": "690c090c8f4b8b690e5bfc5448bdad434fc52cdd73df4e53c7e2fe6beb60d1ef"
+    },
+    {
+      "source": "gpt/project_templateA/.agents/messages/TEMPLATE.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.agents/messages/TEMPLATE.md",
+      "sha256": "76afe2df3c25cd73410c4680ddd7b96a4449c5c32beb80a53ee9388832294ad2"
+    },
+    {
+      "source": "gpt/project_templateA/.agents/plans/README.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.agents/plans/README.md",
+      "sha256": "8cbd5005b6f2870f7ea3ad3bcfeb9fa4871e60f4d41f4c788ebee5c69bcd4cf2"
+    },
+    {
+      "source": "gpt/project_templateA/.agents/PROTOCOL.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.agents/PROTOCOL.md",
+      "sha256": "9706cc2d414b1032b8d5dfcb7e7df25d8a0fcdef433661633c4104f189bfba70"
+    },
+    {
+      "source": "gpt/project_templateA/.agents/runs/TEMPLATE.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.agents/runs/TEMPLATE.md",
+      "sha256": "a45ba21076c2ee58013a23f553fd6b890ea0988064df9d2ad33bc9d41d482a12"
+    },
+    {
+      "source": "gpt/project_templateA/.agents/scratch/README.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.agents/scratch/README.md",
+      "sha256": "55da71e83adc373f967c4cd51c59770d8d76a36430d740e013867166bab9bc1e"
+    },
+    {
+      "source": "gpt/project_templateA/.agents/tasks/README.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.agents/tasks/README.md",
+      "sha256": "19655942ad9b428c3e019a2c3fcb968169c884f4999d824aea7b3012b168837a"
+    },
+    {
+      "source": "gpt/project_templateA/.agents/tasks/TEMPLATE-lite.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.agents/tasks/TEMPLATE-lite.md",
+      "sha256": "6c4ff31f44d0b72229e81f06ee82391f77d222e35d4cc8f960b457ff833e1c6d"
+    },
+    {
+      "source": "gpt/project_templateA/.agents/tasks/TEMPLATE.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.agents/tasks/TEMPLATE.md",
+      "sha256": "8b7659f822c4e552ea39323690cde115fbee857753b89a8a34b0c65ca38aac07"
+    },
+    {
+      "source": "gpt/project_templateA/.agents/template_manifest.json",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.agents/template_manifest.json",
+      "sha256": "50fab2e1d36d35bd240e5d359256c6beb377b6afdfb76b73df3f0bd7430edf29"
+    },
+    {
+      "source": "gpt/project_templateA/.gitattributes",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.gitattributes",
+      "sha256": "46a0f9c11e12e10a674d20703143a24776068ad191fb6e07a54073c4490f818d"
+    },
+    {
+      "source": "gpt/project_templateA/.gitignore",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.gitignore",
+      "sha256": "1ddf4ddf14dabbcefcb43d368c1a804c2c85828fdbcce30ec830e07e1227f97b"
+    },
+    {
+      "source": "gpt/project_templateA/agents_list.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/agents_list.md",
+      "sha256": "8438be31d9879f813f6de4beb61ff24620f1633f8874603d311eac63f7740852"
+    },
+    {
+      "source": "gpt/project_templateA/AGENTS.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/AGENTS.md",
+      "sha256": "ca193e28f13c59a3ea0c0006cac604a19bb13b65b20644f10b689f712e2d985a"
+    },
+    {
+      "source": "gpt/project_templateA/docs/CURRENT.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/docs/CURRENT.md",
+      "sha256": "23227636f6de078a917ca05ec9f520fc5b0472fa79b50d813b3d72a470a44cd6"
+    },
+    {
+      "source": "gpt/project_templateA/docs/history/README.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/docs/history/README.md",
+      "sha256": "bb0e4a72b73885214f680aa4de92133c943ac1c11f3492418d8c51c2977aeb92"
+    },
+    {
+      "source": "gpt/project_templateA/docs/template-usage.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/docs/template-usage.md",
+      "sha256": "386117d1c64c27091414e5285bce7a4b14f82380f8ea59207585211edc857cce"
+    },
+    {
+      "source": "gpt/project_templateA/README.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/README.md",
+      "sha256": "acbef8d4148374877ebdb3c4bdc53901cda3017e0727e7b25441806a6e2b561a"
+    },
+    {
+      "source": "gpt/project_templateA/results/README.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/results/README.md",
+      "sha256": "36d27c300cc283a85ba882bffd4ec4d7e3c10fb35f9066d110677fbc77fea9d3"
+    },
+    {
+      "source": "gpt/project_templateA/template_readme.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/template_readme.md",
+      "sha256": "c116f945009852548547aa175a6370dd34e94f3bfa7d67c80afe8e786fceaf34"
+    },
+    {
+      "source": "gpt/project_templateA/tools/check_template.py",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/tools/check_template.py",
+      "sha256": "e9fb8357ebb74cfba48c460d5a2d66ac84f8ba67ead3af413d91ad26f6930217"
+    },
+    {
+      "source": "gpt/project_templateA/tools/template_manager.py",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/tools/template_manager.py",
+      "sha256": "05755aa52ce1218839c8176ff5c12b72294aa7967ae6e85da23d68f432107339"
+    },
+    {
+      "source": "tests/test_project_template.py",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/tests/test_project_template.py",
+      "sha256": "190271c98dbc826188beac541bce38e621954b4379a1837f55c9d35f8f72b6a2"
+    },
+    {
+      "source": "tests/test_template_manager.py",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/tests/test_template_manager.py",
+      "sha256": "5cf2e41fadb314817fa7d5ac21a01ac0049a921afd5db9b875ac91a14be18ea4"
+    },
+    {
+      "source": "tools/agent_bootstrap.py",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/tools/agent_bootstrap.py",
+      "sha256": "ae5d5a81647ed1cb5e2a9fc455c0b3885b6df45170e008ab57f0f9c34b1aedc9"
+    },
+    {
+      "source": "tests/test_agent_bootstrap.py",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/tests/test_agent_bootstrap.py",
+      "sha256": "43da5230a4d0dd89556ee1622f4bc6e5ae99a6e21521858dc755acd51cbd3362"
+    },
+    {
+      "source": "tools/agent_relay.py",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/tools/agent_relay.py",
+      "sha256": "18a7f572b9d5f54d5e37c8805dfbf5d9b47d1a5ecec5a930c7438a7d1775b06b"
+    },
+    {
+      "source": "tools/start_agent_relay.cmd",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/tools/start_agent_relay.cmd",
+      "sha256": "e52aabd4d4d17590155de743b385e98c0f22769a54a1a8f8275c4b225e6253e0"
+    },
+    {
+      "source": "tests/test_agent_relay.py",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/tests/test_agent_relay.py",
+      "sha256": "231f9500d1e3b6e2d2b3cc662186d2324fee978f3e727a227db798f69ded43bc"
+    },
+    {
+      "source": "docs/collaboration/agent-relay.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/docs/collaboration/agent-relay.md",
+      "sha256": "5a9f7fcb020e5b2f5828d5127150822057e84eedc72df574a511e295193130aa"
+    },
+    {
+      "source": "docs/collaboration/agent-relay-prompt.md",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/docs/collaboration/agent-relay-prompt.md",
+      "sha256": "9fbce4f0ac7eca49e9013ddc834db526259d4a4163cd5c6956c340e64fc3ff58"
+    }
+  ],
+  "protected": {
+    "docs/decisions/002-integrator-succession.md": "8f97202e6b505bed14866be7015092ef5677e57e78f272497df5e76e7cbede59",
+    "docs/normal-drive/CURRENT.md": "603b4b22fe8fa396d586df935f60c3ab6e338e7179af2865d51a40ce10d604fe",
+    "docs/normal-drive/README.md": "3f1d338bc37fd68f911346d042c50ffef2eb1458fa0bd0442e03a0887f8c2c40",
+    "docs/normal-drive/examples/acceptance-cases.json": "b1aa02a0976007c89ecbf62cfb420150dfb11d7043c6f03d88274fb64cd7c6b3",
+    "docs/normal-drive/examples/audio-events.json": "627012116ec6050bb5d325fe2a3e9629e518cf68de23a791036eda87f0cd1b32",
+    "docs/normal-drive/examples/turn-plan.json": "b122ad2d074e97a830af805552423c5381ddc5d83f973d77fd3b6e17754cc9a5",
+    "docs/normal-drive/integration-draft.md": "08e17d86dc6e46ab6099179ae403b347e30b3989d2d3c49f143808282ef728a8",
+    "docs/normal-drive/research-2026-10-03.md": "c1f88995c9282d2994ba957ba7553f4ff8d9e12d5a7cb96f6f5b08de4a012bde",
+    "docs/normal-drive/verification.json": "db70b3617854f65378352050aeb8f4aca0dbd881dab020b5eecdfa8ad5a9c090",
+    "docs/software/API.md": "104b81f51d95a7f54931bd08738ae55c746b5a92c994df77799423581eaf01fb",
+    "docs/software/CURRENT.md": "59ad816805dfa4ab27c89f8880e0b671626fae9bda86eead246c8cf9952d9d3f",
+    "docs/software/README.md": "6dc63e7721af1625439e3fda585d92984c158dbfa15b71324668cf4edfe954cd",
+    "docs/software/audio-start-verification.json": "2ecad5fab0e813a5e08dbcd28d4202cecb40a634d4237a364f7b953b8bad8e35",
+    "docs/software/decisions/001-independent-audio-clock.md": "4b4b0837c4ba5c2a637cc4b4641069c4c63432b9366bbd99b253209e8b92741c",
+    "docs/software/git-version.md": "92a6ed0d64525d22561baa3cbbd3eb3e3b65886e89ef59cd309f90f797513c94",
+    "docs/software/gpu-benchmark-2026-10-04.md": "2a012dd62765331d0571e1e569194fc1f972835cc53291cf22c6e0930f6b7461",
+    "docs/software/gpu-publication-check.json": "ccf52c246f40cba7481271b41a0d53dc216d3d172391575497bee292e529e419",
+    "docs/software/gpu-verification.json": "3cb498e4c911f49230ecc180f685cad04a17e0d9433924ce3ebf210b1add4607",
+    "docs/software/motion-publication-check.json": "7fee98c10d64ef3844c31e9948e89bd48f54484ceeffb3f42cf914bdf7940f59",
+    "docs/software/motion-verification.json": "7e38b4a11f52489f8962db6f829028dab3b566cb55bcc8f3f713f6d980df3f73",
+    "docs/software/motion-visibility.md": "e1e76255db486d18ee76f05a52a8ecc04266eac4cc8fc29de653be407f44eec5",
+    "docs/software/publication.json": "e29801f004279f3d15922b1d37d5d864752cfdb1f3ddce78eedcda15ed806f0b",
+    "docs/software/stream-publication-check.json": "4aa824a4ca81cceab8e60b4d6a457e7d6bb7feeda96485dcce2ee7d77ee6b592",
+    "docs/software/stream-verification.json": "1fc6e56d71d01cc1398f2fb8b1af2b250381b29f577e64ab5b973071ba80749a",
+    "docs/software/streaming-and-performance.md": "0c9704ce76e11eebd5027ea32304909c69001c83fe4e4fc20f497a2080622d92",
+    "docs/software/verification.json": "ade70874fef75b6061274a5db2c624ab35780eb42b6c9a5553f342847a12f490",
+    "gpt/research/2026-09-30-avatar-expression-and-morphology.md": "60fe47abba1cb310b5de6fe9cccc2eb79634d345633938053b76260656cbb680",
+    "public/app.mjs": "72310571cc7824ee484e714a9a30b33c392c4df7b3b29bced6b9b3039c2ce3d2",
+    "public/audio-worklet.mjs": "3b3dc245695857d190dfb4a313f2b2c22b5acd7d97888e68728dcf3c7c33a8e8",
+    "public/index.html": "8ec681702d28d2fad77188773e9dfc485cdeaa70dabc310ae089c8003b412ece",
+    "public/style.css": "8c87ef8013814c0f49cc9b6ed42cc4394e10105eaae1fa36a0042a4fa8c56670",
+    "src/behavior.mjs": "fad9594bac5b1aab165306613baf489891bfc939312e958832c8776c1625bfac",
+    "src/config.mjs": "7bfbc1eaa6447f0c5ec2004f7bdad2a75e008178a5e15557758138ea6b499f98",
+    "src/driver.mjs": "a09685c13bc046278b2ca73223c31235aa9f0da423225f622b294e1717a6d41b",
+    "src/emotion.mjs": "5357dd9cec1406969d04272bd8c74453c665cae318e232e5a96d0ee8ec37f2f9",
+    "src/pcm.mjs": "6a39416061bea908c517ef01d39cccf3ed994b9b4804fd493665af8906161302",
+    "src/planner.mjs": "88092828d1084fc0302d04a7e4284f530c7b629a3686dcc99ce3ef5ff397107e",
+    "src/rig.mjs": "288104f4a7e1273c1161eb281a18a54494a4e01edd3f91f7acff81ac6e0ccf35",
+    "src/server.mjs": "6f405ce0785d3191847394e9af9448cf236352814cd8c3126acd9c2a49aa2a58",
+    "src/session.mjs": "38387d7faa6999251267da335d5bb84b49a9b2790b483929d50f9d4552f47137",
+    "src/tts-entry.py": "1b31cbee179d3cfe8713034d42fef4202476f31084dcb57f28c2133742b5fca4",
+    "src/tts.mjs": "639b3045f5ff9966815521be023c127b146b52a23c5abc317a7840c612af15a8",
+    "src/wave.mjs": "83a1886321852733e6a4cfdde7cb37c155eddb532b8f0d3d0c6cc05d80005109",
+    "tests/normaldrive-core.test.mjs": "114648fda0ffd169473d5e84738232c41fd848d69d2fe2e278db5e29828ccc63",
+    "tests/normaldrive-http.test.mjs": "f241bc388c67c3ad383b666e1a2afcea077be7c6d777e2039e45eeb6db497fa9",
+    "tests/normaldrive-stream.test.mjs": "f3d79b1005105cd3382ce891c5368479f82662372a795daf0a81aa0d78acae94",
+    "tests/normaldrive-tts.test.mjs": "542bdeb027ce164f3c217e57696da075705434e39c2aa535ee01ed470acc9cbe",
+    "wb/research/embodied-expression-vfs.workbuddy.md": "b7cc267fa48ae1a8c331a3d5082c609cab08ad13736185a365ecaa906ddfebeb"
+  }
+}

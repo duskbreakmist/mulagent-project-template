@@ -1,0 +1,24 @@
+# 本地 Agent 会话、凭据与运行缓存
+.codex/
+.workbuddy/
+.env
+.env.*
+!.env.example
+!.env.*.example
+__pycache__/
+*.py[cod]
+.venv/
+node_modules/
+build/
+dist/
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
+# 本地工作树与临时实验；正式 tasks/messages/handoffs 必须跟踪
+.worktrees/
+.agents/scratch/*/
+# 安装器锁、备份与冲突候选仅存本机；template-state.json 基线需要随工程提交。
+.agents/.template-update.lock
+.agents/template-updates/
+.test-tmp/

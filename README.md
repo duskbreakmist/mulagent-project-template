@@ -51,3 +51,7 @@ git -C H:\Project\agent-project-template pull --ff-only
 - 普通任务不用读完整手册或可选对照机制。
 - 提交自己的模板基线文件 .agents/template-state.json；锁和冲突备份只存本机。
 - 不自动推送、删除工程文件或执行下载的脚本；复制与 GitHub 的 Use this template 本身不等于已建立更新基线。
+
+## 独立开发与可选组件
+
+本仓库独立保存源码、测试、CI 和开发历史，不再依赖 Live2D 工程。[维护入口](https://github.com/duskbreakmist/mulagent-project-template/blob/main/docs/maintenance/README.md)与[可选消息工具](https://github.com/duskbreakmist/mulagent-project-template/blob/main/docs/optional/agent-relay.md)均不由安装器分发；消息工具必须指定业务主目录，不自动启动 Agent。

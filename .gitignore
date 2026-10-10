@@ -22,3 +22,6 @@ Thumbs.db
 .agents/.template-update.lock
 .agents/template-updates/
 .test-tmp/
+
+# 可选消息工具的实际运行队列。
+.agent-relay/

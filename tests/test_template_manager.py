@@ -11,7 +11,7 @@ import unittest
 from unittest.mock import patch
 
 PROJECT = Path(__file__).resolve().parents[1]
-SOURCE = PROJECT if (PROJECT / ".agents/template_manifest.json").exists() else PROJECT / "gpt/project_templateA"
+SOURCE = PROJECT
 SPEC = importlib.util.spec_from_file_location("template_manager", SOURCE / "tools/template_manager.py")
 M = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(M)

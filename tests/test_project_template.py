@@ -9,7 +9,7 @@ import tempfile
 import unittest
 
 PROJECT = Path(__file__).resolve().parents[1]
-SOURCE = PROJECT if (PROJECT / ".agents/template_manifest.json").exists() else PROJECT / "gpt/project_templateA"
+SOURCE = PROJECT
 
 
 class ProjectTemplateTests(unittest.TestCase):

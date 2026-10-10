@@ -1,4 +1,4 @@
-# project_templateA 使用说明
+# 协作模板使用说明
 
 这是可直接复制的多文件 Agent 协作模板。它把旧单文件里的规则、模板正文和程序分开，减少日常读取量。复制后已经具备目录骨架，不再需要提取代码、解包或写初始化标记。
 
@@ -6,7 +6,7 @@
 
 ## 1. 新建工程怎么用
 
-1. 将 project_templateA 目录内的**全部内容**复制到新工程根目录，包含隐藏的 .agents、.gitignore 和 .gitattributes。不要只复制 AGENTS.md，也不要只把整个目录嵌套到工程里。
+1. 推荐使用 init，只分发清单中的骨架。手工复制时按 .agents/template_manifest.json 的 required 列表复制到工程根目录，包含隐藏文件；不复制母仓库 .git、tests、docs/maintenance 或可选工具，也不只复制 AGENTS.md。
 2. 默认模板中没有任何已登记 Agent、真实任务、厂商职责、绝对路径或本工程报告。首个 Agent 读 AGENTS 与核心协议，在用户实际任务范围内登记自己、创建任务并更新 docs/CURRENT.md。
 3. 首个 Agent 可以在本次用户任务范围内兼任 integrator，登记 [.agents/coordination.md](.agents/coordination.md) 的实际来源与范围，不作为永久任命。任务 integrator 另记在 task；后续 Agent 的登记请求写自己的消息，由实际负责人串行汇总；未回复不能算同意。
 4. **默认纳入 Git 管理**：首次实质修改前按 [Git 指南](.agents/guides/git.md) 检查已有仓库与忽略项；确认无仓库才由 integrator 初始化，保留已有身份／配置。每次交付前验证、显式暂存、审查并提交；复制文件本身不等于已经初始化或提交。
