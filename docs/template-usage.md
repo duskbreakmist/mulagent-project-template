@@ -7,7 +7,7 @@ git clone https://github.com/duskbreakmist/mulagent-project-template.git H:\Proj
 python H:\Project\agent-project-template\tools\template_manager.py init --root H:\Project\my-new-project --commit
 ```
 
-已有 H:\Project\agent-project-template 时跳过 clone。init 每次从 Git 读取最新 main，也可用 --ref v0.1.0 固定已发布版本。目标须为空（新建的无历史空 Git 仓库也可），已有工程不用 init。
+已有 H:\Project\agent-project-template 时跳过 clone。init 每次从 Git 读取最新 main，也可用 --ref v0.1.1 固定已发布版本。目标须为空（新建的无历史空 Git 仓库也可），已有工程不用 init。
 
 默认初始化独立 Git 并设置本地协作根。--commit 保存初始模板提交；身份缺失会明确报错，不捏造姓名／邮箱，已生成文件保留。--no-git 仅在你明确不需要版本管理时使用，不能与 --commit 同时指定。安装器不设置业务工程 origin，不推送。
 

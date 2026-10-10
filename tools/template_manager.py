@@ -249,7 +249,7 @@ def three_way(current, base, incoming, directory):
     directory.mkdir(parents=True, exist_ok=True)
     paths = [directory / name for name in ("current", "base", "upstream")]
     for path, text in zip(paths, (current, base, incoming)):
-        path.write_text(text, encoding="utf-8", newline="\n")
+        path.write_bytes(text.encode("utf-8"))
     result = run_git("merge-file", "--stdout", "--diff3", "-L", "LOCAL", "-L", "BASE",
                      "-L", "UPSTREAM", *paths, check=False)
     if result.returncode < 0 or result.returncode > 127:
