@@ -23,3 +23,5 @@ main／v0.1.0 首版代码提交 921cd9ee8fb3a044efbbae1239bd438cfda82bf0；is_t
 ## v0.1.1 兼容修正
 
 三方合并临时文件使用 UTF-8 字节写入，避免 Python 3.10 才增加的 Path.write_text newline 参数；固定版本示例改为 v0.1.1。实际非重叠三方合并回归 1 项通过。本机使用较新 Python；未直接运行 Python 3.9，兼容修正按标准库 API 边界核对。
+
+公开跨版本验收通过：v0.1.0 安装的独立工程升级到 main／v0.1.1，仅更新两项模板文件；定制登记保留，预览只读，没有模板 origin，更新后检查 32 项通过，提交后重复更新 ALREADY_CURRENT。临时工程已清理。修正版 c6e3e0cb7aab86247d66d869e7faa39055614dfc 的 Windows／Ubuntu CI 全部成功：https://github.com/duskbreakmist/mulagent-project-template/actions/runs/38040232118。HTTP/2 推送遭遇临时 HTTP 500，改为单次 HTTP/1.1 传输后完成，未改全局配置。
