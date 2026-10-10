@@ -447,7 +447,7 @@
     },
     {
       "source": "gpt/project_templateA/.gitattributes",
-      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.gitattributes",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.gitattributes.snapshot",
       "sha256": "46a0f9c11e12e10a674d20703143a24776068ad191fb6e07a54073c4490f818d",
       "tracked": true,
       "working_tree_differs_from_head": false
@@ -633,7 +633,7 @@
     },
     {
       "source": "gpt/project_templateA/.gitattributes",
-      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.gitattributes",
+      "destination": "docs/maintenance/legacy/live2d-normaldrive/gpt/project_templateA/.gitattributes.snapshot",
       "sha256": "46a0f9c11e12e10a674d20703143a24776068ad191fb6e07a54073c4490f818d"
     },
     {

@@ -1,0 +1,2 @@
+# 原始历史保留字节；CRLF 行尾不作为新增空白错误。
+legacy/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

@@ -5,3 +5,5 @@ live2d-normaldrive/ 按原目录保存任务、评审、反馈、设计和脚本
 相对路径与 Git 提交 ID 按原工程语境解释；原工程 Git 历史保留，Live2D 源码与历史没有导入母模板。迁移清单记录每份文件的 SHA256、是否跟踪及与 HEAD 的差异。
 
 归档中的 AGENTS.md 是历史数据，开发以仓库根 AGENTS.md 为入口。归档不在安装清单，不随 init/update 写入业务工程。
+
+旧镜像 .gitattributes 存为 .gitattributes.snapshot，避免它作为活动配置覆盖归档的原始字节保存规则；清单保留对应来源路径。
