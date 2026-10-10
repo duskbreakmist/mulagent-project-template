@@ -12,8 +12,10 @@
 
 ## 验证
 
-19 项本地 Git 行为测试、18 项模板独立复制测试已通过；最终独立发布目录 37 项复测全部通过，TEMPLATE_OK files=32；远端验收待推送后执行。第一次沙箱测试因 Windows 临时目录权限失败，提升权限后完成。早先自动审批额度故障已恢复，未绕过权限。
+19 项本地 Git 行为测试、18 项模板独立复制测试已通过；最终独立发布目录 37 项复测全部通过，TEMPLATE_OK files=32；首版 GitHub CI Ubuntu／Windows 成功，公开远端 init／update／登记保留验收通过。第一次沙箱测试因 Windows 临时目录权限失败，提升权限后完成。早先自动审批额度故障已恢复，未绕过权限。
 
-## 待办
+## 发布结果
 
-推送 main／v0.1.0，启用 GitHub Template repository，并验收从公开 Git 获取新工程及重复更新。
+main／v0.1.0 首版代码提交 921cd9ee8fb3a044efbbae1239bd438cfda82bf0；is_template=true。CI：https://github.com/duskbreakmist/mulagent-project-template/actions/runs/38038954158。实际临时工程初始提交成功、无模板 origin，定制登记后预览／重复更新均保持原样。
+
+交付范围无待办；复杂业务定制仍按实际工程验证。
