@@ -1,0 +1,13 @@
+* text=auto
+*.md text eol=lf
+*.py text eol=lf
+*.json text eol=lf
+.gitignore text eol=lf
+.gitattributes text eol=lf
+*.blend binary
+*.moc3 binary
+*.psd binary
+*.fbx binary
+*.png binary
+*.jpg binary
+*.jpeg binary

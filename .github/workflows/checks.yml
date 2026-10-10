@@ -1,0 +1,31 @@
+name: Template checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    # 被 Use this template 创建的业务仓库不强制执行母模板的结构断言。
+    if: github.repository == 'duskbreakmist/mulagent-project-template'
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.13'
+      - name: Template integrity
+        run: python tools/check_template.py --root .
+      - name: Copy and updater tests
+        run: python -m unittest discover -s tests -v
