@@ -2,9 +2,10 @@
 
 写入前先 git status 确认 HEAD 未变；提交只 add 自己改动的文件，不用 git add .。
 
-## 发布验证（进行中）
+## 发布验证（本轮已完成）
 
-2026-10-11 [PUB001-CODEX](tasks/PUB001-CODEX.md) / codex-publish-20261011：按用户授权已推送 main 至 76af135，并实测 GitHub 默认新工程安装（33 项、独立 Git、干净状态）。首次 CI 的 Windows 短路径问题已最小修复；相关 20 项与隔离完整 75 项通过，待修复推送及双平台 CI；他人暂存 TPL005 保留。
+2026-10-11 [PUB001-CODEX](tasks/PUB001-CODEX.md) / codex-publish-20261011：按用户授权发布文档规范与前序提交，实测 GitHub 默认新工程安装（33 项、独立 Git、干净状态）；首次 Windows CI 短路径问题已最小修复。
+修复 f9c7669 经官方 API 原样发布，提交 SHA 一致；相关 20 项、隔离完整 75 项和[双平台 CI](https://github.com/duskbreakmist/mulagent-project-template/actions/runs/38120883231)通过。常规 Git 通道故障未改持久配置；他人 TPL005 暂存保留。ORCH001 完成摘要移入维护历史，保留原验收边界。
 
 ## 文档规范（本轮已完成）
 
@@ -15,12 +16,6 @@
 
 2026-10-11 [DOC001-CODEX](tasks/DOC001-CODEX.md) / codex-docs-20261011：README 补活动文件职责树、工作台用法、本地已提交版本安装；接入说明补各客户端可复制提示词。
 模板检查 32 项、diff 检查、独立新工程 init --commit／无 origin／外置工作台 status 冒烟通过；新 README 在最小安装副本检查通过。本轮开始时实时远端 main=0df7095，本地=a329301；未 push、未跑远端 CI。
-
-## 工作台原型（本轮已完成）
-
-2026-10-11 [ORCH001-CODEX](tasks/ORCH001-CODEX.md) / codex-workbench-20261011：按五项要求交付[可选工作台](../optional/agent-workbench.md)，含登记／原子认领、额度检查点接力、开发测试反馈、封存调研与人工界面。
-隔离 worktree 完整 70 项回归通过；最终工作台 18 项通过（补充人工入口、候选接力与数据保留迁移）；模板 32 项检查、Python 编译与 diff 检查通过；浏览器人工创建／暂停／接手／检查点读取实测成功。
-真实四客户端启动与额度适配、独立测试 Agent 审查、文件权限硬隔离未完成；本轮不调用模型、不推送。旧 TPL003 本人摘要见[维护历史](history/CURRENT-2026-10.md)，根种子与他人暂存保持原样。
 
 ## 多实例同源审计轮次（进行中，需收尾）
 
@@ -44,4 +39,4 @@ v0.1.1 已发布，实际安装／跨版本更新及双平台 CI 成功；完整
 
 ## 接手与发布
 
-实际开发 task 保存 docs/maintenance/tasks，根分发状态保持空骨架。2026-10-11 用户随后明确授权推送，GitHub main 已接收 76af135 及其前序提交；最新发布与 CI 状态见 PUB001-CODEX。历史任务的未推送／未验证说明保留当时语境，不能把旧版绿色 CI 算成本轮通过。
+实际开发 task 保存 docs/maintenance/tasks，根分发状态保持空骨架。2026-10-11 用户随后明确授权推送，GitHub main 已接收 f9c7669 及其前序提交；最新发布与 CI 状态见 PUB001-CODEX。历史任务的未推送／未验证说明保留当时语境，不能把旧版绿色 CI 算成本轮通过。
