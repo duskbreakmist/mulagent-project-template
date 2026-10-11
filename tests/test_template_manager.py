@@ -436,6 +436,55 @@ class LabelTests(unittest.TestCase):
             M.initialize(target, str(self.source), "main")
         self.assertFalse(target.exists())
 
+    def test_cli_selects_release_tag_without_changing_preview_baseline(self):
+        original = self.digest_project()
+        self.modify_source("template_readme.md", "# Release candidate\n")
+        self.git(self.source, "tag", "v-next")
+        command = [sys.executable, str(SOURCE / "tools/template_manager.py"), "update",
+                   "--root", str(self.project), "--ref", "v-next"]
+        preview = subprocess.run([*command, "--check"], capture_output=True)
+        self.assertEqual(0, preview.returncode, preview.stdout + preview.stderr)
+        self.assertEqual(original, self.digest_project())
+        applied = subprocess.run(command, capture_output=True)
+        self.assertEqual(0, applied.returncode, applied.stdout + applied.stderr)
+        self.assertEqual("v-next", M.read_state(self.project)["ref"])
+        self.assertEqual("# Release candidate\n", (self.project / "template_readme.md").read_text())
+        self.commit(self.project)
+        self.modify_source("template_readme.md", "# Later main\n")
+        # 不带--ref的后续更新仍固定标签，不能悄悄追随main。
+        self.assertEqual(0, M.update(self.project))
+        self.assertEqual("# Release candidate\n", (self.project / "template_readme.md").read_text())
+
+    def test_missing_release_ref_leaves_project_unchanged(self):
+        before = self.digest_project()
+        with self.assertRaisesRegex(ValueError, "Git 操作失败"):
+            M.update(self.project, ref="missing-release")
+        self.assertEqual(before, self.digest_project())
+
+    def test_conflicted_release_switch_saves_ref_only_when_applied(self):
+        (self.project / "AGENTS.md").write_text("# 本地完全替换\n", encoding="utf-8")
+        self.commit(self.project)
+        self.modify_source("AGENTS.md", "# 上游完全替换\n")
+        self.git(self.source, "tag", "v-conflict")
+        original = M.read_state(self.project)
+        self.assertEqual(2, M.update(self.project, ref="v-conflict"))
+        self.assertEqual(original, M.read_state(self.project))
+        plan = self.plan_file()
+        data = json.loads(plan.read_text(encoding="utf-8"))
+        self.assertEqual("v-conflict", data["next_state"]["ref"])
+        proposed = plan.parent / "proposed/AGENTS.md"
+        proposed.write_text("# Reviewed release merge\n", encoding="utf-8")
+        M.apply_plan(self.project, plan)
+        self.assertEqual("v-conflict", M.read_state(self.project)["ref"])
+
+    def test_same_commit_ref_switch_persists_metadata(self):
+        self.git(self.source, "tag", "v-same")
+        original = M.read_state(self.project)["revision"]
+        self.assertEqual(0, M.update(self.project, ref="v-same"))
+        state = M.read_state(self.project)
+        self.assertEqual("v-same", state["ref"])
+        self.assertEqual(original, state["revision"])
+
     def test_remote_urls_and_scp_sources_keep_their_meaning(self):
         for source in (M.DEFAULT_SOURCE, "ssh://git@example.invalid/repo.git", "git@example.invalid:repo.git"):
             with self.subTest(source=source):

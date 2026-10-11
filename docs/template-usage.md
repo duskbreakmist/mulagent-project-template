@@ -12,7 +12,7 @@ python tools/check_template.py --root .
 
 `../agent-template-tools` 是本次下载的同级工具目录，`--root .` 是当前业务工程；无需原电脑上的路径。相对路径适用于 Windows、Linux 和 macOS；若系统使用 python3，替换示例中的 python 命令。
 
-同级已有该工具仓库时跳过 clone，先执行 `git -C ../agent-template-tools pull --ff-only`。init 每次从 Git 读取最新 main，也可用 --ref v0.1.1 固定已发布版本。目标须为空（新建的无历史空 Git 仓库也可），已有工程不用 init。工具目录放在业务工程外，避免下载工具后使 init 目标不再为空。
+同级已有该工具仓库时跳过 clone，先执行 `git -C ../agent-template-tools pull --ff-only`。init 每次从 Git 读取最新 main，也可用 --ref v0.2.0 固定已发布版本。目标须为空（新建的无历史空 Git 仓库也可），已有工程不用 init。工具目录放在业务工程外，避免下载工具后使 init 目标不再为空。
 
 默认初始化独立 Git 并设置本地协作根。--commit 保存初始模板提交；身份缺失会明确报错，不捏造姓名／邮箱，已生成文件保留。--no-git 仅在你明确不需要版本管理时使用，不能与 --commit 同时指定。安装器不设置业务工程 origin，不推送。
 
@@ -55,7 +55,15 @@ python tools/check_template.py --root .
 git diff
 ```
 
---check 对工程只读，不建锁、状态或报告；仍会访问 Git，并在临时目录读取快照。状态基线在 .agents/template-state.json，包含 source、ref、提交与各文件基线哈希，需要随业务工程 Git 保存。改 ref 前明确选择已存在分支／标签，不把清单的格式 version 当发布版本。
+--check 对工程只读，不建锁、状态或报告；仍会访问 Git，并在临时目录读取快照。状态基线在 .agents/template-state.json，包含 source、ref、提交与各文件基线哈希，需要随业务工程 Git 保存。不把清单的格式 version 当发布版本。省略 --ref 时沿用原分支／固定标签；要升级到已存在的发布标签，用最新同级工具执行：
+
+```powershell
+python ../agent-template-tools/tools/template_manager.py update --root . --ref v0.2.0 --check
+python ../agent-template-tools/tools/template_manager.py update --root . --ref v0.2.0
+python tools/check_template.py --root .
+```
+
+旧版工程自身工具可能不支持 update --ref，因此先更新同级工具仓库，再用上面命令。预览不改变基线；实际成功应用才保存新 ref。冲突时先审查并 apply，不能靠改基线哈希绕过检查。选择 --ref main 可恢复跟随 main。
 
 保护规则：
 
@@ -144,5 +152,5 @@ git diff
 1. 保存业务 Git 版本，在工程外建立独立 clone／分支作为候选，保留原业务历史和原 checkout。
 2. 明确以后由哪个来源提供升级。将 README、agents_list.md、.agents/coordination.md、.agents/tasks/README.md、docs/CURRENT.md 五项种子整理为通用说明／空状态；核对真实身份、任务索引、进度和路径是否残留。保留需要的定制规则，但不能把运行记录加入 manifest。
 3. 仅显式暂存审阅过的种子与规则，提交候选；不要把业务源的安装基线误当成新工程基线，init 会为新工程生成自己的状态。
-4. 在另一个空工程以候选 Git 仓库为 --source 安装并检查；核对33项当前骨架、独立Git、无模板origin、新登记／CURRENT为空和新source／revision正确。具体新清单允许扩展，核心协议和工具应保留。
+4. 在另一个空工程以候选 Git 仓库为 --source 安装并检查；核对35项当前骨架（包含两个模板许可文件）、独立Git、无模板origin、新登记／CURRENT为空和新source／revision正确。具体新清单允许扩展，核心协议和工具应保留。
 5. 完整测试仍在维护仓库执行。本轮默认安装集不包含 tests、CI、维护记录或可选客户端工具。通过候选验收后再按明确授权发布；已有业务工程继续保留原数据。

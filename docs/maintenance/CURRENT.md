@@ -2,6 +2,10 @@
 
 写入前先 git status 确认 HEAD 未变；提交只 add 自己改动的文件，不用 git add .。
 
+## v0.2.0 发布（进行中）
+
+2026-10-11 [REL001-CODEX](tasks/REL001-CODEX.md) / codex-bootstrap-integrator-20261011：用户授权完成release，重新选择后采用推荐的Apache-2.0；源码许可与两个业务分发许可副本、固定版本说明及update --ref已准备。验证、推送、CI、标签与release待完成；旧标签不移动。
+
 ## 业务工程约定与小任务验收（本轮已完成）
 
 2026-10-11 [ENG001-CODEX](tasks/ENG001-CODEX.md) / codex-bootstrap-integrator-20261011：工程约定集中到README／引用文档，AGENTS与两种task格式接入，补检查边界及旧工程手工保留README的迁移说明，保持33项分发。

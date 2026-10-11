@@ -41,6 +41,18 @@ git -C ../agent-template-tools pull --ff-only
 
 然后在新的空工程目录执行上面的 init 和检查。目标已有业务文件时，按[旧工程接入说明](docs/template-usage.md)处理。
 
+### 固定安装发布版本
+
+需要可复现的版本时，在新的空工程目录执行（同级工具目录须尚不存在）：
+
+```powershell
+git clone --branch v0.2.0 --depth 1 https://github.com/duskbreakmist/mulagent-project-template.git ../agent-template-tools
+python ../agent-template-tools/tools/template_manager.py init --root . --ref v0.2.0 --commit
+python tools/check_template.py --root .
+```
+
+该工程后续 update 继续固定 v0.2.0；选择下一版时显式使用 update --ref。使用 main 的安装方式仍按前面的命令跟随 main。
+
 ## 更新已经使用模板的工程
 
 先提交工程当前改动，再在工程根目录执行：
@@ -53,6 +65,15 @@ git diff
 ```
 
 检查无误并运行工程测试后，提交这次模板更新。工程状态始终保留；定制规则尝试三方合并，冲突时不写原文件，按报告手工处理。
+
+升级旧版本到本版时，先提交当前业务改动，再用最新同级工具仓库执行：
+
+```powershell
+python ../agent-template-tools/tools/template_manager.py update --root . --ref v0.2.0 --check
+python ../agent-template-tools/tools/template_manager.py update --root . --ref v0.2.0
+```
+
+旧工程内的 updater 可能尚不支持 --ref，因此先用同级工具；成功更新后可继续用工程自身工具。冲突按安装说明审查后 apply，完成后运行工程测试并提交。
 
 [安装、旧工程接入与冲突处理](docs/template-usage.md) · [模板结构与原理](template_readme.md)
 
@@ -102,6 +123,7 @@ agent-project-template/
 │   │   ├── git.md                       # Git 初始化、worktree 与提交整合
 │   │   ├── records.md                   # 任务标识、摘要窗口与归档
 │   │   └── tools.md                     # 各客户端加载规则和通信边界
+│   ├── licenses/                       # 默认：模板 Apache-2.0 原文与许可范围
 │   ├── tasks/
 │   │   ├── README.md                    # 活跃／近期任务索引种子
 │   │   ├── TEMPLATE-lite.md             # 单人串行任务格式
@@ -176,6 +198,10 @@ git pull --ff-only
 - 普通任务不用读完整手册或可选对照机制。
 - 提交自己的模板基线文件 .agents/template-state.json；锁和冲突备份只存本机。
 - 不自动推送、删除工程文件或执行下载的脚本；复制与 GitHub 的 Use this template 本身不等于已建立更新基线。
+
+## 许可证
+
+模板源码、工具和文档采用 [Apache-2.0](.agents/licenses/Apache-2.0.txt)，版权与范围见[模板许可说明](.agents/licenses/README.md)。源仓库根 LICENSE 保存同一许可原文。安装器将许可放在 .agents/licenses/，不覆盖业务工程根 LICENSE 或为独立业务代码指定许可证。
 
 ## 独立开发与可选组件
 

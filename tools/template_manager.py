@@ -284,7 +284,7 @@ def three_way(current, base, incoming, directory):
 def make_plan(root, upstream, state, temp):
     changed, conflicts, skipped = [], [], []
     new_state = json.loads(json.dumps(state))
-    new_state.update(revision=upstream.revision, source=upstream.source)
+    new_state.update(revision=upstream.revision, source=upstream.source, ref=upstream.ref)
     for name, incoming in upstream.files.items():
         path = safe_path(root, name)
         if path.exists() and not path.is_file():
@@ -431,7 +431,7 @@ def apply_plan(root, plan_path):
     return plan
 
 
-def update(root, check=False, source=None):
+def update(root, check=False, source=None, ref=None):
     root = Path(root).resolve()
     state = read_state(root)
     if source is None and not remote_source(state["source"]) and not Path(state["source"]).is_absolute():
@@ -440,7 +440,9 @@ def update(root, check=False, source=None):
     if not check:
         require_clean(root)
     with tempfile.TemporaryDirectory() as temp:
-        upstream = Upstream(temp, source if source is not None else state["source"], state["ref"])
+        # 默认沿用原分支／固定标签；只有显式选择才切换，预览或冲突不写基线。
+        upstream = Upstream(temp, source if source is not None else state["source"],
+                            ref if ref is not None else state["ref"])
         plan = make_plan(root, upstream, state, temp)
         print("UPDATE_PLAN", "changes=" + str(len(plan["entries"])),
               "conflicts=" + str(len(plan["conflicts"])), "protected=" + str(len(plan["skipped"])),
@@ -476,6 +478,7 @@ def main():
         if name == "update":
             command.add_argument("--check", action="store_true")
             command.add_argument("--source", help="明确恢复或更换来源；预览不写基线，实际更新才保存")
+            command.add_argument("--ref", help="明确切换到已有分支／标签；成功应用后保存新引用")
         if name == "apply":
             command.add_argument("--plan", required=True)
     args = parser.parse_args()
@@ -486,9 +489,9 @@ def main():
             adopt(args.root, args.source, args.ref)
         elif args.command == "update":
             if args.check:
-                return update(args.root, True, args.source)
+                return update(args.root, True, args.source, args.ref)
             with write_lock(Path(args.root).resolve()):
-                return update(args.root, source=args.source)
+                return update(args.root, source=args.source, ref=args.ref)
         else:
             root = Path(args.root).resolve()
             with write_lock(root):
