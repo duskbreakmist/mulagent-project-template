@@ -12,4 +12,4 @@
 - 单人串行用精简 task，更新索引与 [CURRENT](docs/CURRENT.md) 短摘要；登记不写任务流水，记录／归档按需看 [指南](.agents/guides/records.md)。
 - 觉得模板繁琐或有改进点时，可自主写 [本人反馈](.agents/feedback/README.md)；无问题不必写，反馈不自动改规则。
 - 首次配置／维护看 [template_readme.md](template_readme.md)，普通任务不要求读手册、脚本或全部模板。
-- 母模板维护时，根登记／任务索引／CURRENT 是分发种子，保持空白；维护身份、scope、进度在 docs/maintenance/tasks/ 和 docs/maintenance/CURRENT.md 记录，普通登记／任务规则使用这些维护路径。业务工程按正常协议管理自身状态。
+- 母模板维护时，根协调／登记／任务索引／CURRENT 保持空白；实际协调读 docs/maintenance/COORDINATION.md，身份、scope、进度记 docs/maintenance/tasks/ 与 CURRENT.md，按 docs/maintenance/README.md 验证。业务工程按正常协议管理自身状态。

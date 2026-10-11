@@ -77,6 +77,15 @@ class TemplateManagerTests(unittest.TestCase):
         self.assertEqual("", self.git(self.project, "remote"))
         self.assertEqual(0, M.update(self.project, check=True))
 
+    def test_actual_install_runs_its_own_checker_without_development_assets(self):
+        before = self.digest_project()
+        checked = subprocess.run([sys.executable, "tools/check_template.py", "--root", "."],
+                                 cwd=self.project, capture_output=True)
+        self.assertEqual(0, checked.returncode, checked.stderr)
+        self.assertEqual(before, self.digest_project())
+        self.assertFalse((self.project / "tests").exists())
+        self.assertFalse((self.project / "docs/maintenance").exists())
+
     def test_new_git_init_and_commit_save_real_baseline(self):
         target = self.folder / "committed-project"
         target.mkdir()
@@ -235,6 +244,20 @@ class TemplateManagerTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 M.update(self.project, check=True)
 
+    def test_upstream_core_removal_is_rejected_before_installation(self):
+        path = self.source / ".agents/template_manifest.json"
+        original = path.read_text(encoding="utf-8")
+        for name in ("tools/check_template.py", ".agents/guides/git.md"):
+            with self.subTest(name=name):
+                data = json.loads(original)
+                data["required"].remove(name)
+                path.write_text(json.dumps(data), encoding="utf-8")
+                self.commit(self.source)
+                target = self.folder / "invalid-source-target"
+                with self.assertRaisesRegex(ValueError, "核心协议"):
+                    M.initialize(target, str(self.source), "main")
+                self.assertFalse(target.exists())
+
     def test_repeated_update_is_idempotent_after_commit(self):
         path = self.source / "template_readme.md"
         self.modify_source("template_readme.md", path.read_text(encoding="utf-8") + "\nnew text\n")
@@ -258,6 +281,52 @@ class TemplateManagerTests(unittest.TestCase):
                 M.update(self.project)
         for name, data in before.items():
             self.assertEqual(data, (self.project / name).read_bytes())
+
+
+    def test_relative_source_is_persisted_independently_of_cwd(self):
+        target = self.folder / "relative-project"
+        target.mkdir()
+        self.git(target, "init", "-b", "main")
+        self.identity(target)
+        with patch("os.getcwd", return_value=str(self.folder)):
+            M.initialize(target, "source", "main", no_git=True)
+        self.commit(target)
+        self.assertEqual(str(self.source.resolve()), M.read_state(target)["source"])
+        with patch("os.getcwd", return_value=str(target)):
+            self.assertEqual(0, M.update(target, check=True))
+
+    def test_explicit_source_recovers_legacy_metadata_without_preview_writes(self):
+        state = M.read_state(self.project)
+        state["source"] = "."
+        (self.project / M.STATE).write_text(json.dumps(state), encoding="utf-8")
+        self.commit(self.project)
+        before = self.digest_project()
+        with self.assertRaisesRegex(ValueError, "update --source"):
+            M.update(self.project, check=True)
+        self.assertEqual(0, M.update(self.project, check=True, source=str(self.source)))
+        self.assertEqual(before, self.digest_project())
+        self.assertEqual(0, M.update(self.project, source=str(self.source)))
+        self.assertEqual(str(self.source.resolve()), M.read_state(self.project)["source"])
+
+    def test_upstream_rejects_development_assets_before_initialization(self):
+        name = "docs/maintenance/COORDINATION.md"
+        path = self.source / name
+        path.parent.mkdir(parents=True)
+        path.write_text("# 实际维护身份\n", encoding="utf-8")
+        manifest = self.source / ".agents/template_manifest.json"
+        data = json.loads(manifest.read_text(encoding="utf-8"))
+        data["required"].append(name)
+        manifest.write_text(json.dumps(data), encoding="utf-8")
+        self.commit(self.source)
+        target = self.folder / "must-not-exist"
+        with self.assertRaisesRegex(ValueError, "开发资产"):
+            M.initialize(target, str(self.source), "main")
+        self.assertFalse(target.exists())
+
+    def test_remote_urls_and_scp_sources_keep_their_meaning(self):
+        for source in (M.DEFAULT_SOURCE, "ssh://git@example.invalid/repo.git", "git@example.invalid:repo.git"):
+            with self.subTest(source=source):
+                self.assertEqual(source, M.normalize_source(source))
 
 
 if __name__ == "__main__":

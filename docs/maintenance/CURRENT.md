@@ -2,6 +2,10 @@
 
 写入前先 git status 确认 HEAD 未变；提交只 add 自己改动的文件，不用 git add .。
 
+## 活跃：自举审计改进与发布
+
+2026-10-11 [BOOT005-CODEX](tasks/BOOT005-CODEX.md) / codex-bootstrap-integrator-20261011：完成核心清单／Python语法／维护task检查、维护COORDINATION、本地来源规范化与update --source恢复、移动／种子整理指南。33项维护检查、85项本地完整回归通过；待推送并按实际SHA验收双平台CI。真实AI接入／完整开发包不在本轮范围。
+
 ## 自举审计统一整合（本轮已完成）
 
 2026-10-11 用户指定 codex-bootstrap-integrator-20261011 整合，[BOOT004-INTEGRATE](tasks/BOOT004-INTEGRATE.md)／[统一 RUN](runs/2026-10-11-bootstrap-audit.md)。已收 Codex、WB 两组共六份首稿；[BOOT002-ZCODE](tasks/BOOT002-ZCODE.md) 用户确认停止且报告缺失，按 missing 收尾，源任务 blocked。原稿保留，治理授权与共享写入范围记在维护 RUN，根种子保持空白。

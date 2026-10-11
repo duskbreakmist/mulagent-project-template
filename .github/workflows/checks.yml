@@ -26,6 +26,6 @@ jobs:
         with:
           python-version: '3.13'
       - name: Template integrity
-        run: python tools/check_template.py --root .
+        run: python tools/check_template.py --root . --maintenance
       - name: Copy and updater tests
         run: python -m unittest discover -s tests -v

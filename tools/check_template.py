@@ -1,11 +1,18 @@
 """只读检查模板完整性；v2 另检查 Markdown 本地链接和任务 status，不初始化或修复工程。"""
 import argparse
+import ast
 import json
 from pathlib import Path
 import re
 from urllib.parse import unquote, urlsplit
 
 TASK_STATUSES = {"todo", "in_progress", "blocked", "review", "done"}
+# 固定最小协议／工具锚点，而不是复制整个33项清单；允许新增组成文件。
+CORE_FILES = {"AGENTS.md", ".agents/PROTOCOL.md", ".agents/coordination.md",
+              ".agents/guides/git.md", ".agents/guides/modes.md",
+              ".agents/tasks/TEMPLATE-lite.md", ".agents/template_manifest.json",
+              "tools/check_template.py", "tools/template_manager.py"}
+DEVELOPMENT_PREFIXES = ("docs/maintenance/", "tests/", ".github/", "tools/legacy/")
 
 
 def safe_path(root, relative):
@@ -87,8 +94,8 @@ def check_links(root, path, text):
             raise ValueError("断链: " + str(path.relative_to(root)) + " -> " + target)
 
 
-def check_task_statuses(root):
-    tasks = safe_path(root, ".agents/tasks")
+def check_task_statuses(root, directory=".agents/tasks"):
+    tasks = safe_path(root, directory)
     for path in tasks.rglob("*.md"):
         safe_path(root, path.relative_to(root))
         if path.name == "README.md" or path.name.startswith("TEMPLATE"):
@@ -102,7 +109,7 @@ def check_task_statuses(root):
             raise ValueError("非法任务 status: " + str(path.relative_to(root)))
 
 
-def validate(root):
+def validate(root, maintenance=False):
     root = Path(root).resolve()
     manifest_path = safe_path(root, ".agents/template_manifest.json")
     manifest = json.loads(readable_text(manifest_path))
@@ -112,6 +119,9 @@ def validate(root):
     required = manifest.get("required")
     if not isinstance(required, list) or not required:
         raise ValueError("模板清单缺失")
+    if version == 2 and not CORE_FILES.issubset(name for name in required if isinstance(name, str)):
+        raise ValueError("清单缺少核心协议／工具: " + ", ".join(sorted(CORE_FILES - set(
+            name for name in required if isinstance(name, str)))))
     seen = set()
     markdown = []
     for name in required:
@@ -121,26 +131,41 @@ def validate(root):
         if relative.is_absolute() or ".." in relative.parts or name in seen:
             raise ValueError("非法或重复路径: " + name)
         seen.add(name)
+        if name.startswith(DEVELOPMENT_PREFIXES):
+            raise ValueError("开发资产不属于业务分发清单: " + name)
         path = safe_path(root, relative)
         if not path.is_file():
             raise ValueError("缺少文件: " + name)
         text = readable_text(path)
+        if version == 2 and path.suffix == ".py":
+            ast.parse(text, filename=name)  # 只校验语法，绝不执行待检查代码。
         if path.suffix.lower() == ".md":
             markdown.append((path, text))
     if version == 2:
         for path, text in markdown:
             check_links(root, path, text)
         check_task_statuses(root)
+    if maintenance:
+        # 显式维护模式，避免把业务项目同名目录或历史快照当成活跃任务板。
+        for name in ("README.md", "CURRENT.md", "COORDINATION.md"):
+            path = safe_path(root, "docs/maintenance/" + name)
+            check_links(root, path, readable_text(path))
+        for directory in ("tasks", "runs", "history"):
+            for path in safe_path(root, "docs/maintenance/" + directory).rglob("*.md"):
+                safe_path(root, path.relative_to(root))
+                check_links(root, path, readable_text(path))
+        check_task_statuses(root, "docs/maintenance/tasks")
     return len(required)
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", default=".")
+    parser.add_argument("--maintenance", action="store_true", help="另检查母模板维护入口、记录链接和任务状态")
     args = parser.parse_args()
     try:
-        count = validate(args.root)
-    except (OSError, ValueError) as error:
+        count = validate(args.root, args.maintenance)
+    except (OSError, ValueError, SyntaxError) as error:
         parser.exit(1, str(error) + "\n")
     print("TEMPLATE_OK files=" + str(count))
 

@@ -23,6 +23,24 @@ SEEDS = {"README.md", "agents_list.md", ".agents/coordination.md",
 RUNTIME_DIRS = {".agents/tasks", ".agents/messages", ".agents/handoffs",
                 ".agents/feedback", ".agents/plans", ".agents/runs",
                 ".agents/scratch", "results", "docs/history"}
+DEVELOPMENT_PREFIXES = ("docs/maintenance/", "tests/", ".github/", "tools/legacy/")
+# 与本地checker的v2最小锚点同步；读取Git对象时不导入或执行上游检查器。
+CORE_FILES = {"AGENTS.md", ".agents/PROTOCOL.md", ".agents/coordination.md",
+              ".agents/guides/git.md", ".agents/guides/modes.md",
+              ".agents/tasks/TEMPLATE-lite.md", ".agents/template_manifest.json",
+              "tools/check_template.py", "tools/template_manager.py"}
+
+
+def remote_source(source):
+    # Git允许URL与scp写法；Windows盘符是本地路径，不能误当URL scheme。
+    drive = bool(re.match(r"^[A-Za-z]:", source))
+    return not drive and (bool(urlsplit(source).scheme) or bool(re.match(r"^[^/\\]+:.+", source)))
+
+
+def normalize_source(source):
+    if not isinstance(source, str) or not source.strip():
+        raise ValueError("来源必须是非空URL或本地Git路径")
+    return source if remote_source(source) else str(Path(source).expanduser().resolve())
 
 
 def normalized(data):
@@ -109,6 +127,7 @@ def write_lock(root):
 
 class Upstream:
     def __init__(self, directory, source, ref):
+        source = normalize_source(source)
         parts = urlsplit(source)
         if parts.username or parts.password:
             raise ValueError("源地址不能内嵌凭据")
@@ -133,11 +152,16 @@ class Upstream:
         self.files = {}
         for name in required:
             safe_path(self.repo, name)
+            if name.startswith(DEVELOPMENT_PREFIXES):
+                raise ValueError("上游包含开发资产: " + name)
             if protected(name) and name not in SEEDS:
                 raise ValueError("上游包含工程运行记录: " + name)
             self.files[name] = self.blob(self.revision, name)
-        if ".agents/template_manifest.json" not in self.files or "tools/template_manager.py" not in self.files:
-            raise ValueError("上游不包含安装器或清单")
+        anchors = {".agents/template_manifest.json", "tools/template_manager.py", "tools/check_template.py"}
+        if manifest.get("version") == 2:
+            anchors = CORE_FILES
+        if not anchors.issubset(self.files):
+            raise ValueError("上游缺少核心协议／工具: " + ", ".join(sorted(anchors - self.files.keys())))
 
     def blob(self, revision, name):
         safe_path(self.repo, name)
@@ -209,7 +233,7 @@ def initialize(root, source, ref, no_git=False, commit=False):
         if existing and run_git("rev-parse", "--verify", "HEAD", cwd=root, check=False).returncode == 0:
             raise ValueError("该仓库已有历史，不按空新工程初始化")
         with write_lock(root):
-            state = {"version": 1, "source": source, "ref": ref, "revision": upstream.revision,
+            state = {"version": 1, "source": upstream.source, "ref": ref, "revision": upstream.revision,
                      "files": {name: baseline(upstream, text) for name, text in upstream.files.items()}}
             for name, text in upstream.files.items():
                 atomic_write(safe_path(root, name), text.encode("utf-8"))
@@ -239,7 +263,7 @@ def adopt(root, source, ref):
             # 无法确认旧版本时不猜基线：只有完全相同的文件可自动识别。
             same = path.is_file() and normalized(path.read_bytes()) == text
             records[name] = baseline(upstream, text) if same else {"revision": None, "sha256": None}
-        state = {"version": 1, "source": source, "ref": ref, "revision": upstream.revision, "files": records}
+        state = {"version": 1, "source": upstream.source, "ref": ref, "revision": upstream.revision, "files": records}
         atomic_write(root / STATE, (json.dumps(state, ensure_ascii=False, indent=2) + "\n").encode())
         print("ADOPTED", root, "existing files unchanged")
         return state
@@ -260,7 +284,7 @@ def three_way(current, base, incoming, directory):
 def make_plan(root, upstream, state, temp):
     changed, conflicts, skipped = [], [], []
     new_state = json.loads(json.dumps(state))
-    new_state.update(revision=upstream.revision)
+    new_state.update(revision=upstream.revision, source=upstream.source)
     for name, incoming in upstream.files.items():
         path = safe_path(root, name)
         if path.exists() and not path.is_file():
@@ -407,13 +431,16 @@ def apply_plan(root, plan_path):
     return plan
 
 
-def update(root, check=False):
+def update(root, check=False, source=None):
     root = Path(root).resolve()
     state = read_state(root)
+    if source is None and not remote_source(state["source"]) and not Path(state["source"]).is_absolute():
+        # 旧相对来源的原始调用目录不可恢复；要求明确选择，不猜一个新的仓库。
+        raise ValueError("旧基线使用相对本地来源；请用 update --source 明确原Git来源")
     if not check:
         require_clean(root)
     with tempfile.TemporaryDirectory() as temp:
-        upstream = Upstream(temp, state["source"], state["ref"])
+        upstream = Upstream(temp, source if source is not None else state["source"], state["ref"])
         plan = make_plan(root, upstream, state, temp)
         print("UPDATE_PLAN", "changes=" + str(len(plan["entries"])),
               "conflicts=" + str(len(plan["conflicts"])), "protected=" + str(len(plan["skipped"])),
@@ -448,6 +475,7 @@ def main():
             command.add_argument("--commit", action="store_true")
         if name == "update":
             command.add_argument("--check", action="store_true")
+            command.add_argument("--source", help="明确恢复或更换来源；预览不写基线，实际更新才保存")
         if name == "apply":
             command.add_argument("--plan", required=True)
     args = parser.parse_args()
@@ -458,9 +486,9 @@ def main():
             adopt(args.root, args.source, args.ref)
         elif args.command == "update":
             if args.check:
-                return update(args.root, True)
+                return update(args.root, True, args.source)
             with write_lock(Path(args.root).resolve()):
-                return update(args.root)
+                return update(args.root, source=args.source)
         else:
             root = Path(args.root).resolve()
             with write_lock(root):

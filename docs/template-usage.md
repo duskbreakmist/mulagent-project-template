@@ -25,7 +25,7 @@ $templateSource = (Resolve-Path "../agent-template-tools").Path
 python ../agent-template-tools/tools/template_manager.py init --root . --source "$templateSource" --ref main --commit
 ~~~
 
-上面的 PowerShell 先把同级工具目录解析为当前电脑的绝对路径，防止换执行目录后本地来源错位。基线会记录这个本地 source，后续 update 沿用它；不会自动切换成 GitHub 来源。需要长期跟随 GitHub 的新工程优先使用默认安装方式。init 目标须位于母仓库外，避免创建嵌套仓库。
+上面的 PowerShell 先解析同级工具目录。安装器也会把相对本地 --source 按调用时目录解析为绝对路径再保存，因此后续 update 不依赖调用目录。基线沿用该本地 source，不自动切换为 GitHub；源仓库移动后按第6节显式恢复。长期跟随 GitHub 的新工程优先使用默认来源。init 目标须位于母仓库外。
 
 ### 同时使用协作工作台
 
@@ -104,3 +104,38 @@ git pull --ff-only
 维护者在母模板仓库审查、测试、提交与推送；发布标签后用户可用 --ref 固定。GitHub Template repository 提供 Use this template，但不建立后续模板自动合并关系，已有业务工程使用本工具管理基线。
 
 更新锁只协调本工具的并发运行，不是所有编辑器的事务锁。残留 .agents/.template-update.lock 时，核对 host／pid 和实际持有者停写后再人工清理，不按超时自动删除。
+
+母仓库使用 `python tools/check_template.py --root . --maintenance`，额外检查维护入口、tasks／runs／history 本地链接与维护 task 状态；实际整合者记在 docs/maintenance/COORDINATION.md。默认业务检查验证v2核心协议／工具锚点、清单文件、受管理Python语法、链接和业务任务状态。检查不执行被检查代码，也不认证协议执行事实或文件来源；手工复制包无需安装基线。v1仍采用基本完整性检查。
+
+## 6. 工程或本地来源移动后恢复
+
+在移动后的主工程根目录运行，重新绑定本机协作根；已有 worktree 先确认唯一实时主目录：
+
+```powershell
+git config --local agent.coordinationRoot (Get-Location).Path
+git config --get agent.coordinationRoot
+```
+
+这是本机 Git 配置，不提交绝对主目录到共享规则。若模板 source 仍可达，正常 update 即可。旧基线保存了相对路径，或本地来源已搬家时，先提交当前工程改动，再明确指定原来源的新位置：
+
+```powershell
+python tools/template_manager.py update --source "../agent-template-tools" --check
+python tools/template_manager.py update --source "../agent-template-tools"
+python tools/check_template.py --root .
+git diff
+```
+
+--source 对URL与Git scp写法保留原含义；本地路径按此次调用目录解析。--check 不改基线；实际 update 成功后保存新来源。ref 沿用既有基线；新来源若没有旧提交，未知旧基线会形成待人工处理候选。审阅规则和新 .agents/template-state.json 后一起提交，不手改文件哈希。远端URL来源也可明确切换，但应先核对仓库和版本。
+旧安装器尚不支持 --source 时，先更新第1节的同级工具仓库，再用 `python ../agent-template-tools/tools/template_manager.py update --root . --source "../agent-template-tools" --check` 预览，并以同一路径执行实际 update。
+
+## 7. 将业务副本整理为新的分发来源
+
+需要完整模板开发能力时，优先 clone 母仓库，取得 tests、CI 和维护入口。业务 init 副本主要消费协议；不将实际业务 checkout 直接作为空白工程模板。
+
+确需从业务副本派生来源时：
+
+1. 保存业务 Git 版本，在工程外建立独立 clone／分支作为候选，保留原业务历史和原 checkout。
+2. 明确以后由哪个来源提供升级。将 README、agents_list.md、.agents/coordination.md、.agents/tasks/README.md、docs/CURRENT.md 五项种子整理为通用说明／空状态；核对真实身份、任务索引、进度和路径是否残留。保留需要的定制规则，但不能把运行记录加入 manifest。
+3. 仅显式暂存审阅过的种子与规则，提交候选；不要把业务源的安装基线误当成新工程基线，init 会为新工程生成自己的状态。
+4. 在另一个空工程以候选 Git 仓库为 --source 安装并检查；核对33项当前骨架、独立Git、无模板origin、新登记／CURRENT为空和新source／revision正确。具体新清单允许扩展，核心协议和工具应保留。
+5. 完整测试仍在维护仓库执行。本轮默认安装集不包含 tests、CI、维护记录或可选客户端工具。通过候选验收后再按明确授权发布；已有业务工程继续保留原数据。

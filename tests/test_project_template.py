@@ -16,16 +16,20 @@ class ProjectTemplateTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.root = Path(self.temp.name) / "new-project"
-        shutil.copytree(SOURCE, self.root,
-                        ignore=shutil.ignore_patterns(".git", ".test-tmp", "__pycache__", "*.pyc"))
+        # 只复制分发集，避免worktree／维护记录混入副本验收并拖慢用例。
+        required = json.loads((SOURCE / ".agents/template_manifest.json").read_text(encoding="utf-8"))["required"]
+        for name in required:
+            target = self.root / name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(SOURCE / name, target)
 
     def tearDown(self):
         self.temp.cleanup()
 
-    def run_check(self):
+    def run_check(self, *extra):
         # 从新目录运行已复制的脚本，检查它没有引用原工程。
         return subprocess.run(
-            [sys.executable, "tools/check_template.py", "--root", "."],
+            [sys.executable, "tools/check_template.py", "--root", ".", *extra],
             cwd=self.root, capture_output=True)
 
     def digest(self):
@@ -178,6 +182,50 @@ class ProjectTemplateTests(unittest.TestCase):
         before = self.digest()
         self.assertEqual(0, self.run_check().returncode)
         self.assertEqual(before, self.digest())
+
+
+    def test_core_tools_cannot_be_removed_from_manifest(self):
+        path = self.root / ".agents/template_manifest.json"
+        original = path.read_bytes()
+        for name in ("tools/check_template.py", ".agents/guides/git.md"):
+            with self.subTest(name=name):
+                path.write_bytes(original)
+                self.rewrite_manifest(lambda data: data["required"].remove(name))
+                before = self.digest()
+                self.assertEqual(1, self.run_check().returncode)
+                self.assertEqual(before, self.digest())
+
+    def test_managed_python_syntax_is_checked_without_execution(self):
+        path = self.root / "tools/template_manager.py"
+        path.write_text("def invalid(:\n", encoding="utf-8")
+        self.assertEqual(1, self.run_check().returncode)
+        path.write_text("raise RuntimeError('must not execute')\n", encoding="utf-8")
+        self.assertEqual(0, self.run_check().returncode)
+
+    def test_development_assets_cannot_enter_distribution(self):
+        name = "docs/maintenance/COORDINATION.md"
+        path = self.root / name
+        path.parent.mkdir(parents=True)
+        path.write_text("# 维护身份\n", encoding="utf-8")
+        self.rewrite_manifest(lambda data: data["required"].append(name))
+        self.assertEqual(1, self.run_check().returncode)
+
+    def test_explicit_maintenance_checks_status_and_links(self):
+        base = self.root / "docs/maintenance"
+        base.mkdir()
+        for name in ("README.md", "CURRENT.md", "COORDINATION.md"):
+            (base / name).write_text("# 维护入口\n", encoding="utf-8")
+        task = base / "tasks/AUDIT.md"
+        task.parent.mkdir()
+        task.write_text("# AUDIT\n- status: invalid\n", encoding="utf-8")
+        self.assertEqual(0, self.run_check().returncode)
+        before = self.digest()
+        self.assertEqual(1, self.run_check("--maintenance").returncode)
+        self.assertEqual(before, self.digest())
+        task.write_text("# AUDIT\n- status: done\n", encoding="utf-8")
+        self.assertEqual(0, self.run_check("--maintenance").returncode)
+        (base / "CURRENT.md").write_text("# 维护\n[坏链接](missing.md)\n", encoding="utf-8")
+        self.assertEqual(1, self.run_check("--maintenance").returncode)
 
 
 if __name__ == "__main__":

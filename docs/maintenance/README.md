@@ -3,6 +3,7 @@
 本仓库是协作模板唯一开发位置。根目录保存分发骨架，tools/ 保存管理器，tests/ 保存独立验证，GitHub Actions 运行检查；原 [Live2D 工程](legacy/README.md)只消费当地规则，其历史完整归档在 legacy/。
 
 实际维护任务在本目录 tasks/ 与 CURRENT.md；根 agents_list.md、.agents/tasks/README.md、docs/CURRENT.md 保持空骨架，不把维护者状态分发给新工程。Git 本地 agent.coordinationRoot 指向本仓库，与业务工程分离。
+实际共享整合者、授权范围与继任状态读 [COORDINATION.md](COORDINATION.md)；根 .agents/coordination.md 保持分发种子。新维护会话读取本页、COORDINATION 和 CURRENT，业务工程继续使用自己的根协调记录。
 
 原开发记录在 legacy/，旧初始化器在 tools/legacy/；可选消息工具在 tools/agent_relay.py 与 docs/optional/，都不在默认安装清单中。消息工具必须显式传入目标工程 --root，不自动派发或接管 Agent。
 
@@ -11,7 +12,7 @@
 维护命令：
 
 ~~~powershell
-python tools/check_template.py --root .
+python tools/check_template.py --root . --maintenance
 python -m unittest discover -s tests -v
 git diff --check
 ~~~
@@ -24,7 +25,7 @@ git diff --check
 
 ~~~text
 这个仓库是协作模板开发工程。
-先读 AGENTS.md、docs/maintenance/README.md 和 docs/maintenance/CURRENT.md，再读相关实现与测试。
+先读 AGENTS.md、docs/maintenance/README.md、docs/maintenance/COORDINATION.md 和 docs/maintenance/CURRENT.md，再读相关实现与测试。
 只做我本轮指定的改进。实际维护任务写 docs/maintenance/tasks/<TASK-ID>.md；单人任务在该文件记录 owner、scope、进度和验证，不把维护身份或真实任务写入根分发种子。
 保持安装清单只包含通用骨架。完成后运行相关检查，更新维护 CURRENT，显式暂存、审阅并提交；GitHub 推送由用户执行。
 ~~~
@@ -37,4 +38,4 @@ git diff --check
 
 ## 提交和推送
 
-本轮改动已在本地提交。用户在本目录运行 git push origin main；推送前 git status 确认没有意外文件，推送后查看 GitHub Actions。已发布版本标签不移动。
+用户授权发布时，在本目录运行 git push origin main；推送前 git status 确认范围，推送后按实际提交 SHA 核对 GitHub Actions。没有推送授权时仅本地提交。已发布版本标签不移动。
