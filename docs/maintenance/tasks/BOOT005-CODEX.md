@@ -1,6 +1,6 @@
 # BOOT005-CODEX 自举审计合理改进与发布验证
 
-- status: in_progress
+- status: done
 - assignment: accepted
 - collaboration_mode: serial
 - mode_source: 用户授权当前整合者“完成你认为合理的改动，并推送测试”
@@ -28,8 +28,9 @@ tools/check_template.py、tools/template_manager.py、相关 tests、.github/wor
 
 本轮完整 unittest 85项全部通过（204.063秒，退出0），日志 .test-tmp/BOOT005-full-tests.log；含新增10项回归。checker首轮22项、manager首轮24项通过；随后完整回归覆盖最终核心锚点拒绝用例。
 python tools/check_template.py --root . --maintenance：TEMPLATE_OK files=33；AST／新链接与git diff检查通过。Python3.13.8、Git2.47.1、Windows，隔离临时Git／本地HTTP验证在获准沙箱外执行；未访问真实AI账户。
-远端main读取为8d2645f，准备显式保存并推送本轮与前序已完成审计提交，CI尚待本轮实际SHA核对。
+实现提交 b69d6301964ce235bca9e53283021023cbf08d90 已与前序审计一起发布到远端main，官方API读回SHA一致；[该提交双平台CI](https://github.com/duskbreakmist/mulagent-project-template/actions/runs/38132901028)的Ubuntu／Windows模板维护检查与完整测试全部成功。
+常规git push遭遇连接重置；官方API上传途中一次SSL中断，有限重试后逐项核对83个对象SHA并非强制更新main，完整保留本地提交作者／时间／父链。不改持久网络配置，不保存或输出凭据，不移动发布标签。收尾仅改维护摘要与本task，不改已验收代码。
 
 ## Remaining
 
-本地实施与验证完成；待保存推送、核对双平台CI并收尾记录。真实AI适配器、完整开发包与自动种子导出未实现；本轮采用可复核的整理步骤，不扩展默认业务安装包。
+本轮实现与发布验收完成。真实AI适配器、完整开发包与自动种子导出未实现；本轮采用可复核的整理步骤，不扩展默认业务安装包。用户可按更新说明使用新工具；旧工具恢复来源时先使用同级最新版安装器。

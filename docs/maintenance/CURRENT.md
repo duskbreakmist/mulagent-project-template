@@ -2,9 +2,10 @@
 
 写入前先 git status 确认 HEAD 未变；提交只 add 自己改动的文件，不用 git add .。
 
-## 活跃：自举审计改进与发布
+## 自举审计改进与发布（本轮已完成）
 
-2026-10-11 [BOOT005-CODEX](tasks/BOOT005-CODEX.md) / codex-bootstrap-integrator-20261011：完成核心清单／Python语法／维护task检查、维护COORDINATION、本地来源规范化与update --source恢复、移动／种子整理指南。33项维护检查、85项本地完整回归通过；待推送并按实际SHA验收双平台CI。真实AI接入／完整开发包不在本轮范围。
+2026-10-11 [BOOT005-CODEX](tasks/BOOT005-CODEX.md) / codex-bootstrap-integrator-20261011：完成核心清单／Python语法／维护task检查、维护COORDINATION、本地来源规范化与update --source恢复、移动／种子整理指南。默认分发33项不变，真实AI接入／完整开发包不在本轮范围。
+33项维护检查与85项本地完整回归通过；实现b69d630原样发布，官方API核对SHA一致，[Windows／Ubuntu CI](https://github.com/duskbreakmist/mulagent-project-template/actions/runs/38132901028)均成功。常规Git连接重置后经官方API非强制发布，未改持久配置／移动标签；DOC004旧摘要归档。
 
 ## 自举审计统一整合（本轮已完成）
 
@@ -15,11 +16,6 @@
 
 2026-10-11 [BOOT001-CODEX](tasks/BOOT001-CODEX.md) / codex-bootstrap-20261011：当前实例与两个内部子 Agent 同题独立判断，全部首稿交付后汇总，见[证据与对照](../../results/BOOT001-CODEX/run-001/comparison/review.md)。人参与的自身维护和协议骨架跨代复制成立；默认副本无完整开发体系，真实 AI 自主迭代闭环尚未形成。
 本轮 33 项检查、沙箱外 75 项测试及三份隔离两代实验通过；另实测业务登记 seed 继承与维护 task 状态不在通用检查覆盖范围。未改实现／未接真实客户端／未推送；PUB001 摘要移入维护历史，保留原验收语境。
-
-## 文案白熊审计（本轮已完成）
-
-2026-10-11 [DOC004-WB](tasks/DOC004-WB.md) / wb-hy4-20261011：审计 33 项分发文件中的"白熊效应"（负向引用受众不知道的迁移史，用户举例 README"不再依赖 Live2D 工程"）。真白熊 5 处：README Live2D 句、template_readme"旧单文件／解包／.bootstrap-v1"、tools.md 与 template_readme 的未定义"源工程"；判定准则"可操作的否定保留，考古的否定删除"，正常的时间性指称（旧执行者／旧基线等）已排除。
-check 33 项与 diff 检查通过；建议均未实施，待用户确认后另立任务。DOC002 摘要移入维护历史。遗留：TPL005 仍 staged、审计轮次待指定汇总者。
 
 ## 多实例同源审计轮次（已收尾）
 
