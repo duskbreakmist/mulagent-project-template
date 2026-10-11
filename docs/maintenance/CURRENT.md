@@ -2,6 +2,11 @@
 
 写入前先 git status 确认 HEAD 未变；提交只 add 自己改动的文件，不用 git add .。
 
+## 文档规范（本轮已完成）
+
+2026-10-11 [DOC002-CODEX](tasks/DOC002-CODEX.md) / codex-docstyle-20261011：将 Microsoft／Google 写作参考、Diátaxis 内容结构、GFM 排版和 RFC 约束词写入[通用指南](../../.agents/guides/documentation.md)，并接入 AGENTS／协议／README／模板手册与 manifest；默认中文，用户及工程具体约定优先。
+模板 33 项、AGENTS 15 行、diff 检查通过；独立候选包新装与 32→33 项升级通过，升级保留业务 README。未推送、未跑远端 CI；TPL006 完成摘要移入[维护历史](history/CURRENT-2026-10.md)，保留原结论语境。
+
 ## 新工程说明与文件树（本轮已完成）
 
 2026-10-11 [DOC001-CODEX](tasks/DOC001-CODEX.md) / codex-docs-20261011：README 补活动文件职责树、工作台用法、本地已提交版本安装；接入说明补各客户端可复制提示词。
@@ -16,10 +21,6 @@
 ## 多实例同源审计轮次（进行中，需收尾）
 
 2026-10-11 四实例用同一提示词审计本仓库，见 [轮次索引](runs/2026-10-11-structure-audit.md)。已落盘 TPL003(codex)／TPL004(wb)／TPL005(zcode，未提交)；第四实例未见产出。结论互相印证（定位认可、32 项骨架、种子空白、ahead 未推送），但盲态不一致、无 RUN 记录、任务号各自抢占、共享 CURRENT 被串行追加，不能当公平横向评测使用。待指定唯一汇总者后合并建议，收尾后一次性推送。
-
-## 最新评审（已完成）
-
-2026-10-11 [TPL006](tasks/TPL006.md) / wb-hy4-20261011：同源指令第四实例，对话评审后按用户要求补记。认可母模板定位与三层结构；评审时实测发现 TPL003 未提交、他人沙箱外测试重跑进行中，选择只读避让（事后证实）。独有建议：维护任务小模板、跨 harness 真实任务试点验收协议。评审 base 0df7095，补记中 HEAD 前进至 8eebc25（RUN 审计记录），提交后本地 ahead 4 未推送；TPL002 摘要已移入 history/CURRENT-2026-10.md。
 
 ## TPL002 迁移方案与修改
 

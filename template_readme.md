@@ -34,6 +34,7 @@ python tools/check_template.py --root .
 | [.agents/coordination.md](.agents/coordination.md) | 共享文件汇总者、指定来源和委派／接班状态 | 领取共享写入或接班时 |
 | [.agents/guides/coordination.md](.agents/guides/coordination.md) | 指定、空窗、继任、争议与故障恢复 | 接班／冲突时 |
 | [.agents/guides/tools.md](.agents/guides/tools.md) | 客户端加载机制及可选通信边界 | 首次接入／加载排错时 |
+| [.agents/guides/documentation.md](.agents/guides/documentation.md) | Microsoft 主写作参考、Google 补充、Diátaxis、GFM 与 RFC 约束词 | 新增／修改技术文档或协议时 |
 | [.agents/tasks/](.agents/tasks/README.md) | 活跃／近期索引，单人 lite 或多人完整任务 | 当前 task 和相关依赖 |
 | [.agents/guides/records.md](.agents/guides/records.md) | 精简路径、摘要窗口、归档和标识 | 记录变重／交接／整理时 |
 | [.agents/messages/](.agents/messages/README.md) | 按任务和作者保存请求、回复、接收确认 | 真正需要讨论时 |
@@ -52,6 +53,10 @@ python tools/check_template.py --root .
 登记仅在身份／能力变化时更新，协调仅在职责／授权／默认模式变化时更新。普通收尾写 task、索引一行和 CURRENT 短摘要；不得每任务在五处重复全文。
 
 ## 4. 内部原理
+
+### 文档规范
+
+技术文档以 [Microsoft 写作参考](https://learn.microsoft.com/en-us/style-guide/welcome/)为主，Google 补充开发者细节，按 Diátaxis 区分内容类型，使用 GFM 排版；协作协议明确要求强度。具体范围、中文适用、例外和交付检查统一在[文档指南](.agents/guides/documentation.md)，不用在每份说明重复全文。用户与工程具体约定优先，既有归档保留原语境。
 
 ### 分层阅读
 

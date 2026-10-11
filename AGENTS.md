@@ -1,6 +1,6 @@
 # Agent 工作入口
 
-- 默认中文；修改前读相关实现，关键设计／边界写简洁中文注释，完成后检查并如实记未验证项。
+- 默认中文；文档按[写作规范](.agents/guides/documentation.md)；修改前读相关实现，关键设计／边界写简洁中文注释，完成后检查并如实记未验证项。
 - 用户当前授权优先；保留已有产出，不记录内部思考链。
 - 新会话先读 [.agents/PROTOCOL.md](.agents/PROTOCOL.md)。同一会话规则未变时不必反复全文读取。
 - 确认主协作目录。明确维护母模板，或 origin 指向 duskbreakmist/mulagent-project-template 时，先读 docs/maintenance/README.md 与 docs/maintenance/CURRENT.md，实际维护任务写 docs/maintenance/tasks/；其他工程读取主目录的 [登记表](agents_list.md) 与 [.agents/tasks](.agents/tasks/README.md)。

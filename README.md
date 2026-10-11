@@ -2,6 +2,8 @@
 
 为单人任务、跨工具分工、接力和独立对照提供简洁的仓库规则。短 AGENTS 入口、按需指南、独立任务／反馈记录；不自动派发其他模型或运行后台服务。
 
+文档采用 Microsoft 主写作参考、Google 开发者细节补充、Diátaxis 内容结构、GFM 排版与 RFC 2119／8174 约束词。默认中文，工程具体约定优先；具体规则见[工程文档写作规范](.agents/guides/documentation.md)。
+
 ## 新建本地工程
 
 已下载本仓库时，用一条命令从 Git 拉取最新模板并建立独立工程：
@@ -74,6 +76,7 @@ agent-project-template/
 │   ├── guides/
 │   │   ├── modes.md                     # 串行、分工协作、独立对照及选择规则
 │   │   ├── coordination.md              # 整合者指定、继任、争议与恢复
+│   │   ├── documentation.md             # 写作风格、内容结构、排版与约束词
 │   │   ├── git.md                       # Git 初始化、worktree 与提交整合
 │   │   ├── records.md                   # 任务标识、摘要窗口与归档
 │   │   └── tools.md                     # 各客户端加载规则和通信边界
