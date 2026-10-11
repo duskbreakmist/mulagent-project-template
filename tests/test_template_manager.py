@@ -86,6 +86,119 @@ class TemplateManagerTests(unittest.TestCase):
         self.assertFalse((self.project / "tests").exists())
         self.assertFalse((self.project / "docs/maintenance").exists())
 
+    def test_business_task_delivery_requires_real_project_tests(self):
+        # 用已安装副本的CLI初始化另一空工程，真实形成BOOTSTRAP基线。
+        project = self.folder / "business-delivery"
+        project.mkdir()
+        self.git(project, "init", "-b", "main")
+        self.identity(project)
+        installed = subprocess.run([sys.executable, str(self.project / "tools/template_manager.py"),
+                                   "init", "--root", str(project), "--source", str(self.source),
+                                   "--ref", "main", "--commit"], capture_output=True)
+        self.assertEqual(0, installed.returncode, installed.stderr)
+        self.assertIn("[BOOTSTRAP][template]", self.git(project, "log", "-1", "--format=%s"))
+        self.assertEqual("", self.git(project, "status", "--porcelain"))
+        self.assertEqual(str(project.resolve()), self.git(project, "config", "--get", "agent.coordinationRoot"))
+        self.assertFalse((project / "tests").exists())
+
+        def write(name, text):
+            path = project / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(text, encoding="utf-8", newline="\n")
+
+        def execute(*args):
+            return subprocess.run([sys.executable, *args], cwd=project, capture_output=True)
+
+        write("README.md", """# 标签示例工程
+
+## 工程约定
+
+- 技术栈／依赖：Python 3.9+标准库，无第三方依赖或锁文件。
+- 目录：app.py提供标签规范化，tests/存业务验收。
+- 风格／错误：snake_case；空标签ValueError，非字符串TypeError。
+- 命令：python -m unittest discover -s tests -v；python -m py_compile app.py。
+- 忽略：沿用.gitignore的__pycache__/和*.pyc，不使用凭据或本地配置。
+- 验收／发布：合并Unicode空白、拒绝无效标签；单个fixture核对并提交，无部署／业务CI。
+""")
+        write("agents_list.md", "# 参与者\n\nworkflow-fixture：隔离测试执行者，不代表在线AI。\n")
+        write(".agents/coordination.md", "# 示例协调\n\n- shared_integrator: workflow-fixture\n"
+              "- selection_source: 本回归固定的单人示例契约\n- state: active\n"
+              "- default_collaboration_mode: serial\n")
+        task = (project / ".agents/tasks/TEMPLATE-lite.md").read_text(encoding="utf-8")
+        task = (task.replace("<TASK-ID>", "DEV001").replace("<标题>", "规范化标签")
+                .replace("<agent-id>", "workflow-fixture").replace("YYYY-MM-DD", "2026-10-11")
+                .replace("- status: todo", "- status: in_progress", 1)
+                .replace("- assignment: proposed", "- assignment: accepted", 1)
+                .replace("mode_source: 填写真实的用户指令／父任务／已授权工程默认来源",
+                         "mode_source: 本回归固定的单人示例契约")
+                .replace("base_commit: 待记录", "base_commit: " + self.git(project, "rev-parse", "HEAD")))
+        task = task.replace("## Objective\n", "## Objective\n\n"
+                            "按[工程约定](../../README.md#工程约定)合并标签空白并拒绝无效输入；"
+                            "验收命令 python -m unittest discover -s tests -v。\n", 1)
+        write(".agents/tasks/DEV001.md", task)
+        write(".agents/tasks/README.md", "# 任务索引\n\n[DEV001](DEV001.md)：in_progress，workflow-fixture。\n")
+        write("docs/CURRENT.md", "# 当前记录\n\n[DEV001](../.agents/tasks/DEV001.md)：正在实现。\n")
+        checker = ("tools/check_template.py", "--root", ".")
+        self.assertEqual(0, execute(*checker).returncode)
+        bad_app = """def normalize_label(text):
+    if not isinstance(text, str):
+        raise TypeError("label must be a string")
+    # 标签必须非空，所有Unicode空白按契约合并。
+    text = text.strip()
+    if not text:
+        raise ValueError("label must not be empty")
+    return text
+"""
+        write("app.py", bad_app)
+        write("tests/test_labels.py", """import unittest
+from app import normalize_label
+
+
+class LabelTests(unittest.TestCase):
+    def test_merge_unicode_whitespace(self):
+        self.assertEqual("项目 标签", normalize_label("  项目\\u3000 \\t标签\\n"))
+
+    def test_plain_label(self):
+        self.assertEqual("demo", normalize_label("demo"))
+
+    def test_invalid_input(self):
+        with self.assertRaises(ValueError):
+            normalize_label(" \\t\\n")
+        with self.assertRaises(TypeError):
+            normalize_label(None)
+""")
+        test_command = ("-m", "unittest", "discover", "-s", "tests", "-v")
+        failed = execute(*test_command)
+        self.assertNotEqual(0, failed.returncode)
+        self.assertIn(b"FAIL: test_merge_unicode_whitespace", failed.stderr)
+        # 文件完整性不认证业务行为：错误实现仍可通过模板检查。
+        self.assertEqual(0, execute(*checker).returncode)
+        write("app.py", bad_app.replace("text = text.strip()", 'text = " ".join(text.split())'))
+        passed = execute(*test_command)
+        self.assertEqual(0, passed.returncode, passed.stderr)
+        self.assertIn(b"Ran 3 tests", passed.stderr)
+        self.assertEqual(0, execute("-m", "py_compile", "app.py").returncode)
+        task = task.replace("- status: in_progress", "- status: done", 1)
+        task += "\n## 示例验收结果\n\n业务测试3项通过，语法检查通过；记录过失败与修复。"
+        task += "单fixture核对代码／测试／契约，不声称独立AI审查或产品上线。\n"
+        write(".agents/tasks/DEV001.md", task)
+        write(".agents/tasks/README.md", "# 最近完成\n\n[DEV001](DEV001.md)：done，workflow-fixture。\n")
+        write("docs/CURRENT.md", "# 最近完成\n\n[DEV001](../.agents/tasks/DEV001.md)：标签规范化，业务3项通过。\n")
+        files = ("README.md", "agents_list.md", ".agents/coordination.md", ".agents/tasks/DEV001.md",
+                 ".agents/tasks/README.md", "docs/CURRENT.md", "app.py", "tests/test_labels.py")
+        self.git(project, "add", "--", *files)
+        self.git(project, "diff", "--cached", "--check")
+        reviewed = self.git(project, "diff", "--cached", "--", "app.py", "tests/test_labels.py")
+        self.assertIn('" ".join(text.split())', reviewed)
+        self.assertIn("test_merge_unicode_whitespace", reviewed)
+        self.git(project, "commit", "-m", "[DEV001][workflow-fixture] normalize labels")
+        self.assertEqual("", self.git(project, "status", "--porcelain"))
+        self.assertEqual("2", self.git(project, "rev-list", "--count", "HEAD"))
+        self.assertEqual("", self.git(project, "remote"))
+        self.assertEqual(0, execute(*checker).returncode)
+        print("BUSINESS_WORKFLOW_OK task=DEV001 tests=3 red=observed commits=2 clean=yes",
+              self.git(project, "rev-parse", "HEAD"))
+
     def test_new_git_init_and_commit_save_real_baseline(self):
         target = self.folder / "committed-project"
         target.mkdir()
