@@ -2,6 +2,11 @@
 
 写入前先 git status 确认 HEAD 未变；提交只 add 自己改动的文件，不用 git add .。
 
+## 业务工程多 AI 试点验收（本轮已完成）
+
+2026-10-11 [PILOT001-WB](tasks/PILOT001-WB.md) / wb-hy4-20261011：只读评审用户在 H:/Project/test_template_a 的真实试点（基于 f290f2a 可移植流程安装）：dsh-1／wb-1／zcode-1 三 harness 串行接力交付俄罗斯方块 4 功能（FEAT-001–004），跨 AI 代码续写成立，任务内含失败→修复→复测。
+独立复验：33 项模板检查、网页逻辑测试、桌面版 `--selftest` 48 项与 `--storage-selftest` 全过；登记／任务板／CURRENT 按协议执行，模板备注反馈通道生效。BOOT004 候选 5 在串行接力层面实证；并行 worktree／真实适配器／跨机器／并发写仍未覆盖，用户预告交由 codex 后续改进。BOOT005 旧摘要归入维护历史。
+
 ## v0.2.0 发布（已完成）
 
 2026-10-11 [REL001-CODEX](tasks/REL001-CODEX.md) / codex-bootstrap-integrator-20261011：[v0.2.0](https://github.com/duskbreakmist/mulagent-project-template/releases/tag/v0.2.0)正式发布，标签固定64a135e，Apache-2.0原文与范围说明随35项分发；补update --ref与固定版本安装／升级说明，业务根LICENSE不覆盖。
@@ -11,12 +16,6 @@
 
 2026-10-11 [ENG001-CODEX](tasks/ENG001-CODEX.md) / codex-bootstrap-integrator-20261011：工程约定集中到README／引用文档，AGENTS与两种task格式接入，补检查边界及旧工程手工保留README的迁移说明，保持33项分发。
 独立CLI示例完成BOOTSTRAP→业务红／绿测试3项→核对提交／记录，86项完整回归通过；57ef7f1原样发布，[Windows／Ubuntu CI](https://github.com/duskbreakmist/mulagent-project-template/actions/runs/38139625505)均成功。不宣称真实产品上线或独立AI审查；BOOT001旧摘要保存到维护历史。
-
-## 自举审计改进与发布（本轮已完成）
-
-2026-10-11 [BOOT005-CODEX](tasks/BOOT005-CODEX.md) / codex-bootstrap-integrator-20261011：完成核心清单／Python语法／维护task检查、维护COORDINATION、本地来源规范化与update --source恢复、移动／种子整理指南。默认分发33项不变，真实AI接入／完整开发包不在本轮范围。
-33项维护检查与85项本地完整回归通过；实现b69d630原样发布，官方API核对SHA一致，[Windows／Ubuntu CI](https://github.com/duskbreakmist/mulagent-project-template/actions/runs/38132901028)均成功。常规Git连接重置后经官方API非强制发布，未改持久配置／移动标签；DOC004旧摘要归档。
-2026-10-11 后续应用评估：已足够作为有人监督的业务开发协作基础；业务目标、构建／测试、验收和自身CI／发布流程由目标工程定义。下一步以真实小任务验证完整交付闭环，详见task模板备注。
 
 ## 多实例同源审计轮次（已收尾）
 

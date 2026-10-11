@@ -74,3 +74,11 @@ check 33 项与 diff 检查通过；建议均未实施，待用户确认后另�
 
 2026-10-11 用户指定 codex-bootstrap-integrator-20261011 整合，[BOOT004-INTEGRATE](../tasks/BOOT004-INTEGRATE.md)／[统一 RUN](../runs/2026-10-11-bootstrap-audit.md)。已收 Codex、WB 两组共六份首稿；[BOOT002-ZCODE](../tasks/BOOT002-ZCODE.md) 用户确认停止且报告缺失，按 missing 收尾，源任务 blocked。原稿保留，治理授权与共享写入范围记在维护 RUN，根种子保持空白。
 清单缩减、语法／状态检查覆盖与路径问题隔离复现；对“自检为零／母仓库不能维护自己／必然死锁”等强结论作限定。形成五项去重候选，未改生产实现；前轮 75 项通过按当时事实引用，不冒充本阶段重跑。DOC003 摘要保存至维护历史。
+
+## BOOT005-CODEX（从维护 CURRENT 保存）
+
+2026-10-11 [BOOT005-CODEX](../tasks/BOOT005-CODEX.md) / codex-bootstrap-integrator-20261011：完成核心清单／Python语法／维护task检查、维护COORDINATION、本地来源规范化与update --source恢复、移动／种子整理指南。默认分发33项不变，真实AI接入／完整开发包不在本轮范围。
+33项维护检查与85项本地完整回归通过；实现b69d630原样发布，官方API核对SHA一致，Windows／Ubuntu CI均成功。常规Git连接重置后经官方API非强制发布，未改持久配置／移动标签；DOC004旧摘要归档。
+2026-10-11 后续应用评估：已足够作为有人监督的业务开发协作基础；业务目标、构建／测试、验收和自身CI／发布流程由目标工程定义。下一步以真实小任务验证完整交付闭环，详见task模板备注。
+
+2026-10-11 PILOT001-WB归档时仅调整相对链接并去掉CI行内链接，保留原文与当时验证语境；该闭环已由 PILOT001-WB 试点实证串行形态，后续发布见 REL001-CODEX v0.2.0。
