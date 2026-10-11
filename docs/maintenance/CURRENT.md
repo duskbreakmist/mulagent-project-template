@@ -2,9 +2,10 @@
 
 写入前先 git status 确认 HEAD 未变；提交只 add 自己改动的文件，不用 git add .。
 
-## v0.2.0 发布（进行中）
+## v0.2.0 发布（已完成）
 
-2026-10-11 [REL001-CODEX](tasks/REL001-CODEX.md) / codex-bootstrap-integrator-20261011：用户授权完成release，重新选择后采用推荐的Apache-2.0；源码许可与两个业务分发许可副本、固定版本说明及update --ref已准备。验证、推送、CI、标签与release待完成；旧标签不移动。
+2026-10-11 [REL001-CODEX](tasks/REL001-CODEX.md) / codex-bootstrap-integrator-20261011：[v0.2.0](https://github.com/duskbreakmist/mulagent-project-template/releases/tag/v0.2.0)正式发布，标签固定64a135e，Apache-2.0原文与范围说明随35项分发；补update --ref与固定版本安装／升级说明，业务根LICENSE不覆盖。
+90项本地完整回归、35项维护检查、真实标签安装／v0.1.1升级及GitHub源码归档逐文件比对通过；[Windows／Ubuntu CI](https://github.com/duskbreakmist/mulagent-project-template/actions/runs/38143819730)均成功。标准Git HTTPS在本机仍受连接限制，未宣称远端clone成功；BOOT004旧摘要归入维护历史，旧标签不移动。
 
 ## 业务工程约定与小任务验收（本轮已完成）
 
@@ -16,11 +17,6 @@
 2026-10-11 [BOOT005-CODEX](tasks/BOOT005-CODEX.md) / codex-bootstrap-integrator-20261011：完成核心清单／Python语法／维护task检查、维护COORDINATION、本地来源规范化与update --source恢复、移动／种子整理指南。默认分发33项不变，真实AI接入／完整开发包不在本轮范围。
 33项维护检查与85项本地完整回归通过；实现b69d630原样发布，官方API核对SHA一致，[Windows／Ubuntu CI](https://github.com/duskbreakmist/mulagent-project-template/actions/runs/38132901028)均成功。常规Git连接重置后经官方API非强制发布，未改持久配置／移动标签；DOC004旧摘要归档。
 2026-10-11 后续应用评估：已足够作为有人监督的业务开发协作基础；业务目标、构建／测试、验收和自身CI／发布流程由目标工程定义。下一步以真实小任务验证完整交付闭环，详见task模板备注。
-
-## 自举审计统一整合（本轮已完成）
-
-2026-10-11 用户指定 codex-bootstrap-integrator-20261011 整合，[BOOT004-INTEGRATE](tasks/BOOT004-INTEGRATE.md)／[统一 RUN](runs/2026-10-11-bootstrap-audit.md)。已收 Codex、WB 两组共六份首稿；[BOOT002-ZCODE](tasks/BOOT002-ZCODE.md) 用户确认停止且报告缺失，按 missing 收尾，源任务 blocked。原稿保留，治理授权与共享写入范围记在维护 RUN，根种子保持空白。
-清单缩减、语法／状态检查覆盖与路径问题隔离复现；对“自检为零／母仓库不能维护自己／必然死锁”等强结论作限定。形成五项去重候选，未改生产实现；前轮 75 项通过按当时事实引用，不冒充本阶段重跑。DOC003 摘要保存至维护历史。
 
 ## 多实例同源审计轮次（已收尾）
 
