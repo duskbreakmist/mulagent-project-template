@@ -6,6 +6,8 @@
 
 原开发记录在 legacy/，旧初始化器在 tools/legacy/；可选消息工具在 tools/agent_relay.py 与 docs/optional/，都不在默认安装清单中。消息工具必须显式传入目标工程 --root，不自动派发或接管 Agent。
 
+面向额度接力、功能并行、职责分离、同题调研与人工介入的[协作工作台原型](../optional/agent-workbench.md)位于 tools/agent_workbench.py。它提供实际登记、任务认领、消息与本地看板；真实客户端启动／额度检测通过显式适配器接入。该组件同样不默认分发，不把模拟接力当成四客户端已经实机接入。
+
 维护命令：
 
 ~~~powershell
