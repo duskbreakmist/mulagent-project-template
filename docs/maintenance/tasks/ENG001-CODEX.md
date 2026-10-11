@@ -1,6 +1,6 @@
 # ENG001-CODEX 业务工程约定入口与交付闭环
 
-- status: in_progress
+- status: done
 - assignment: accepted
 - collaboration_mode: serial
 - mode_source: 用户“继续”推进上一轮提出的工程约定入口与实际小任务验收；沿用合理改动／推送测试授权
@@ -30,7 +30,8 @@ README、接入说明与手册明确TEMPLATE_OK范围；不把已填status合法
 可复现新场景：python -m unittest discover -s tests -p test_template_manager.py -k business_task_delivery -v；最终CLI版本定向用例通过（10.508秒）。模板／维护检查33项、AST与diff检查通过。执行环境Windows/Python3.13.8/Git2.47.1，隔离Git／业务代码用已获准沙箱外方式执行。
 apply_patch对已核验的普通README两次误报reparse point；文件属性和Path.resolve确认范围／无符号链接后，用限域替换脚本核对全文、唯一目标段落与并发字节完成文档改动。未将编辑工具限制算成业务缺陷。
 示例仅验证单fixture执行的最小工程流程，不宣称真实产品上线、独立AI审查、业务CI或部署；业务工程仍需自身验收。
+实现提交57ef7f18155ff59644e701cead69a946c7f919c7已原样发布到main，官方API读回SHA一致；[Windows／Ubuntu CI](https://github.com/duskbreakmist/mulagent-project-template/actions/runs/38139625505)模板维护检查与完整回归均成功。复用官方API通道逐项核对24对象，不强推、不移动标签。发布辅助引号处理失败时，远端SHA校验已安全阻止更新；修正辅助文件后发布成功。
 
 ## Remaining
 
-本地实施与验证完成，待提交发布并核对双平台CI。生产产品的具体配置／上线、真实AI自动协同不在本轮范围。
+本轮目标完成；收尾仅保存维护记录。生产产品的具体配置／上线、真实AI自动协同不在本轮范围。实际业务工程须填写自身约定并运行自己的验收命令。

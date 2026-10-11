@@ -2,10 +2,10 @@
 
 写入前先 git status 确认 HEAD 未变；提交只 add 自己改动的文件，不用 git add .。
 
-## 活跃：业务工程约定与小任务验收
+## 业务工程约定与小任务验收（本轮已完成）
 
 2026-10-11 [ENG001-CODEX](tasks/ENG001-CODEX.md) / codex-bootstrap-integrator-20261011：工程约定集中到README／引用文档，AGENTS与两种task格式接入，补检查边界及旧工程手工保留README的迁移说明，保持33项分发。
-独立CLI示例完成BOOTSTRAP→业务红／绿测试3项→核对提交／记录，86项完整回归通过；待推送并验收双平台CI。不宣称真实产品上线或独立AI审查。
+独立CLI示例完成BOOTSTRAP→业务红／绿测试3项→核对提交／记录，86项完整回归通过；57ef7f1原样发布，[Windows／Ubuntu CI](https://github.com/duskbreakmist/mulagent-project-template/actions/runs/38139625505)均成功。不宣称真实产品上线或独立AI审查；BOOT001旧摘要保存到维护历史。
 
 ## 自举审计改进与发布（本轮已完成）
 
@@ -17,11 +17,6 @@
 
 2026-10-11 用户指定 codex-bootstrap-integrator-20261011 整合，[BOOT004-INTEGRATE](tasks/BOOT004-INTEGRATE.md)／[统一 RUN](runs/2026-10-11-bootstrap-audit.md)。已收 Codex、WB 两组共六份首稿；[BOOT002-ZCODE](tasks/BOOT002-ZCODE.md) 用户确认停止且报告缺失，按 missing 收尾，源任务 blocked。原稿保留，治理授权与共享写入范围记在维护 RUN，根种子保持空白。
 清单缩减、语法／状态检查覆盖与路径问题隔离复现；对“自检为零／母仓库不能维护自己／必然死锁”等强结论作限定。形成五项去重候选，未改生产实现；前轮 75 项通过按当时事实引用，不冒充本阶段重跑。DOC003 摘要保存至维护历史。
-
-## 自举能力并行判断（本轮已完成）
-
-2026-10-11 [BOOT001-CODEX](tasks/BOOT001-CODEX.md) / codex-bootstrap-20261011：当前实例与两个内部子 Agent 同题独立判断，全部首稿交付后汇总，见[证据与对照](../../results/BOOT001-CODEX/run-001/comparison/review.md)。人参与的自身维护和协议骨架跨代复制成立；默认副本无完整开发体系，真实 AI 自主迭代闭环尚未形成。
-本轮 33 项检查、沙箱外 75 项测试及三份隔离两代实验通过；另实测业务登记 seed 继承与维护 task 状态不在通用检查覆盖范围。未改实现／未接真实客户端／未推送；PUB001 摘要移入维护历史，保留原验收语境。
 
 ## 多实例同源审计轮次（已收尾）
 
