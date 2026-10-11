@@ -2,6 +2,11 @@
 
 写入前先 git status 确认 HEAD 未变；提交只 add 自己改动的文件，不用 git add .。
 
+## 新工程说明与文件树（本轮已完成）
+
+2026-10-11 [DOC001-CODEX](tasks/DOC001-CODEX.md) / codex-docs-20261011：README 补活动文件职责树、工作台用法、本地已提交版本安装；接入说明补各客户端可复制提示词。
+模板检查 32 项、diff 检查、独立新工程 init --commit／无 origin／外置工作台 status 冒烟通过；新 README 在最小安装副本检查通过。本轮开始时实时远端 main=0df7095，本地=a329301；未 push、未跑远端 CI。
+
 ## 工作台原型（本轮已完成）
 
 2026-10-11 [ORCH001-CODEX](tasks/ORCH001-CODEX.md) / codex-workbench-20261011：按五项要求交付[可选工作台](../optional/agent-workbench.md)，含登记／原子认领、额度检查点接力、开发测试反馈、封存调研与人工界面。
@@ -15,10 +20,6 @@
 ## 最新评审（已完成）
 
 2026-10-11 [TPL006](tasks/TPL006.md) / wb-hy4-20261011：同源指令第四实例，对话评审后按用户要求补记。认可母模板定位与三层结构；评审时实测发现 TPL003 未提交、他人沙箱外测试重跑进行中，选择只读避让（事后证实）。独有建议：维护任务小模板、跨 harness 真实任务试点验收协议。评审 base 0df7095，补记中 HEAD 前进至 8eebc25（RUN 审计记录），提交后本地 ahead 4 未推送；TPL002 摘要已移入 history/CURRENT-2026-10.md。
-
-## 上一轮：TPL004（已完成）
-
-2026-10-11 [TPL004](tasks/TPL004.md) / wb-structure-20261011：对 TPL003 的交叉复核。认可母模板定位与四层结构；分发骨架 32 项、根种子保持空白。增量建议：维护身份识别去掉对 git remote 的依赖、legacy 同名快照加归档标识防误改、共享 CURRENT 并发写入保护。本轮 check 通过（32 项），base_commit 01f66e7，本地 ahead 1 未推送。
 
 ## TPL002 迁移方案与修改
 

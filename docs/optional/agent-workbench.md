@@ -61,6 +61,34 @@ demo 创建五个明确标注为演示的 Agent 加一个 human，两个正在�
 
 ## 客户端接入契约
 
+新工程先用 template_manager init 安装协议；工作台不需要复制到业务工程，可以一直从母仓库脚本运行，并传入业务工程 --root。不能把母模板目录当作五个业务 Agent 的任务板。所有 worktree 通过 Git 的 agent.coordinationRoot 指向同一业务主目录。
+
+各客户端开新会话时可复制下面提示词，替换全部占位符；同客户端多个实例也使用不同会话 ID：
+
+~~~text
+你参与一个已有用户授权的协作任务。
+主协作目录：PROJECT_ROOT
+工作台脚本绝对路径：WORKBENCH_SCRIPT
+本会话 ID：AGENT_ID
+客户端名称：CLIENT_NAME
+本轮角色：developer / tester / researcher / integrator 中实际指定的一项
+共同任务 ID：TASK_ID（由人或任务整合者创建，不自行换成新编号）
+实际工作目录：WORKTREE_PATH
+
+1. 阅读主目录 AGENTS.md、.agents/PROTOCOL.md、当前 task 及相关消息。读取实际 Git coordinationRoot，不能在另一 worktree 建第二份任务板。
+2. 用 python WORKBENCH_SCRIPT --root PROJECT_ROOT status 查看登记、认领和冲突。同一会话首次用 call join 登记；已有本人登记不重复 join。参数保存成自己的 UTF-8 JSON 文件，再通过 --file 调用。
+3. 用 call claim 认领 TASK_ID，保存返回的 epoch；领取失败就报告已有 owner／依赖／scope 冲突，不擅自改共享文件。领取成功用 call context 读取本人契约和检查点。
+4. 只在已授权 scope 内操作。并行代码开发在各自 worktree；共享 Git 操作和正式汇总由唯一实际整合者串行执行。
+5. 每个可独立验证的小步骤完成后 call checkpoint，保存 completed、remaining、revision、files 和实际验证，保留 epoch；不上传完整会话或内部思考链。
+6. 开工、阶段完成和收尾时 call inbox 读取本人消息；可用 call send 告知指定协作者具体结果／复现。反馈不扩大用户授权，已读不等于接受任务。
+7. 开发者用 call finish 提交 revision，交给另一会话验收。测试者只用公共契约、指定交付版本和独立测试资料；不要读取开发者完整会话，不把隐藏计划／private 字段转发给开发者。
+8. 同题独立调研只读固定问题、标准和本人候选。关联 run／slot 的任务通过 finish.result.report 交付；无关联任务的候选用 submit_report。轮次关闭前不看其他首稿，不向其他候选发送答案。
+9. 如实际观察到额度耗尽，尽可能保留检查点；未确认停写不要释放占用。接手先核对检查点、Git 版本与新 epoch。真实启动／额度适配尚未配置时由人启动接手客户端，不声称自己已自动唤醒其他应用。
+10. 人可通过看板查看进度、暂停、接手和创建工作；角色或任务方式不明确时让指定整合者询问一次，不能凭沉默授权自己。
+~~~
+
+脚本路径、用户授权与实际执行权限仍取决于各客户端。复制提示词并不证明客户端支持 shell／MCP，首次接入须用 status 等只读操作验证。
+
 所有客户端先登记独立的会话 ID；同工具两个实例分别用 wb-1、wb-2。登记记录是本地协作标签，未提供密码学身份认证。人可以登记为 human，角色包含 human；注册不会改模型账户或 Git 身份。
 
 建议把请求参数保存为 UTF-8 JSON 文件，再执行：

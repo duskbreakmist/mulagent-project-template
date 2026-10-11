@@ -11,6 +11,26 @@ python H:\Project\agent-project-template\tools\template_manager.py init --root H
 
 默认初始化独立 Git 并设置本地协作根。--commit 保存初始模板提交；身份缺失会明确报错，不捏造姓名／邮箱，已生成文件保留。--no-git 仅在你明确不需要版本管理时使用，不能与 --commit 同时指定。安装器不设置业务工程 origin，不推送。
 
+### 使用未推送的本地版本
+
+--source 也接受本地 Git 仓库路径；--ref main 读取已提交快照，不包括工作区未提交内容：
+
+~~~powershell
+python H:\Project\agent-project-template\tools\template_manager.py init --root H:\Project\my-new-project --source H:\Project\agent-project-template --ref main --commit
+~~~
+
+基线会记录这个本地 source，后续 update 沿用它；不会自动切换成 GitHub 来源。需要长期跟随 GitHub 的新工程优先使用默认安装方式。init 目标须位于母仓库外，避免创建嵌套仓库。
+
+### 同时使用协作工作台
+
+默认清单不包含可选工作台；可从母仓库运行它，将 --root 指向业务工程：
+
+~~~powershell
+python H:\Project\agent-project-template\tools\agent_workbench.py --root H:\Project\my-new-project serve
+~~~
+
+所有客户端使用同一个业务 --root，但使用不同会话 ID 和自己的角色／worktree。先登记并领取任务，再读专属 context；开启网页不等于客户端已经连接。可复制提示词见[工作台接入说明](https://github.com/duskbreakmist/mulagent-project-template/blob/main/docs/optional/agent-workbench.md)。
+
 ## 2. 日常更新业务工程
 
 先 git status 并提交现有工作，然后：
