@@ -34,3 +34,10 @@
 模板检查 32 项、diff 检查、独立新工程 init --commit／无 origin／外置工作台 status 冒烟通过；新 README 在最小安装副本检查通过。本轮开始时实时远端 main=0df7095，本地=a329301；未 push、未跑远端 CI。
 
 2026-10-11 归档仅调整 task 相对链接，保留当时验证与未推送语境；后续发布见 PUB001-CODEX，跨电脑示例修正见 DOC003-CODEX。
+
+## DOC002-CODEX（从维护 CURRENT 保存）
+
+2026-10-11 [DOC002-CODEX](../tasks/DOC002-CODEX.md) / codex-docstyle-20261011：将 Microsoft／Google 写作参考、Diátaxis 内容结构、GFM 排版和 RFC 约束词写入[通用指南](../../.agents/guides/documentation.md)，并接入 AGENTS／协议／README／模板手册与 manifest；默认中文，用户及工程具体约定优先。
+模板 33 项、AGENTS 15 行、diff 检查通过；独立候选包新装与 32→33 项升级通过，升级保留业务 README。未推送、未跑远端 CI；TPL006 完成摘要移入[维护历史](CURRENT-2026-10.md)，保留原结论语境。
+
+2026-10-11 归档仅调整 task 相对链接，保留原文案与当时验证语境；后续推送见 PUB001-CODEX。

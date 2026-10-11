@@ -2,6 +2,11 @@
 
 写入前先 git status 确认 HEAD 未变；提交只 add 自己改动的文件，不用 git add .。
 
+## 文案白熊审计（本轮已完成）
+
+2026-10-11 [DOC004-WB](tasks/DOC004-WB.md) / wb-hy4-20261011：审计 33 项分发文件中的"白熊效应"（负向引用受众不知道的迁移史，用户举例 README"不再依赖 Live2D 工程"）。真白熊 5 处：README Live2D 句、template_readme"旧单文件／解包／.bootstrap-v1"、tools.md 与 template_readme 的未定义"源工程"；判定准则"可操作的否定保留，考古的否定删除"，正常的时间性指称（旧执行者／旧基线等）已排除。
+check 33 项与 diff 检查通过；建议均未实施，待用户确认后另立任务。DOC002 摘要移入维护历史。遗留：TPL005 仍 staged、审计轮次待指定汇总者。
+
 ## 跨电脑安装说明（本轮已完成）
 
 2026-10-11 [DOC003-CODEX](tasks/DOC003-CODEX.md) / codex-portable-20261011：README／安装说明去掉固定 H 盘路径；在空工程目录 clone 同级工具仓库，再 init --root .，工作台／本地来源／adopt／母仓库更新示例同步。
@@ -11,11 +16,6 @@
 
 2026-10-11 [PUB001-CODEX](tasks/PUB001-CODEX.md) / codex-publish-20261011：按用户授权发布文档规范与前序提交，实测 GitHub 默认新工程安装（33 项、独立 Git、干净状态）；首次 Windows CI 短路径问题已最小修复。
 修复 f9c7669 经官方 API 原样发布，提交 SHA 一致；相关 20 项、隔离完整 75 项和[双平台 CI](https://github.com/duskbreakmist/mulagent-project-template/actions/runs/38120883231)通过。常规 Git 通道故障未改持久配置；他人 TPL005 暂存保留。ORCH001 完成摘要移入维护历史，保留原验收边界。
-
-## 文档规范（本轮已完成）
-
-2026-10-11 [DOC002-CODEX](tasks/DOC002-CODEX.md) / codex-docstyle-20261011：将 Microsoft／Google 写作参考、Diátaxis 内容结构、GFM 排版和 RFC 约束词写入[通用指南](../../.agents/guides/documentation.md)，并接入 AGENTS／协议／README／模板手册与 manifest；默认中文，用户及工程具体约定优先。
-模板 33 项、AGENTS 15 行、diff 检查通过；独立候选包新装与 32→33 项升级通过，升级保留业务 README。未推送、未跑远端 CI；TPL006 完成摘要移入[维护历史](history/CURRENT-2026-10.md)，保留原结论语境。
 
 ## 多实例同源审计轮次（进行中，需收尾）
 
