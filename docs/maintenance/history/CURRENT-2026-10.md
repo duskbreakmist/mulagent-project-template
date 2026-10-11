@@ -48,3 +48,10 @@
 修复 f9c7669 经官方 API 原样发布，提交 SHA 一致；相关 20 项、隔离完整 75 项和[双平台 CI](https://github.com/duskbreakmist/mulagent-project-template/actions/runs/38120883231)通过。常规 Git 通道故障未改持久配置；他人 TPL005 暂存保留。ORCH001 完成摘要移入维护历史，保留原验收边界。
 
 2026-10-11 BOOT001-CODEX 归档调整 task 相对链接，并修复 DOC002 既有通用指南相对链接；保留发布当时事实，不把当时 CI 算成本轮验证。
+
+## DOC003-CODEX（从维护 CURRENT 保存）
+
+2026-10-11 [DOC003-CODEX](../tasks/DOC003-CODEX.md) / codex-portable-20261011：README／安装说明去掉固定 H 盘路径；在空工程目录 clone 同级工具仓库，再 init --root .，工作台／本地来源／adopt／母仓库更新示例同步。
+本地候选 Git 副本的相对路径安装、33 项检查、外置工作台 status、干净独立 Git 和 diff 检查通过；未实机验证其他操作系统。只改文档，不重复完整代码回归；DOC001 完成摘要移入维护历史，保留原语境。
+
+2026-10-11 BOOT004-INTEGRATE 归档仅调整 task 相对链接，保留原结论与当时验证边界。

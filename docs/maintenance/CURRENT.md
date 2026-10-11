@@ -2,6 +2,11 @@
 
 写入前先 git status 确认 HEAD 未变；提交只 add 自己改动的文件，不用 git add .。
 
+## 自举审计统一整合（本轮已完成）
+
+2026-10-11 用户指定 codex-bootstrap-integrator-20261011 整合，[BOOT004-INTEGRATE](tasks/BOOT004-INTEGRATE.md)／[统一 RUN](runs/2026-10-11-bootstrap-audit.md)。已收 Codex、WB 两组共六份首稿；[BOOT002-ZCODE](tasks/BOOT002-ZCODE.md) 用户确认停止且报告缺失，按 missing 收尾，源任务 blocked。原稿保留，治理授权与共享写入范围记在维护 RUN，根种子保持空白。
+清单缩减、语法／状态检查覆盖与路径问题隔离复现；对“自检为零／母仓库不能维护自己／必然死锁”等强结论作限定。形成五项去重候选，未改生产实现；前轮 75 项通过按当时事实引用，不冒充本阶段重跑。DOC003 摘要保存至维护历史。
+
 ## 自举能力并行判断（本轮已完成）
 
 2026-10-11 [BOOT001-CODEX](tasks/BOOT001-CODEX.md) / codex-bootstrap-20261011：当前实例与两个内部子 Agent 同题独立判断，全部首稿交付后汇总，见[证据与对照](../../results/BOOT001-CODEX/run-001/comparison/review.md)。人参与的自身维护和协议骨架跨代复制成立；默认副本无完整开发体系，真实 AI 自主迭代闭环尚未形成。
@@ -11,11 +16,6 @@
 
 2026-10-11 [DOC004-WB](tasks/DOC004-WB.md) / wb-hy4-20261011：审计 33 项分发文件中的"白熊效应"（负向引用受众不知道的迁移史，用户举例 README"不再依赖 Live2D 工程"）。真白熊 5 处：README Live2D 句、template_readme"旧单文件／解包／.bootstrap-v1"、tools.md 与 template_readme 的未定义"源工程"；判定准则"可操作的否定保留，考古的否定删除"，正常的时间性指称（旧执行者／旧基线等）已排除。
 check 33 项与 diff 检查通过；建议均未实施，待用户确认后另立任务。DOC002 摘要移入维护历史。遗留：TPL005 仍 staged、审计轮次待指定汇总者。
-
-## 跨电脑安装说明（本轮已完成）
-
-2026-10-11 [DOC003-CODEX](tasks/DOC003-CODEX.md) / codex-portable-20261011：README／安装说明去掉固定 H 盘路径；在空工程目录 clone 同级工具仓库，再 init --root .，工作台／本地来源／adopt／母仓库更新示例同步。
-本地候选 Git 副本的相对路径安装、33 项检查、外置工作台 status、干净独立 Git 和 diff 检查通过；未实机验证其他操作系统。只改文档，不重复完整代码回归；DOC001 完成摘要移入维护历史，保留原语境。
 
 ## 多实例同源审计轮次（已收尾）
 

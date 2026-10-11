@@ -1,0 +1,11 @@
+{
+  "assignment": "observed",
+  "files": {
+    "results/BOOT002-ZCODE/run-001/input.md": "bfd48b42da623acc104dd5d7dcd0ef00e92f1fd52d7fabdb7bdea5f30772ea8b",
+    "results/BOOT003-WB/run-001/comparison/review.md": "5d4e5cb776c094a697c1642e8ff062b9b775124794ae8efb9a497f2302cb098e",
+    "results/BOOT003-WB/run-001/input.md": "7531195b89895d02c0d88a487394251f3e5d6382ca631dd44363899f6cb7eb7b",
+    "results/BOOT003-WB/run-001/wb-audit-evidence/judge.md": "f469a4e4a0f67d16c81ff30cc7762f0d5ce1ca3aa0cb1bd7d6f5479de9f4c8ff",
+    "results/BOOT003-WB/run-001/wb-audit-protocol/judge.md": "3563197b6b3d8c065a0158e1c001b24a0520f8fd6421e2a85cd1c6c2de6e5b77",
+    "results/BOOT003-WB/run-001/wb-audit-toolchain/judge.md": "70f6792975c12a471f92434958b339079ab162fa737b3bfad4a786ac44057581"
+  }
+}
