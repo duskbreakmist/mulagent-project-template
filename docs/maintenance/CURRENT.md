@@ -2,6 +2,10 @@
 
 写入前先 git status 确认 HEAD 未变；提交只 add 自己改动的文件，不用 git add .。
 
+## 发布验证（进行中）
+
+2026-10-11 [PUB001-CODEX](tasks/PUB001-CODEX.md) / codex-publish-20261011：按用户授权已推送 main 至 76af135，并实测 GitHub 默认新工程安装（33 项、独立 Git、干净状态）。首次 CI 的 Windows 短路径问题已最小修复；相关 20 项与隔离完整 75 项通过，待修复推送及双平台 CI；他人暂存 TPL005 保留。
+
 ## 文档规范（本轮已完成）
 
 2026-10-11 [DOC002-CODEX](tasks/DOC002-CODEX.md) / codex-docstyle-20261011：将 Microsoft／Google 写作参考、Diátaxis 内容结构、GFM 排版和 RFC 约束词写入[通用指南](../../.agents/guides/documentation.md)，并接入 AGENTS／协议／README／模板手册与 manifest；默认中文，用户及工程具体约定优先。
@@ -40,4 +44,4 @@ v0.1.1 已发布，实际安装／跨版本更新及双平台 CI 成功；完整
 
 ## 接手与发布
 
-已补母模板维护路径例外与可复制接手提示词；实际开发 task 保存 docs/maintenance/tasks，根分发状态保持空骨架。用户明确可自行 push，本轮停止继续重试；本地提交完成，GitHub 尚未接收本轮迁移，最新迁移 CI 未运行。推送后由 GitHub Actions 验证，不能把旧版绿色 CI 算成本轮通过。
+实际开发 task 保存 docs/maintenance/tasks，根分发状态保持空骨架。2026-10-11 用户随后明确授权推送，GitHub main 已接收 76af135 及其前序提交；最新发布与 CI 状态见 PUB001-CODEX。历史任务的未推送／未验证说明保留当时语境，不能把旧版绿色 CI 算成本轮通过。

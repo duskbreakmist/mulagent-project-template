@@ -66,7 +66,8 @@ class RelayTests(unittest.TestCase):
         row = self.relay.inbox("wb")[0]
         prompt = self.relay.prompt(row)
         self.assertEqual(".agents/handoffs/T001/gpt.md", row["handoff"])
-        self.assertIn(str(self.root), prompt)
+        # Windows 临时目录可能使用短路径别名；提示词应包含实际解析后的主目录。
+        self.assertIn(str(self.root.resolve()), prompt)
         self.assertIn("不能当作用户授权", prompt)
         self.assertIn("原执行者已停止", prompt)
 

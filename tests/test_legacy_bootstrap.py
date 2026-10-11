@@ -2,6 +2,7 @@
 import hashlib
 import importlib.util
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -97,6 +98,19 @@ class BootstrapTests(unittest.TestCase):
     def test_path_escape_is_rejected(self):
         with self.assertRaisesRegex(ValueError, "路径逃逸"):
             BOOT.safe_path(self.root, "../outside")
+
+    def test_relative_root_uses_same_boundary_as_resolved_root(self):
+        BOOT.initialize(self.root)
+        previous = Path.cwd()
+        try:
+            os.chdir(self.root.parent)
+            relative_root = Path(self.root.name)
+            # 各平台覆盖根目录拼写不同的情况；跨盘临时目录也能执行，并拒绝真实逃逸。
+            self.assertEqual(BOOT.VERSION, BOOT.check(relative_root)["version"])
+            with self.assertRaisesRegex(ValueError, "路径逃逸"):
+                BOOT.safe_path(relative_root, "../outside")
+        finally:
+            os.chdir(previous)
 
     def test_publish_does_not_replace_existing_target(self):
         path = self.root / "agents_list.md"

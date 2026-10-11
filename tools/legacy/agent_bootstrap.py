@@ -21,6 +21,8 @@ FILES = {
 
 def safe_path(root, relative):
     """拒绝协作目录通过符号链接跳到工程外，已有外部资料也不触碰。"""
+    # 两侧使用同一解析基准，避免 Windows 短路径别名或相对根目录被误判为越界。
+    root = Path(root).resolve()
     path = root / relative
     if not path.resolve().is_relative_to(root):
         raise ValueError("路径逃逸工程: " + relative)
