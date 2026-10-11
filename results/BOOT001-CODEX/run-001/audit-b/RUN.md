@@ -1,0 +1,22 @@
+# audit-b 运行记录
+
+- task: BOOT001-CODEX
+- run_id: run-001
+- participant: audit-b
+- assignment: accepted（已实际启动并向主实例确认接受）
+- status: delivered_first_draft
+- date: 2026-10-11 / Asia/Shanghai
+- baseline: 8d2645f80f43df4932515f5b6650a05e53410f5b
+- host: Codex 内部子 Agent
+- model_version: unknown
+- tool_version: unknown（工具未返回版本号；不以宿主品牌推断模型版本）
+- measured_runtime: Windows；Python 3.13.8；Git 2.47.1.windows.2
+- independence: 首稿前只读取公共 input、共享 task、当前协议、源码、测试定义、既有维护文档与 Git 历史；未读取 codex-main、audit-a、comparison 的本轮候选。
+- received_process_message: 主实例告知临时目录沙箱 WinError 5 和可申请隔离执行；该消息没有判断结论。
+- memory: 对 MEMORY.md 用 agent-project-template／mulagent-project-template／自举／workbench 做轻量检索，没有命中，没有使用历史记忆事实。
+- write_scope: 仅 results/BOOT001-CODEX/run-001/audit-b/。
+- verification: 本人隔离两代分发实验成功退出 0；真实输出见 experiment-output.txt；完整 tests 由主实例负责。
+- environment_issue: 首次普通沙箱执行临时目录 WinError 5；同时暴露实验辅助代码 UTF-8 解码假设，修正辅助代码输出解码后，以自动审核允许的沙箱外隔离运行成功。不改生产实现。
+- artifacts: report.md、RUN.md、experiment.py、experiment-output.txt。
+- shared_mutations: 无共享 task／CURRENT／实现改动；无生产 Git 暂存／提交／配置操作。
+- first_draft_boundary: 报告写出后向主实例只发路径与完成通知，之后才允许汇总阶段读取。

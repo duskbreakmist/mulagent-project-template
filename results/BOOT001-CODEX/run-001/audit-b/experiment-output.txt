@@ -1,0 +1,19 @@
+执行：python results/BOOT001-CODEX/run-001/audit-b/experiment.py
+环境：Windows；Python 3.13.8；git version 2.47.1.windows.2
+执行权限：沙箱外隔离临时目录，自动审核允许。
+退出码：0
+
+INITIALIZED C:\Users\Asus\AppData\Local\Temp\boot001-audit-b-iz0nt067\first 8d2645f80f43df4932515f5b6650a05e53410f5b
+INITIALIZED C:\Users\Asus\AppData\Local\Temp\boot001-audit-b-iz0nt067\second 6704085e0ca3bb3e9dc28b7114cdbb520c67f6fa
+TEMPLATE_OK files=33
+{
+  "base_commit": "8d2645f80f43df4932515f5b6650a05e53410f5b",
+  "python": "3.13.8",
+  "git": "git version 2.47.1.windows.2",
+  "required_count": 33,
+  "all_required_files_equal_across_generations": true,
+  "second_has_tests": false,
+  "second_has_workbench": false,
+  "first_has_maintenance_guide": false,
+  "invalid_maintenance_status_check_output": "TEMPLATE_OK files=33"
+}

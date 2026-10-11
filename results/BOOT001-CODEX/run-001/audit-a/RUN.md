@@ -1,0 +1,27 @@
+# BOOT001-CODEX/run-001/audit-a
+
+- participant: audit-a
+- assignment: accepted
+- status: done
+- role: 独立首稿调查者
+- accepted: 已通过内部 Agent 消息真实确认接受
+- model_version: unknown
+- execution_channel: 内部子 Agent；具体模型名称／版本未提供
+- tool_versions: Python 3.13.8；Git 2.47.1.windows.2；functions.exec／exec_command／apply_patch 与 collaboration 工具版本 unknown
+- date: 2026-10-11，Asia/Shanghai
+- base_commit: 8d2645f80f43df4932515f5b6650a05e53410f5b
+- collaboration_mode: independent_compare
+- mode_source: 用户要求当前实例和其他 AI 并行判断；父任务 BOOT001-CODEX
+- scope: results/BOOT001-CODEX/run-001/audit-a/；实验仅本人专属临时 fixture
+- independence: 首稿前未读 codex-main、audit-b、comparison；收到父实例的环境限制消息，没有收到候选核心判断
+- isolation: 共享 checkout，仅按行为约定保持独立，不是权限盲测
+- report: report.md
+- experiment: validate_replication.py
+- evidence: verification.txt
+- budget: 一次独立首稿，无明确 token 配额；未测量与其他候选的成本或延迟
+- verification: 已安装第一代内的 manager 再安装第二代，33 项检查通过；完整 unittest 留给主实例
+- limitations: 系统 TEMP 与 .test-tmp 两次 sandbox Git clone／清理失败；sandbox 外验证通过；不把历史 CI 当本轮结果
+- changes: 仅本人 report／RUN／验证脚本／原始结果；未改共享实现、task、CURRENT 或母仓库 Git
+- conclusion: 协议维护自身与骨架再安装成立；默认副本不含完整开发栈；真实 AI 自主迭代闭环未实现
+- handoff: 首稿完成后通知父实例，按事先约定进入比较；无生产修改待移交
+- formatting: 首稿交付后仅去除 verification.txt 第 12 行尾随空格；实测值和首稿结论不变

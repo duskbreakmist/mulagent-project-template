@@ -1,0 +1,41 @@
+{
+  "baseline": "8d2645f80f43df4932515f5b6650a05e53410f5b",
+  "generations": [
+    {
+      "generation": 1,
+      "installed": "INITIALIZED H:\\Project\\agent-project-template\\.test-tmp\\BOOT001-g9jd4vu0\\generation-1 8d2645f80f43df4932515f5b6650a05e53410f5b",
+      "managed_files": 33,
+      "check": "TEMPLATE_OK files=33",
+      "preview": "UPDATE_PLAN changes=0 conflicts=0 protected=5 removed_upstream=0",
+      "source_revision": "8d2645f80f43df4932515f5b6650a05e53410f5b",
+      "clean": true,
+      "no_remote": true,
+      "coordination_root_matches": true,
+      "development_files_present": {
+        "tests": false,
+        ".github/workflows/checks.yml": false,
+        "docs/maintenance": false,
+        "tools/agent_workbench.py": false,
+        "tools/agent_relay.py": false
+      }
+    },
+    {
+      "generation": 2,
+      "installed": "INITIALIZED H:\\Project\\agent-project-template\\.test-tmp\\BOOT001-g9jd4vu0\\generation-2 074f41ed9f14e544aff299835345d9b7feb9326a",
+      "managed_files": 33,
+      "check": "TEMPLATE_OK files=33",
+      "preview": "UPDATE_PLAN changes=0 conflicts=0 protected=5 removed_upstream=0",
+      "source_revision": "074f41ed9f14e544aff299835345d9b7feb9326a",
+      "clean": true,
+      "no_remote": true,
+      "coordination_root_matches": true,
+      "development_files_present": {
+        "tests": false,
+        ".github/workflows/checks.yml": false,
+        "docs/maintenance": false,
+        "tools/agent_workbench.py": false,
+        "tools/agent_relay.py": false
+      }
+    }
+  ]
+}

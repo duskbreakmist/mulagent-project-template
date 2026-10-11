@@ -2,6 +2,11 @@
 
 写入前先 git status 确认 HEAD 未变；提交只 add 自己改动的文件，不用 git add .。
 
+## 自举能力并行判断（本轮已完成）
+
+2026-10-11 [BOOT001-CODEX](tasks/BOOT001-CODEX.md) / codex-bootstrap-20261011：当前实例与两个内部子 Agent 同题独立判断，全部首稿交付后汇总，见[证据与对照](../../results/BOOT001-CODEX/run-001/comparison/review.md)。人参与的自身维护和协议骨架跨代复制成立；默认副本无完整开发体系，真实 AI 自主迭代闭环尚未形成。
+本轮 33 项检查、沙箱外 75 项测试及三份隔离两代实验通过；另实测业务登记 seed 继承与维护 task 状态不在通用检查覆盖范围。未改实现／未接真实客户端／未推送；PUB001 摘要移入维护历史，保留原验收语境。
+
 ## 文案白熊审计（本轮已完成）
 
 2026-10-11 [DOC004-WB](tasks/DOC004-WB.md) / wb-hy4-20261011：审计 33 项分发文件中的"白熊效应"（负向引用受众不知道的迁移史，用户举例 README"不再依赖 Live2D 工程"）。真白熊 5 处：README Live2D 句、template_readme"旧单文件／解包／.bootstrap-v1"、tools.md 与 template_readme 的未定义"源工程"；判定准则"可操作的否定保留，考古的否定删除"，正常的时间性指称（旧执行者／旧基线等）已排除。
@@ -11,11 +16,6 @@ check 33 项与 diff 检查通过；建议均未实施，待用户确认后另�
 
 2026-10-11 [DOC003-CODEX](tasks/DOC003-CODEX.md) / codex-portable-20261011：README／安装说明去掉固定 H 盘路径；在空工程目录 clone 同级工具仓库，再 init --root .，工作台／本地来源／adopt／母仓库更新示例同步。
 本地候选 Git 副本的相对路径安装、33 项检查、外置工作台 status、干净独立 Git 和 diff 检查通过；未实机验证其他操作系统。只改文档，不重复完整代码回归；DOC001 完成摘要移入维护历史，保留原语境。
-
-## 发布验证（本轮已完成）
-
-2026-10-11 [PUB001-CODEX](tasks/PUB001-CODEX.md) / codex-publish-20261011：按用户授权发布文档规范与前序提交，实测 GitHub 默认新工程安装（33 项、独立 Git、干净状态）；首次 Windows CI 短路径问题已最小修复。
-修复 f9c7669 经官方 API 原样发布，提交 SHA 一致；相关 20 项、隔离完整 75 项和[双平台 CI](https://github.com/duskbreakmist/mulagent-project-template/actions/runs/38120883231)通过。常规 Git 通道故障未改持久配置；他人 TPL005 暂存保留。ORCH001 完成摘要移入维护历史，保留原验收边界。
 
 ## 多实例同源审计轮次（已收尾）
 

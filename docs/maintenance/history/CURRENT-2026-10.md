@@ -37,7 +37,14 @@
 
 ## DOC002-CODEX（从维护 CURRENT 保存）
 
-2026-10-11 [DOC002-CODEX](../tasks/DOC002-CODEX.md) / codex-docstyle-20261011：将 Microsoft／Google 写作参考、Diátaxis 内容结构、GFM 排版和 RFC 约束词写入[通用指南](../../.agents/guides/documentation.md)，并接入 AGENTS／协议／README／模板手册与 manifest；默认中文，用户及工程具体约定优先。
+2026-10-11 [DOC002-CODEX](../tasks/DOC002-CODEX.md) / codex-docstyle-20261011：将 Microsoft／Google 写作参考、Diátaxis 内容结构、GFM 排版和 RFC 约束词写入[通用指南](../../../.agents/guides/documentation.md)，并接入 AGENTS／协议／README／模板手册与 manifest；默认中文，用户及工程具体约定优先。
 模板 33 项、AGENTS 15 行、diff 检查通过；独立候选包新装与 32→33 项升级通过，升级保留业务 README。未推送、未跑远端 CI；TPL006 完成摘要移入[维护历史](CURRENT-2026-10.md)，保留原结论语境。
 
 2026-10-11 归档仅调整 task 相对链接，保留原文案与当时验证语境；后续推送见 PUB001-CODEX。
+
+## PUB001-CODEX（从维护 CURRENT 保存）
+
+2026-10-11 [PUB001-CODEX](../tasks/PUB001-CODEX.md) / codex-publish-20261011：按用户授权发布文档规范与前序提交，实测 GitHub 默认新工程安装（33 项、独立 Git、干净状态）；首次 Windows CI 短路径问题已最小修复。
+修复 f9c7669 经官方 API 原样发布，提交 SHA 一致；相关 20 项、隔离完整 75 项和[双平台 CI](https://github.com/duskbreakmist/mulagent-project-template/actions/runs/38120883231)通过。常规 Git 通道故障未改持久配置；他人 TPL005 暂存保留。ORCH001 完成摘要移入维护历史，保留原验收边界。
+
+2026-10-11 BOOT001-CODEX 归档调整 task 相对链接，并修复 DOC002 既有通用指南相对链接；保留发布当时事实，不把当时 CI 算成本轮验证。
