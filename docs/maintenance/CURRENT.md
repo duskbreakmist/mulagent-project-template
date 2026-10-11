@@ -2,6 +2,11 @@
 
 写入前先 git status 确认 HEAD 未变；提交只 add 自己改动的文件，不用 git add .。
 
+## 跨电脑安装说明（本轮已完成）
+
+2026-10-11 [DOC003-CODEX](tasks/DOC003-CODEX.md) / codex-portable-20261011：README／安装说明去掉固定 H 盘路径；在空工程目录 clone 同级工具仓库，再 init --root .，工作台／本地来源／adopt／母仓库更新示例同步。
+本地候选 Git 副本的相对路径安装、33 项检查、外置工作台 status、干净独立 Git 和 diff 检查通过；未实机验证其他操作系统。只改文档，不重复完整代码回归；DOC001 完成摘要移入维护历史，保留原语境。
+
 ## 发布验证（本轮已完成）
 
 2026-10-11 [PUB001-CODEX](tasks/PUB001-CODEX.md) / codex-publish-20261011：按用户授权发布文档规范与前序提交，实测 GitHub 默认新工程安装（33 项、独立 Git、干净状态）；首次 Windows CI 短路径问题已最小修复。
@@ -11,11 +16,6 @@
 
 2026-10-11 [DOC002-CODEX](tasks/DOC002-CODEX.md) / codex-docstyle-20261011：将 Microsoft／Google 写作参考、Diátaxis 内容结构、GFM 排版和 RFC 约束词写入[通用指南](../../.agents/guides/documentation.md)，并接入 AGENTS／协议／README／模板手册与 manifest；默认中文，用户及工程具体约定优先。
 模板 33 项、AGENTS 15 行、diff 检查通过；独立候选包新装与 32→33 项升级通过，升级保留业务 README。未推送、未跑远端 CI；TPL006 完成摘要移入[维护历史](history/CURRENT-2026-10.md)，保留原结论语境。
-
-## 新工程说明与文件树（本轮已完成）
-
-2026-10-11 [DOC001-CODEX](tasks/DOC001-CODEX.md) / codex-docs-20261011：README 补活动文件职责树、工作台用法、本地已提交版本安装；接入说明补各客户端可复制提示词。
-模板检查 32 项、diff 检查、独立新工程 init --commit／无 origin／外置工作台 status 冒烟通过；新 README 在最小安装副本检查通过。本轮开始时实时远端 main=0df7095，本地=a329301；未 push、未跑远端 CI。
 
 ## 多实例同源审计轮次（进行中，需收尾）
 

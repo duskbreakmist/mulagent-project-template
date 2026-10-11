@@ -4,21 +4,27 @@
 
 文档采用 Microsoft 主写作参考、Google 开发者细节补充、Diátaxis 内容结构、GFM 排版与 RFC 2119／8174 约束词。默认中文，工程具体约定优先；具体规则见[工程文档写作规范](.agents/guides/documentation.md)。
 
-## 新建本地工程
+## 在任意电脑新建工程
 
-已下载本仓库时，用一条命令从 Git 拉取最新模板并建立独立工程：
+需要 Python 3.9+、Git 和你已有的真实 Git 提交身份。Windows、Linux 或 macOS 均可使用下面的相对路径；若 Python 命令为 python3，把示例中的 python 换成 python3。
 
-```powershell
-python H:\Project\agent-project-template\tools\template_manager.py init --root H:\Project\my-new-project --commit
-```
-
-目标必须为空；需要 Python 3.9+ 与 Git，提交沿用你已有的真实 Git 身份。新工程有自己的历史，不把模板仓库设为它的 origin。
-
-尚未下载工具时先执行一次：
+在新建的空工程文件夹内打开终端，先从 GitHub 下载工具到同级目录，再初始化当前工程：
 
 ```powershell
-git clone https://github.com/duskbreakmist/mulagent-project-template.git H:\Project\agent-project-template
+git clone https://github.com/duskbreakmist/mulagent-project-template.git ../agent-template-tools
+python ../agent-template-tools/tools/template_manager.py init --root . --commit
+python tools/check_template.py --root .
 ```
+
+`--root .` 表示当前工程文件夹；`../agent-template-tools` 是第一条命令刚下载的工具仓库，不依赖原电脑的盘符或目录。工具放在工程外，初始化前的工程目录保持为空。新工程有自己的 Git 历史，不把模板仓库设为它的 origin。
+
+如果同级已有工具仓库，跳过 clone，先更新它：
+
+```powershell
+git -C ../agent-template-tools pull --ff-only
+```
+
+然后在新的空工程目录执行上面的 init 和检查。目标已有业务文件时，按[旧工程接入说明](docs/template-usage.md)处理。
 
 ## 更新已经使用模板的工程
 
@@ -37,10 +43,10 @@ git diff
 
 ## 在新工程启用协作工作台
 
-init 安装的是通用协议骨架。可选工作台仍放在母模板仓库；把 --root 指向刚建立的新工程，登记、任务和消息都保存在新工程：
+init 安装的是通用协议骨架。继续在刚建立的新工程目录运行同级工具仓库中的可选工作台，登记、任务和消息都保存在当前工程：
 
 ~~~powershell
-python H:\Project\agent-project-template\tools\agent_workbench.py --root H:\Project\my-new-project serve
+python ../agent-template-tools/tools/agent_workbench.py --root . serve
 ~~~
 
 复制终端打印的完整本地 URL 到浏览器。首次打开登记 human 人工入口；可以查看进度、创建任务、暂停、接手和发送反馈。服务需保持运行，Ctrl+C 停止。
@@ -52,10 +58,11 @@ python H:\Project\agent-project-template\tools\agent_workbench.py --root H:\Proj
 母模板还未推送或希望离线安装本地版本时，可用本地 Git 快照：
 
 ~~~powershell
-python H:\Project\agent-project-template\tools\template_manager.py init --root H:\Project\my-new-project --source H:\Project\agent-project-template --ref main --commit
+$templateSource = (Resolve-Path "../agent-template-tools").Path
+python ../agent-template-tools/tools/template_manager.py init --root . --source "$templateSource" --ref main --commit
 ~~~
 
-此命令读取本地 main 已提交内容，不包括未提交文件；安装基线会记录本地 source，后续 update 也从这个来源读取。希望以后跟随 GitHub 更新的新工程，应使用前面的默认 GitHub 安装方式。
+这段 PowerShell 先解析这台电脑上的工具目录，再读取它的 main 已提交内容，不包括未提交文件；安装基线会记录本地 source，后续 update 也从这个来源读取。希望以后跟随 GitHub 更新的新工程，应使用前面的默认 GitHub 安装方式。
 
 ## 文件树与作用
 
@@ -137,10 +144,10 @@ agent-project-template/
 
 ## 维护母模板仓库
 
-H:\Project\agent-project-template 是母模板工作目录，它自身接收 GitHub 更新使用：
+在下载的母模板仓库目录内，更新该仓库使用：
 
 ```powershell
-git -C H:\Project\agent-project-template pull --ff-only
+git pull --ff-only
 ```
 
 这是更新母模板 checkout。使用模板的业务工程通过上面的 template_manager 更新，不对业务工程执行指向模板仓库的 git pull。

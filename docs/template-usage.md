@@ -2,12 +2,17 @@
 
 ## 1. 获取工具和创建新工程
 
+安装 Python 3.9+ 与 Git，并配置你自己的真实 Git 提交身份。在新建的空工程文件夹内打开终端，执行：
+
 ```powershell
-git clone https://github.com/duskbreakmist/mulagent-project-template.git H:\Project\agent-project-template
-python H:\Project\agent-project-template\tools\template_manager.py init --root H:\Project\my-new-project --commit
+git clone https://github.com/duskbreakmist/mulagent-project-template.git ../agent-template-tools
+python ../agent-template-tools/tools/template_manager.py init --root . --commit
+python tools/check_template.py --root .
 ```
 
-已有 H:\Project\agent-project-template 时跳过 clone。init 每次从 Git 读取最新 main，也可用 --ref v0.1.1 固定已发布版本。目标须为空（新建的无历史空 Git 仓库也可），已有工程不用 init。
+`../agent-template-tools` 是本次下载的同级工具目录，`--root .` 是当前业务工程；无需原电脑上的路径。相对路径适用于 Windows、Linux 和 macOS；若系统使用 python3，替换示例中的 python 命令。
+
+同级已有该工具仓库时跳过 clone，先执行 `git -C ../agent-template-tools pull --ff-only`。init 每次从 Git 读取最新 main，也可用 --ref v0.1.1 固定已发布版本。目标须为空（新建的无历史空 Git 仓库也可），已有工程不用 init。工具目录放在业务工程外，避免下载工具后使 init 目标不再为空。
 
 默认初始化独立 Git 并设置本地协作根。--commit 保存初始模板提交；身份缺失会明确报错，不捏造姓名／邮箱，已生成文件保留。--no-git 仅在你明确不需要版本管理时使用，不能与 --commit 同时指定。安装器不设置业务工程 origin，不推送。
 
@@ -16,17 +21,18 @@ python H:\Project\agent-project-template\tools\template_manager.py init --root H
 --source 也接受本地 Git 仓库路径；--ref main 读取已提交快照，不包括工作区未提交内容：
 
 ~~~powershell
-python H:\Project\agent-project-template\tools\template_manager.py init --root H:\Project\my-new-project --source H:\Project\agent-project-template --ref main --commit
+$templateSource = (Resolve-Path "../agent-template-tools").Path
+python ../agent-template-tools/tools/template_manager.py init --root . --source "$templateSource" --ref main --commit
 ~~~
 
-基线会记录这个本地 source，后续 update 沿用它；不会自动切换成 GitHub 来源。需要长期跟随 GitHub 的新工程优先使用默认安装方式。init 目标须位于母仓库外，避免创建嵌套仓库。
+上面的 PowerShell 先把同级工具目录解析为当前电脑的绝对路径，防止换执行目录后本地来源错位。基线会记录这个本地 source，后续 update 沿用它；不会自动切换成 GitHub 来源。需要长期跟随 GitHub 的新工程优先使用默认安装方式。init 目标须位于母仓库外，避免创建嵌套仓库。
 
 ### 同时使用协作工作台
 
-默认清单不包含可选工作台；可从母仓库运行它，将 --root 指向业务工程：
+默认清单不包含可选工作台；在业务工程根目录运行同级工具仓库中的脚本：
 
 ~~~powershell
-python H:\Project\agent-project-template\tools\agent_workbench.py --root H:\Project\my-new-project serve
+python ../agent-template-tools/tools/agent_workbench.py --root . serve
 ~~~
 
 所有客户端使用同一个业务 --root，但使用不同会话 ID 和自己的角色／worktree。先登记并领取任务，再读专属 context；开启网页不等于客户端已经连接。可复制提示词见[工作台接入说明](https://github.com/duskbreakmist/mulagent-project-template/blob/main/docs/optional/agent-workbench.md)。
@@ -73,14 +79,14 @@ python tools/template_manager.py apply --plan ".agents/template-updates/<报告�
 
 ## 4. 已经复制旧模板或用 GitHub 模板按钮创建的工程
 
-没有安装基线时，不猜旧版本。先保存工程当前 Git 版本，然后使用母模板目录里的工具：
+没有安装基线时，不猜旧版本。先保存工程当前 Git 版本，在已有业务工程根目录打开终端。若尚未获取工具，先执行第 1 节的 clone（跳过 init），然后：
 
 ```powershell
-python H:\Project\agent-project-template\tools\template_manager.py adopt --root H:\Project\existing-project
-git -C H:\Project\existing-project add -- .agents/template-state.json
-git -C H:\Project\existing-project commit -m "Record template update baseline"
-python H:\Project\agent-project-template\tools\template_manager.py update --root H:\Project\existing-project --check
-python H:\Project\agent-project-template\tools\template_manager.py update --root H:\Project\existing-project
+python ../agent-template-tools/tools/template_manager.py adopt --root .
+git add -- .agents/template-state.json
+git commit -m "Record template update baseline"
+python ../agent-template-tools/tools/template_manager.py update --root . --check
+python ../agent-template-tools/tools/template_manager.py update --root .
 ```
 
 adopt 只创建元数据，不覆盖已有内容。完全相同的文件可自动识别；不同文件标为未知基线，更新时留候选供人工合并。缺少 updater／新指南可新增，完成后可从业务工程自身 tools/ 运行。
@@ -89,8 +95,10 @@ adopt 只创建元数据，不覆盖已有内容。完全相同的文件可自�
 
 ## 5. 母模板维护者
 
+在下载的母模板仓库目录内执行：
+
 ```powershell
-git -C H:\Project\agent-project-template pull --ff-only
+git pull --ff-only
 ```
 
 维护者在母模板仓库审查、测试、提交与推送；发布标签后用户可用 --ref 固定。GitHub Template repository 提供 Use this template，但不建立后续模板自动合并关系，已有业务工程使用本工具管理基线。
