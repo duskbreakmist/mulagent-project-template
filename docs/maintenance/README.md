@@ -1,6 +1,6 @@
 # 模板开发工程
 
-本仓库是协作模板唯一开发位置。根目录保存分发骨架，tools/ 保存管理器，tests/ 保存独立验证，GitHub Actions 运行检查；原 Live2D 工程只消费当地规则。
+本仓库是协作模板唯一开发位置。根目录保存分发骨架，tools/ 保存管理器，tests/ 保存独立验证，GitHub Actions 运行检查；原 [Live2D 工程](legacy/README.md)只消费当地规则，其历史完整归档在 legacy/。
 
 实际维护任务在本目录 tasks/ 与 CURRENT.md；根 agents_list.md、.agents/tasks/README.md、docs/CURRENT.md 保持空骨架，不把维护者状态分发给新工程。Git 本地 agent.coordinationRoot 指向本仓库，与业务工程分离。
 
@@ -29,7 +29,7 @@ git diff --check
 保持安装清单只包含通用骨架。完成后运行相关检查，更新维护 CURRENT，显式暂存、审阅并提交；GitHub 推送由用户执行。
 ~~~
 
-先查看 tasks/TPL002.md 和最新 Git 历史。新任务用独立 ID；根 .agents/tasks 中的格式模板可参考，但实际 task 保存到维护目录。普通单人修改不用登记多个重复进度表；若并行维护，按共同约定写 scope、单一整合者和独立 worktree。
+先查看本目录 CURRENT.md 与最新 Git 历史，了解最近任务与当前状态。新任务用独立 ID；根 .agents/tasks 中的格式模板可参考，但实际 task 保存到维护目录。普通单人修改不用登记多个重复进度表；若并行维护，按共同约定写 scope、单一整合者和独立 worktree。
 
 ## 应用到新工程
 

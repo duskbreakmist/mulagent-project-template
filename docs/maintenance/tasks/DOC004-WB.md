@@ -53,6 +53,22 @@
 - python tools/check_template.py --root . 通过（TEMPLATE_OK files=33）；git diff --check 通过。
 - 未验证：修复实施效果（建议均未实施）、业务工程实装后的读者体验。
 
+## 实施（同会话，用户 2026-10-11 16:02 授权"完成剩下的并提交"）
+
+- README.md:166 删除"不再依赖 Live2D 工程"（P1）。
+- template_readme.md:3 改为现在时表述，去掉旧单文件／解包／初始化标记（P1）。
+- template_readme.md 删除".bootstrap-v1／旧解包流程"整条（P2；旧工程场景已由 template-usage 第 4 节 adopt 流程覆盖）。
+- tools.md 与 template_readme.md 的"源工程"改为"模板作者所在工程"（P2）。
+- maintenance/README.md "原 Live2D 工程"补 legacy/ 链接（P3）；顺带修正"先查看 tasks/TPL002.md"过时指引为本目录 CURRENT.md（TPL003 建议 2 的入口过时问题）。
+- documentation.md 写作与示例新增"分发说明不引用读者无法获知的历史；可操作的否定保留，考古性的否定删除"（P3 准则入规范）。
+- README 树注释"旧初始化器"按原结论保留：已标"开发"且 DOC003 已折叠，属弱白熊不处理。
+
+## Verification（实施后复验）
+
+- python tools/check_template.py --root . 通过（TEMPLATE_OK files=33）；git diff --check 通过。
+- manifest 未变（无文件增删，不需要更新清单）。
+- 未验证：业务工程实装后的读者体验、远端 CI（未推送）。
+
 ## Remaining
 
-建议待用户确认后另行立任务实施。遗留协调项（非本任务 scope）：TPL005.md 仍处 staged 未提交；RUN 审计记录"第四实例未见产出"已过时（TPL006 已落盘），审计轮次仍待指定汇总者收尾。
+建议已全部实施（含 P1–P3）。审计轮次收尾另行处理：TPL005 代提交 4f71580、RUN 记录与合并建议清单由本会话按用户授权收尾。

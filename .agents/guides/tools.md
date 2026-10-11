@@ -8,7 +8,7 @@
 | Claude Code | 新版本在项目没有 CLAUDE.md／CLAUDE.local.md 时可直接读 AGENTS；版本、内置插件和设置影响行为 | 直接支持要求 v2.1.277+，部分会话仍有条件。已有 CLAUDE 或旧版可用 @AGENTS.md 导入，不应一律要求新建兼容文件。见 [官方说明](https://code.claude.com/docs/en/memory) |
 | GitHub Copilot CLI | 发现 AGENTS.md、CLAUDE.md、GEMINI.md 等并组合，无一般文件优先级 | 用 /instructions 查看启用来源；避免互相矛盾。不能把 CLI 规则泛化到所有 IDE／云端形态。见 [GitHub 官方说明](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-custom-instructions) |
 | Gemini CLI | 默认 GEMINI.md，可通过 context.fileName 改为一个或多个名称 | /memory show 查看、/memory reload 刷新；合并已有 settings，不直接覆盖。见 [官方说明](https://geminicli.com/docs/cli/gemini-md/) |
-| WorkBuddy | 源工程 WB 自报本机根 AGENTS 被项目指引自动注入 | 仅是源工程参与者自报，目标工程重新验证；未给出版本，不能保证所有环境如此 |
+| WorkBuddy | 模板作者所在工程的 WB 自报本机根 AGENTS 被项目指引自动注入 | 仅是该工程参与者自报，目标工程重新验证；未给出版本，不能保证所有环境如此 |
 
 Claude 兼容方案（只有需要时添加／合并 CLAUDE.md，不复制一份完整规则）：
 

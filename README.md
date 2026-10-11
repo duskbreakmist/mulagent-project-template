@@ -163,4 +163,4 @@ git pull --ff-only
 
 ## 独立开发与可选组件
 
-本仓库独立保存源码、测试、CI 和开发历史，不再依赖 Live2D 工程。[维护入口](https://github.com/duskbreakmist/mulagent-project-template/blob/main/docs/maintenance/README.md)与[可选消息工具](https://github.com/duskbreakmist/mulagent-project-template/blob/main/docs/optional/agent-relay.md)均不由安装器分发；消息工具必须指定业务主目录，不自动启动 Agent。
+本仓库独立保存源码、测试、CI 和开发历史。[维护入口](https://github.com/duskbreakmist/mulagent-project-template/blob/main/docs/maintenance/README.md)与[可选消息工具](https://github.com/duskbreakmist/mulagent-project-template/blob/main/docs/optional/agent-relay.md)均不由安装器分发；消息工具必须指定业务主目录，不自动启动 Agent。
