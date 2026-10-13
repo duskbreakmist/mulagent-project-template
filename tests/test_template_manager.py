@@ -208,6 +208,71 @@ class LabelTests(unittest.TestCase):
         self.assertEqual("", self.git(target, "status", "--porcelain"))
         self.assertEqual(str(target.resolve()), self.git(target, "config", "--get", "agent.coordinationRoot"))
         self.assertTrue(self.git(target, "rev-parse", "HEAD"))
+        self.assertIn("README.md", self.git(target, "ls-files").splitlines())
+        self.assertNotIn("README.md", M.read_state(target)["files"])
+
+    def test_new_business_readme_is_not_copied_or_template_managed(self):
+        self.assertNotIn("README.md", self.required)
+        self.assertNotIn("README.md", M.read_state(self.project)["files"])
+        text = (self.project / "README.md").read_text(encoding="utf-8")
+        self.assertEqual(M.PROJECT_README, text)
+        self.assertIn("## 工程约定", text)
+        # 母仓库README即使存在且后来改动，也不会进入安装／更新。
+        self.modify_source("README.md", "# 母模板维护专用说明\n")
+        self.assertEqual(0, M.update(self.project))
+        self.assertEqual(text, (self.project / "README.md").read_text(encoding="utf-8"))
+
+    def test_legacy_readme_baseline_is_retired_without_writing_business_file(self):
+        # 构造仍分发README的旧Git版本，安装和定制后再升级到新清单。
+        self.modify_source("README.md", "# 旧模板README\n")
+        manifest_path = self.source / ".agents/template_manifest.json"
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        manifest["required"].append("README.md")
+        manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+        self.commit(self.source)
+        legacy = self.folder / "legacy"
+        legacy.mkdir()
+        self.git(legacy, "init", "-b", "main")
+        self.identity(legacy)
+        M.initialize(legacy, str(self.source), "main", no_git=True)
+        self.assertIn("README.md", M.read_state(legacy)["files"])
+        custom = "# 业务README\n\n业务说明与自有约定。\n"
+        (legacy / "README.md").write_text(custom, encoding="utf-8")
+        self.commit(legacy)
+        manifest["required"].remove("README.md")
+        manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+        self.commit(self.source)
+        before = (legacy / M.STATE).read_bytes()
+        self.assertEqual(0, M.update(legacy, check=True))
+        self.assertEqual(before, (legacy / M.STATE).read_bytes())
+        self.assertEqual(0, M.update(legacy))
+        self.assertNotIn("README.md", M.read_state(legacy)["files"])
+        self.assertEqual(custom, (legacy / "README.md").read_text(encoding="utf-8"))
+        self.commit(legacy)
+        # 业务自行删README后，后续更新也不重建、不把删除报告为模板缺陷。
+        (legacy / "README.md").unlink()
+        self.commit(legacy)
+        self.assertEqual(0, M.update(legacy))
+        self.assertFalse((legacy / "README.md").exists())
+        # 显式回选仍含README的旧清单，同样不恢复业务自行删除的文件。
+        manifest["required"].append("README.md")
+        manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+        self.commit(self.source)
+        self.assertEqual(0, M.update(legacy))
+        self.assertFalse((legacy / "README.md").exists())
+
+    def test_metadata_only_legacy_readme_cleanup_is_read_only_until_applied(self):
+        # 旧updater首次更新可能留有README条目；新工具只改元数据即可完成迁移。
+        state = M.read_state(self.project)
+        state["files"]["README.md"] = {"revision": None, "sha256": None}
+        (self.project / M.STATE).write_text(json.dumps(state), encoding="utf-8")
+        self.commit(self.project)
+        before = self.digest_project()
+        self.assertEqual(0, M.update(self.project, check=True))
+        self.assertEqual(before, self.digest_project())
+        self.assertEqual(0, M.update(self.project))
+        self.assertNotIn("README.md", M.read_state(self.project)["files"])
+        self.assertEqual(before["README.md"], self.digest_project()["README.md"])
 
     def test_init_refuses_existing_contents(self):
         target = self.folder / "nonempty"

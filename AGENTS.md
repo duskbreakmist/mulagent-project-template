@@ -1,6 +1,6 @@
 # Agent 工作入口
 
-- 默认中文；业务代码修改前读 README.md 的工程约定或其引用文档，缺项先调查补齐；文档按[写作规范](.agents/guides/documentation.md)；修改前读实现，关键设计／边界写简洁中文注释，完成后检查并如实记未验证项。
+- 默认中文；业务代码修改前读业务工程 README.md 的工程约定或其引用文档（模板使用须知不代替业务规范），缺项先调查补齐；文档按[写作规范](.agents/guides/documentation.md)；修改前读实现，关键设计／边界写简洁中文注释，完成后检查并如实记未验证项。
 - 用户当前授权优先；保留已有产出，不记录内部思考链。
 - 新会话先读 [.agents/PROTOCOL.md](.agents/PROTOCOL.md)。同一会话规则未变时不必反复全文读取。
 - 确认主协作目录。明确维护母模板，或 origin 指向 duskbreakmist/mulagent-project-template 时，先读 docs/maintenance/README.md 与 docs/maintenance/CURRENT.md，实际维护任务写 docs/maintenance/tasks/；其他工程读取主目录的 [登记表](agents_list.md) 与 [.agents/tasks](.agents/tasks/README.md)。
@@ -11,5 +11,5 @@
 - 并行代码开发使用独立 worktree；共享 checkout 的 Git 操作串行。中断有剩余／移交写交接，正常单人完成用 task 收尾。
 - 单人串行用精简 task，更新索引与 [CURRENT](docs/CURRENT.md) 短摘要；登记不写任务流水，记录／归档按需看 [指南](.agents/guides/records.md)。
 - 觉得模板繁琐或有改进点时，可自主写 [本人反馈](.agents/feedback/README.md)；无问题不必写，反馈不自动改规则。
-- 首次配置／维护看 [template_readme.md](template_readme.md)，普通任务不要求读手册、脚本或全部模板。
+- 首次配置／维护看 [模板使用须知](template_readme.md)，普通任务不要求读手册、脚本或全部模板。
 - 母模板维护时，根协调／登记／任务索引／CURRENT 保持空白；实际协调读 docs/maintenance/COORDINATION.md，身份、scope、进度记 docs/maintenance/tasks/ 与 CURRENT.md，按 docs/maintenance/README.md 验证。业务工程按正常协议管理自身状态。

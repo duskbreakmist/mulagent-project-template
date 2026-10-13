@@ -18,6 +18,7 @@ DEFAULT_SOURCE = "https://github.com/duskbreakmist/mulagent-project-template.git
 STATE = ".agents/template-state.json"
 LOCK = ".agents/.template-update.lock"
 REPORTS = ".agents/template-updates"
+# README仅为旧清单保留保护规则；新工程的业务README独立生成，不进入模板基线。
 SEEDS = {"README.md", "agents_list.md", ".agents/coordination.md",
          ".agents/tasks/README.md", "docs/CURRENT.md"}
 RUNTIME_DIRS = {".agents/tasks", ".agents/messages", ".agents/handoffs",
@@ -29,6 +30,27 @@ CORE_FILES = {"AGENTS.md", ".agents/PROTOCOL.md", ".agents/coordination.md",
               ".agents/guides/git.md", ".agents/guides/modes.md",
               ".agents/tasks/TEMPLATE-lite.md", ".agents/template_manifest.json",
               "tools/check_template.py", "tools/template_manager.py"}
+PROJECT_README = """# 项目说明
+
+填写本项目的用途、运行方式与验收标准。本文属于业务工程，由工程自己的 Git 保存；模板更新不覆盖它。
+
+## 工程约定
+
+已有规范可直接引用；未知项先通过调查任务补齐，业务代码修改前读取相关约定。
+
+| 约定 | 本项目需要明确的内容 |
+| --- | --- |
+| 技术栈、依赖与环境 | 工具版本、安装命令与锁文件；无依赖时明确说明 |
+| 目录与模块边界 | 源码、测试、资源和生成产物位置及模块职责 |
+| 代码、命名与错误处理 | 现有风格、格式化配置、公共接口与错误约定 |
+| 构建、测试与静态检查 | 实际命令、环境与成功标准；不适用项说明原因 |
+| 敏感文件与忽略项 | 凭据、本地配置、资产策略、忽略项与示例配置 |
+| 审查、验收与发布 | owner、必需检查、功能验收、CI与发布／回退步骤 |
+
+## 协作入口
+
+[Agent规则](AGENTS.md) · [当前工作](docs/CURRENT.md) · [模板使用须知](template_readme.md)
+"""
 
 
 def remote_source(source):
@@ -233,9 +255,13 @@ def initialize(root, source, ref, no_git=False, commit=False):
         if existing and run_git("rev-parse", "--verify", "HEAD", cwd=root, check=False).returncode == 0:
             raise ValueError("该仓库已有历史，不按空新工程初始化")
         with write_lock(root):
+            # 新清单不携带母仓库README；旧版本仍按其原清单安装以保持兼容。
+            installed = dict(upstream.files)
+            if "README.md" not in installed:
+                installed["README.md"] = PROJECT_README
             state = {"version": 1, "source": upstream.source, "ref": ref, "revision": upstream.revision,
                      "files": {name: baseline(upstream, text) for name, text in upstream.files.items()}}
-            for name, text in upstream.files.items():
+            for name, text in installed.items():
                 atomic_write(safe_path(root, name), text.encode("utf-8"))
             atomic_write(root / STATE, (json.dumps(state, ensure_ascii=False, indent=2) + "\n").encode())
             if not no_git:
@@ -243,7 +269,7 @@ def initialize(root, source, ref, no_git=False, commit=False):
                     run_git("init", "-b", "main", cwd=root)
                 run_git("config", "--local", "agent.coordinationRoot", root, cwd=root)
                 if commit:
-                    run_git("add", "--", *upstream.files, STATE, cwd=root)
+                    run_git("add", "--", *installed, STATE, cwd=root)
                     run_git("commit", "-m", "[BOOTSTRAP][template] initialize project template", cwd=root)
             print("INITIALIZED", root, upstream.revision)
             return state
@@ -289,7 +315,8 @@ def make_plan(root, upstream, state, temp):
         path = safe_path(root, name)
         if path.exists() and not path.is_file():
             raise ValueError("目标不是普通文件: " + name)
-        if path.exists() and protected(name):
+        # README只在init产生；即使回选旧清单，也不重建业务已删除的README。
+        if name == "README.md" or (path.exists() and protected(name)):
             skipped.append(name)
             continue
         record = state["files"].get(name, {})
@@ -330,6 +357,10 @@ def make_plan(root, upstream, state, temp):
         new_state["files"][name] = baseline(upstream, incoming)
     # 上游删文件时也不自动删本地内容；旧基线保留以便审计。
     removed = sorted(set(state["files"]) - set(upstream.files))
+    if "README.md" not in upstream.files:
+        # 旧业务README转为完全由业务持有；只移除基线项，不删除或恢复文件。
+        new_state["files"].pop("README.md", None)
+        removed = [name for name in removed if name != "README.md"]
     return {"version": 1, "root": str(root), "revision": upstream.revision,
             "state_sha256": digest((root / STATE).read_bytes()), "entries": changed,
             "conflicts": conflicts, "skipped": skipped, "removed_upstream": removed,

@@ -57,7 +57,7 @@ class ProjectTemplateTests(unittest.TestCase):
                      ".agents/guides/tools.md", ".agents/feedback/README.md",
                      ".agents/feedback/TEMPLATE.md", ".agents/tasks/TEMPLATE-lite.md",
                      ".agents/guides/records.md", "docs/history/README.md",
-                     "results/README.md", "README.md", "docs/template-usage.md",
+                     "results/README.md", "docs/template-usage.md",
                      "tools/template_manager.py"):
             with self.subTest(name=name):
                 path = self.root / name
@@ -68,6 +68,15 @@ class ProjectTemplateTests(unittest.TestCase):
                 self.assertFalse(path.exists())
                 # 下一种漏复制情形独立验证；只恢复本测试临时副本。
                 shutil.copyfile(SOURCE / name, path)
+
+    def test_business_readme_is_optional_but_checked_when_present(self):
+        self.assertFalse((self.root / "README.md").exists())
+        self.assertEqual(0, self.run_check().returncode)
+        path = self.root / "README.md"
+        path.write_text("# 业务项目\n\n[坏链接](missing-business-guide.md)\n", encoding="utf-8")
+        before = self.digest()
+        self.assertEqual(1, self.run_check().returncode)
+        self.assertEqual(before, self.digest())
 
     def test_custom_project_state_is_preserved(self):
         path = self.root / "agents_list.md"

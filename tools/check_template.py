@@ -7,7 +7,7 @@ import re
 from urllib.parse import unquote, urlsplit
 
 TASK_STATUSES = {"todo", "in_progress", "blocked", "review", "done"}
-# 固定最小协议／工具锚点，而不是复制整个33项清单；允许新增组成文件。
+# 固定最小协议／工具锚点，而不是复制整个分发清单；允许新增组成文件。
 CORE_FILES = {"AGENTS.md", ".agents/PROTOCOL.md", ".agents/coordination.md",
               ".agents/guides/git.md", ".agents/guides/modes.md",
               ".agents/tasks/TEMPLATE-lite.md", ".agents/template_manifest.json",
@@ -142,6 +142,10 @@ def validate(root, maintenance=False):
         if path.suffix.lower() == ".md":
             markdown.append((path, text))
     if version == 2:
+        # 业务README不属于模板清单；存在时仍检查编码和链接，缺失时不伪装为漏分发。
+        readme = safe_path(root, "README.md")
+        if "README.md" not in seen and readme.is_file():
+            markdown.append((readme, readable_text(readme)))
         for path, text in markdown:
             check_links(root, path, text)
         check_task_statuses(root)

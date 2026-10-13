@@ -4,20 +4,15 @@
 
 文档采用 Microsoft 主写作参考、Google 开发者细节补充、Diátaxis 内容结构、GFM 排版与 RFC 2119／8174 约束词。默认中文，工程具体约定优先；具体规则见[工程文档写作规范](.agents/guides/documentation.md)。
 
-## 工程约定
+## 使用须知与业务工程 README
 
-业务工程安装后，将 README 改为自己的项目说明，并在本节或它引用的文档集中记录下面六项。已有规范直接引用；业务代码修改前确认相关约定。技术栈或命令尚不清楚时，首个 task 可以调查、运行现有检查并补齐，避免猜测规范或阻塞任务登记。
+本页属于母模板仓库的介绍、开发和发布入口，不由新分发清单复制到业务工程。[模板使用须知](template_readme.md)随模板分发，[安装与更新说明](docs/template-usage.md)提供具体命令。
 
-| 约定 | 需要写清的内容 |
-| --- | --- |
-| 技术栈、依赖与环境 | 语言／工具版本、依赖安装命令、锁文件或无第三方依赖的明确说明 |
-| 目录与模块边界 | 源码、测试、资源、生成产物的位置，以及模块职责 |
-| 代码、命名与错误处理 | 沿用的风格／格式化配置、公共接口和错误约定；新规则的实际来源 |
-| 构建、测试与静态检查 | 可在工程根运行的命令、需要的环境和预期成功标准；不适用项写明原因 |
-| 敏感文件与忽略项 | 本地配置、凭据和生成产物的位置；对应.gitignore／示例配置／资产管理约定 |
-| 审查、验收与发布 | 功能验收标准、实际整合者、必需检查、业务CI与发布／回退步骤；尚未部署的项目明确当前边界 |
+init为新的空业务工程独立生成精简README.md，保留六项工程约定入口与导航；该文件由业务自己的Git保存，不写入模板文件基线。已有工程的README保留，升级不覆盖、不删除，也不重建业务自行删除的README。
 
-task 引用工程约定的实际位置，不复制一套易漂移的规范。业务测试与CI由目标工程定义；模板不会选择技术栈或替工程生成生产应用。本仓库自身开发遵循[母模板维护入口](https://github.com/duskbreakmist/mulagent-project-template/blob/main/docs/maintenance/README.md)。
+当前main分发34项，init另生成1份业务README；已发布v0.2.0按当时35项旧清单安装，旧标签不变。升级到本次新清单时，更新器只移除旧README基线项，实际业务文件保留。
+
+本仓库自身开发遵循[母模板维护入口](docs/maintenance/README.md)。
 
 ## 在任意电脑新建工程
 
@@ -106,9 +101,9 @@ python ../agent-template-tools/tools/template_manager.py init --root . --source 
 
 ~~~text
 agent-project-template/
-├── README.md                            # 默认：安装、使用、更新与目录导航
+├── README.md                            # 开发：母模板介绍与开发／发布入口，不分发
 ├── AGENTS.md                            # 默认：Agent 的短规则入口
-├── template_readme.md                    # 默认：协议结构、原理和完整说明
+├── template_readme.md                    # 默认：模板使用须知、工程约定与原理
 ├── agents_list.md                        # 默认：业务工程参与者登记种子
 ├── .gitignore                           # 默认：凭据、缓存、运行数据库等忽略规则
 ├── .gitattributes                       # 默认：文本与换行约定
@@ -177,7 +172,7 @@ agent-project-template/
 └── .github/workflows/checks.yml         # 开发：Windows／Linux CI
 ~~~
 
-安装后还会生成 .agents/template-state.json（应提交的更新基线）；启用工作台后生成 .agent-relay/workbench/state.sqlite3（本地运行状态，忽略）；冲突候选保存在 .agents/template-updates/（本地忽略）。这些是运行时产物，不是分发源码。
+安装器另生成业务README.md（精简项目说明，业务Git保存，非模板基线文件）；还会生成 .agents/template-state.json（应提交的更新基线）；启用工作台后生成 .agent-relay/workbench/state.sqlite3（本地运行状态，忽略）；冲突候选保存在 .agents/template-updates/（本地忽略）。这些是运行时产物，不是分发源码。
 
 ## 维护母模板仓库
 
@@ -197,7 +192,7 @@ git pull --ff-only
 - 安装清单只分发模板组成文件，维护测试／CI 和日志不由安装器写入业务工程。
 - 普通任务不用读完整手册或可选对照机制。
 - 提交自己的模板基线文件 .agents/template-state.json；锁和冲突备份只存本机。
-- 不自动推送、删除工程文件或执行下载的脚本；复制与 GitHub 的 Use this template 本身不等于已建立更新基线。
+- 不自动推送、删除工程文件或执行下载的脚本；复制与 GitHub 的 Use this template 本身不等于已建立更新基线。GitHub模板按钮／整仓库clone仍会带上母README，独立业务工程推荐使用init。
 
 ## 许可证
 

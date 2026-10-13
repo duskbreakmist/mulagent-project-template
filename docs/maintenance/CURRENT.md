@@ -2,6 +2,10 @@
 
 写入前先 git status 确认 HEAD 未变；提交只 add 自己改动的文件，不用 git add .。
 
+## 母模板与业务 README 分离（进行中）
+
+2026-10-13 [DOC005-CODEX](tasks/DOC005-CODEX.md) / codex-bootstrap-integrator-20261011：用户授权分离母README并核对相关引用；新清单34项，init独立生成业务README并随Git保存，模板使用须知保留template_readme文件名。升级仅移除旧README基线，实际文件保留；完整回归正在执行。
+
 ## 业务工程多 AI 试点验收（本轮已完成）
 
 2026-10-11 [PILOT001-WB](tasks/PILOT001-WB.md) / wb-hy4-20261011：只读评审用户在 H:/Project/test_template_a 的真实试点（基于 f290f2a 可移植流程安装）：dsh-1／wb-1／zcode-1 三 harness 串行接力交付俄罗斯方块 4 功能（FEAT-001–004），跨 AI 代码续写成立，任务内含失败→修复→复测。

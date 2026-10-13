@@ -17,7 +17,7 @@ python -m unittest discover -s tests -v
 git diff --check
 ~~~
 
-交付前显式暂存、审阅并提交。改变分发文件时维护 .agents/template_manifest.json；修改历史、测试或可选工具，不扩大安装清单。
+交付前显式暂存、审阅并提交。根README是母仓库介绍／开发入口，不分发；template_readme.md是业务侧模板使用须知。新业务README由管理器独立生成并纳入业务Git，不进入模板基线。改变分发文件时维护 .agents/template_manifest.json；修改历史、测试或可选工具，不扩大安装清单。
 
 ## 让其他 AI 接手开发
 
