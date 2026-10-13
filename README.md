@@ -61,11 +61,11 @@ git diff
 
 检查无误并运行工程测试后，提交这次模板更新。工程状态始终保留；定制规则尝试三方合并，冲突时不写原文件，按报告手工处理。
 
-升级旧版本到本版时，先提交当前业务改动，再用最新同级工具仓库执行：
+升级旧工程到当前 main 开发版本时，先提交当前业务改动，再用最新同级工具仓库执行：
 
 ```powershell
-python ../agent-template-tools/tools/template_manager.py update --root . --ref v0.2.0 --check
-python ../agent-template-tools/tools/template_manager.py update --root . --ref v0.2.0
+python ../agent-template-tools/tools/template_manager.py update --root . --ref main --check
+python ../agent-template-tools/tools/template_manager.py update --root . --ref main
 ```
 
 旧工程内的 updater 可能尚不支持 --ref，因此先用同级工具；成功更新后可继续用工程自身工具。冲突按安装说明审查后 apply，完成后运行工程测试并提交。

@@ -19,6 +19,10 @@ git diff --check
 
 交付前显式暂存、审阅并提交。根README是母仓库介绍／开发入口，不分发；template_readme.md是业务侧模板使用须知。新业务README由管理器独立生成并纳入业务Git，不进入模板基线。改变分发文件时维护 .agents/template_manifest.json；修改历史、测试或可选工具，不扩大安装清单。
 
+`--maintenance` 还将四份根状态种子与 [空种子基准](../../tests/fixtures/template-seeds.json) 比对，防止真实身份、任务和进度被分发。哈希使用 UTF-8、LF 换行；有意修改种子的说明文字时，先审查仍为空状态，再同步该基准。普通业务检查不要求种子为空。根 `.agents/tasks` 只留说明和两份格式模板。
+
+CI 配置矩阵为 Windows／Ubuntu 和 Python 3.9／3.13；最低版本也需要运行实际回归，不能只解析语法。检查器与管理器独立运行，不导入下载的脚本；两者路径策略通过 `tests/test_distribution_paths.py` 交叉验证，修改边界时须同步两侧和用例。
+
 ## 让其他 AI 接手开发
 
 在 Codex、WorkBuddy 或其他工具中打开此仓库目录；不能假定它自动读取 AGENTS。新会话可粘贴：

@@ -42,6 +42,16 @@ class ProjectTemplateTests(unittest.TestCase):
         transform(data)
         path.write_text(json.dumps(data), encoding="utf-8")
 
+    def maintenance_fixture(self):
+        base = self.root / "docs/maintenance"
+        base.mkdir(exist_ok=True)
+        for name in ("README.md", "CURRENT.md", "COORDINATION.md"):
+            (base / name).write_text("# 维护入口\n", encoding="utf-8")
+        fixture = "tests/fixtures/template-seeds.json"
+        (self.root / fixture).parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(SOURCE / fixture, self.root / fixture)
+        return base
+
     def test_copied_package_runs_independently_and_check_is_read_only(self):
         before = self.digest()
         for _ in range(2):
@@ -220,10 +230,7 @@ class ProjectTemplateTests(unittest.TestCase):
         self.assertEqual(1, self.run_check().returncode)
 
     def test_explicit_maintenance_checks_status_and_links(self):
-        base = self.root / "docs/maintenance"
-        base.mkdir()
-        for name in ("README.md", "CURRENT.md", "COORDINATION.md"):
-            (base / name).write_text("# 维护入口\n", encoding="utf-8")
+        base = self.maintenance_fixture()
         task = base / "tasks/AUDIT.md"
         task.parent.mkdir()
         task.write_text("# AUDIT\n- status: invalid\n", encoding="utf-8")
@@ -235,6 +242,35 @@ class ProjectTemplateTests(unittest.TestCase):
         self.assertEqual(0, self.run_check("--maintenance").returncode)
         (base / "CURRENT.md").write_text("# 维护\n[坏链接](missing.md)\n", encoding="utf-8")
         self.assertEqual(1, self.run_check("--maintenance").returncode)
+
+    def test_maintenance_rejects_real_state_while_business_check_allows_it(self):
+        self.maintenance_fixture()
+        for name in ("agents_list.md", ".agents/coordination.md",
+                     ".agents/tasks/README.md", "docs/CURRENT.md"):
+            with self.subTest(name=name):
+                path = self.root / name
+                original = path.read_bytes()
+                path.write_text("# 真实工程状态\n\nowner: real-maintainer\n", encoding="utf-8")
+                before = self.digest()
+                self.assertEqual(0, self.run_check().returncode)
+                self.assertEqual(1, self.run_check("--maintenance").returncode)
+                self.assertEqual(before, self.digest())
+                path.write_bytes(original)
+        (self.root / ".agents/tasks/REAL001.md").write_text("# 真实任务\n- status: done\n", encoding="utf-8")
+        self.assertEqual(0, self.run_check().returncode)
+        self.assertEqual(1, self.run_check("--maintenance").returncode)
+
+    def test_manifest_rejects_runtime_records_aliases_and_case_collisions(self):
+        manifest = self.root / ".agents/template_manifest.json"
+        original = manifest.read_bytes()
+        for name in (".agents/tasks/REAL001.md", "./docs/maintenance/secret.md",
+                     ".git/config", "./AGENTS.md", "agents.md"):
+            with self.subTest(name=name):
+                manifest.write_bytes(original)
+                self.rewrite_manifest(lambda data: data["required"].append(name))
+                before = self.digest()
+                self.assertEqual(1, self.run_check().returncode)
+                self.assertEqual(before, self.digest())
 
 
 if __name__ == "__main__":

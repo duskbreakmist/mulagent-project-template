@@ -73,30 +73,45 @@ def digest(data):
     return hashlib.sha256(data).hexdigest()
 
 
-def safe_path(root, name):
-    # 即使来自清单／状态／计划，也重新验证；不能碰 Git 元数据、绝对路径或符号链接外部目标。
-    if not isinstance(name, str) or "\\" in name or ":" in name:
+def path_key(name):
+    """模板路径采用跨平台的规范形式；比较键不随宿主大小写规则变化。"""
+    if not isinstance(name, str) or re.search(r'[\x00-\x1f<>:"\\|?*]', name):
         raise ValueError("非法模板路径")
     relative = PurePosixPath(name)
-    if relative.is_absolute() or ".." in relative.parts or not relative.parts:
+    if (relative.is_absolute() or ".." in relative.parts or not relative.parts or
+            name != relative.as_posix()):
         raise ValueError("非法模板路径: " + name)
-    if relative.parts[0] == ".git" or name in (STATE, LOCK) or name.startswith(REPORTS + "/"):
+    for part in relative.parts:
+        if (part.endswith((".", " ")) or
+                re.fullmatch(r"(?:con|prn|aux|nul|com[1-9]|lpt[1-9]|conin\$|conout\$)(?:\..*)?",
+                             part, re.IGNORECASE)):
+            raise ValueError("不可移植的模板路径: " + name)
+    key = name.casefold()
+    if (any(part.casefold() == ".git" for part in relative.parts) or
+            key in (STATE, LOCK, REPORTS) or key.startswith(REPORTS + "/")):
         raise ValueError("保留路径: " + name)
-    path = root.joinpath(*relative.parts)
+    return key
+
+
+def safe_path(root, name):
+    # 清单、状态和计划都经同一入口；符号链接解析后仍须在目标工程内。
+    path_key(name)
+    path = root.joinpath(*PurePosixPath(name).parts)
     if not path.resolve().is_relative_to(root.resolve()):
         raise ValueError("路径逃逸: " + name)
     return path
 
 
 def protected(name):
-    if name in SEEDS:
+    name = path_key(name)
+    if name in {seed.casefold() for seed in SEEDS}:
         return True
     parent = PurePosixPath(name).parent.as_posix()
     for directory in RUNTIME_DIRS:
         if name.startswith(directory + "/"):
             leaf = PurePosixPath(name).name
             # 只管理这些目录中的根级说明／格式；实际 task、交接、反馈和结果始终属于工程。
-            return parent != directory or not (leaf == "README.md" or leaf.startswith("TEMPLATE"))
+            return parent != directory or not (leaf == "readme.md" or leaf.startswith("template"))
     return False
 
 
@@ -124,8 +139,13 @@ def read_state(root):
     data = json.loads(path.read_text(encoding="utf-8"))
     if data.get("version") != 1 or not isinstance(data.get("files"), dict):
         raise ValueError("不支持的安装状态")
+    seen = set()
     for name in data["files"]:
         safe_path(root, name)
+        key = path_key(name)
+        if key in seen:
+            raise ValueError("重复状态路径: " + name)
+        seen.add(key)
     return data
 
 
@@ -172,11 +192,16 @@ class Upstream:
                 not all(isinstance(name, str) for name in required) or len(set(required)) != len(required)):
             raise ValueError("清单为空或重复")
         self.files = {}
+        seen = set()
         for name in required:
             safe_path(self.repo, name)
-            if name.startswith(DEVELOPMENT_PREFIXES):
+            key = path_key(name)
+            if key in seen:
+                raise ValueError("重复清单路径: " + name)
+            seen.add(key)
+            if key.startswith(DEVELOPMENT_PREFIXES):
                 raise ValueError("上游包含开发资产: " + name)
-            if protected(name) and name not in SEEDS:
+            if protected(name) and key not in {seed.casefold() for seed in SEEDS}:
                 raise ValueError("上游包含工程运行记录: " + name)
             self.files[name] = self.blob(self.revision, name)
         anchors = {".agents/template_manifest.json", "tools/template_manager.py", "tools/check_template.py"}
@@ -316,7 +341,7 @@ def make_plan(root, upstream, state, temp):
         if path.exists() and not path.is_file():
             raise ValueError("目标不是普通文件: " + name)
         # README只在init产生；即使回选旧清单，也不重建业务已删除的README。
-        if name == "README.md" or (path.exists() and protected(name)):
+        if name.casefold() == "readme.md" or (path.exists() and protected(name)):
             skipped.append(name)
             continue
         record = state["files"].get(name, {})
@@ -415,9 +440,10 @@ def apply_plan(root, plan_path):
     seen = set()
     for entry in plan["entries"]:
         name = entry["path"]
-        if name in seen:
+        key = path_key(name)
+        if key in seen:
             raise ValueError("重复计划文件: " + name)
-        seen.add(name)
+        seen.add(key)
         path = safe_path(root, name)
         if protected(name) and path.exists():
             raise ValueError("计划试图覆盖工程状态: " + name)
@@ -430,8 +456,13 @@ def apply_plan(root, plan_path):
     state_path = root / STATE
     before_state = state_path.read_bytes()
     next_state = plan["next_state"]
+    state_seen = set()
     for name in next_state["files"]:
         safe_path(root, name)
+        key = path_key(name)
+        if key in state_seen:
+            raise ValueError("重复状态路径: " + name)
+        state_seen.add(key)
     state_bytes = (json.dumps(next_state, ensure_ascii=False, indent=2) + "\n").encode()
     written = []
     try:
@@ -446,17 +477,25 @@ def apply_plan(root, plan_path):
         if state_path.read_bytes() != before_state:
             raise ValueError("写入前安装状态变化")
         atomic_write(state_path, state_bytes)
-    except Exception:
-        if state_path.read_bytes() == state_bytes:
-            atomic_write(state_path, before_state)
-        for name in reversed(written):
-            path = safe_path(root, name)
-            # 恢复只覆盖仍等于本工具刚写入的内容，不抢掉其他执行者的新修改。
-            if path.read_bytes() == changes[name]:
-                if originals[name] is None:
-                    path.unlink()
-                else:
-                    atomic_write(path, originals[name])
+    except Exception as error:
+        # 某一文件被外部删除或恢复失败，不能中断其他文件的恢复。
+        rollback_errors = []
+        recovery = [(STATE, state_bytes, before_state)] + [
+            (name, changes[name], originals[name]) for name in reversed(written)]
+        for name, ours, original in recovery:
+            try:
+                path = state_path if name == STATE else safe_path(root, name)
+                current = path.read_bytes() if path.exists() else None
+                if current == ours:
+                    if original is None:
+                        path.unlink()
+                    else:
+                        atomic_write(path, original)
+            except (OSError, ValueError) as rollback_error:
+                rollback_errors.append(name + ": " + str(rollback_error))
+        if rollback_errors:
+            raise ValueError("更新失败，部分恢复未完成；核对报告备份：" +
+                             "; ".join(rollback_errors)) from error
         raise
     print("APPLIED", len(changes), "files", plan["revision"], "backup", plan_path.parent)
     return plan

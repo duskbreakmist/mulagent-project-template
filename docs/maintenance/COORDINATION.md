@@ -1,18 +1,18 @@
 # 母模板维护协调
 
-- shared_integrator: codex-bootstrap-integrator-20261011
-- selection_source: 用户2026-10-11指定“你现在负责整合”，随后授权合理改动并推送测试
+- shared_integrator: codex-audit-20261013
+- selection_source: 用户2026-10-13授权当前会话全面分析并解决项目不足，随后明确单人串行；本轮负责修复及维护记录整合
 - state: active
 - default_collaboration_mode: unset
 - default_mode_source: unset（本次串行实现不构成全工程默认）
 - backup_authorization: 无
-- previous_integrator: 未指定
+- previous_integrator: codex-bootstrap-integrator-20261011
 - last_handoff: 无
-- updated: 2026-10-11
+- updated: 2026-10-14
 
 ## 共享写入范围
 
-维护 CURRENT、轮次汇总、任务接收与跨任务整合；具体实现与发布权限按当前用户任务和 task 确定。本轮实现入口为 [BOOT005-CODEX](tasks/BOOT005-CODEX.md)，审计接收事实见 [BOOT004 RUN](runs/2026-10-11-bootstrap-audit.md)。
+维护 CURRENT、当前审查与修复的任务记录、测试和相关使用说明；具体范围见 [AUDIT001-CODEX](tasks/AUDIT001-CODEX.md)。本轮只授权本地修复与提交，未获得新一轮推送／发布授权；此前整合与发布事实保留在历史 task 和 Git 中。
 同一共享文件由实际整合者串行写入，worker 只写已接受 scope。active 表示当前职责，不表示进程在线、后台监控或自动调度；文件本身不是锁，也不自动通知其他客户端。
 
 ## 维护与分发

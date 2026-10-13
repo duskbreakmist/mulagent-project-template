@@ -1,8 +1,9 @@
 """只读检查模板完整性；v2 另检查 Markdown 本地链接和任务 status，不初始化或修复工程。"""
 import argparse
 import ast
+import hashlib
 import json
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 import re
 from urllib.parse import unquote, urlsplit
 
@@ -13,6 +14,44 @@ CORE_FILES = {"AGENTS.md", ".agents/PROTOCOL.md", ".agents/coordination.md",
               ".agents/tasks/TEMPLATE-lite.md", ".agents/template_manifest.json",
               "tools/check_template.py", "tools/template_manager.py"}
 DEVELOPMENT_PREFIXES = ("docs/maintenance/", "tests/", ".github/", "tools/legacy/")
+SEEDS = {"README.md", "agents_list.md", ".agents/coordination.md",
+         ".agents/tasks/README.md", "docs/CURRENT.md"}
+RUNTIME_DIRS = {".agents/tasks", ".agents/messages", ".agents/handoffs",
+                ".agents/feedback", ".agents/plans", ".agents/runs",
+                ".agents/scratch", "results", "docs/history"}
+
+
+def path_key(name):
+    # 与管理器保持同一静态路径约束；交叉回归防止漂移，不导入待检查代码。
+    if not isinstance(name, str) or re.search(r'[\x00-\x1f<>:"\\|?*]', name):
+        raise ValueError("非法模板路径")
+    relative = PurePosixPath(name)
+    if (relative.is_absolute() or ".." in relative.parts or not relative.parts or
+            name != relative.as_posix()):
+        raise ValueError("非法模板路径: " + name)
+    for part in relative.parts:
+        if (part.endswith((".", " ")) or
+                re.fullmatch(r"(?:con|prn|aux|nul|com[1-9]|lpt[1-9]|conin\$|conout\$)(?:\..*)?",
+                             part, re.IGNORECASE)):
+            raise ValueError("不可移植的模板路径: " + name)
+    key = name.casefold()
+    if (any(part.casefold() == ".git" for part in relative.parts) or
+            key in (".agents/template-state.json", ".agents/.template-update.lock",
+                    ".agents/template-updates") or key.startswith(".agents/template-updates/")):
+        raise ValueError("保留路径: " + name)
+    return key
+
+
+def protected(name):
+    name = path_key(name)
+    if name in {seed.casefold() for seed in SEEDS}:
+        return True
+    parent = PurePosixPath(name).parent.as_posix()
+    for directory in RUNTIME_DIRS:
+        if name.startswith(directory + "/"):
+            leaf = PurePosixPath(name).name
+            return parent != directory or not (leaf == "readme.md" or leaf.startswith("template"))
+    return False
 
 
 def safe_path(root, relative):
@@ -109,6 +148,22 @@ def check_task_statuses(root, directory=".agents/tasks"):
             raise ValueError("非法任务 status: " + str(path.relative_to(root)))
 
 
+def check_maintenance_seeds(root):
+    # 只在母仓库比较经审阅的空种子基准；业务工程可以正常填写这四份文件。
+    baseline = json.loads(readable_text(safe_path(root, "tests/fixtures/template-seeds.json")))
+    seeds = SEEDS - {"README.md"}
+    if not isinstance(baseline, dict) or set(baseline) != seeds:
+        raise ValueError("母模板空种子基准不完整")
+    for name, expected in baseline.items():
+        content = readable_text(safe_path(root, name)).encode("utf-8")
+        if hashlib.sha256(content).hexdigest() != expected:
+            raise ValueError("母模板分发种子发生变化，请核对空状态及基准: " + name)
+    allowed = {"README.md", "TEMPLATE.md", "TEMPLATE-lite.md"}
+    if any(path.name not in allowed or not path.is_file()
+           for path in safe_path(root, ".agents/tasks").iterdir()):
+        raise ValueError("母模板根任务目录不能保存实际维护任务")
+
+
 def validate(root, maintenance=False):
     root = Path(root).resolve()
     manifest_path = safe_path(root, ".agents/template_manifest.json")
@@ -127,30 +182,33 @@ def validate(root, maintenance=False):
     for name in required:
         if not isinstance(name, str):
             raise ValueError("清单项必须是相对路径字符串")
-        relative = Path(name)
-        if relative.is_absolute() or ".." in relative.parts or name in seen:
+        key = path_key(name)
+        if key in seen:
             raise ValueError("非法或重复路径: " + name)
-        seen.add(name)
-        if name.startswith(DEVELOPMENT_PREFIXES):
+        seen.add(key)
+        if key.startswith(DEVELOPMENT_PREFIXES):
             raise ValueError("开发资产不属于业务分发清单: " + name)
-        path = safe_path(root, relative)
+        if protected(name) and key not in {seed.casefold() for seed in SEEDS}:
+            raise ValueError("工程运行记录不属于业务分发清单: " + name)
+        path = safe_path(root, name)
         if not path.is_file():
             raise ValueError("缺少文件: " + name)
         text = readable_text(path)
-        if version == 2 and path.suffix == ".py":
+        if version == 2 and path.suffix.lower() == ".py":
             ast.parse(text, filename=name)  # 只校验语法，绝不执行待检查代码。
         if path.suffix.lower() == ".md":
             markdown.append((path, text))
     if version == 2:
         # 业务README不属于模板清单；存在时仍检查编码和链接，缺失时不伪装为漏分发。
         readme = safe_path(root, "README.md")
-        if "README.md" not in seen and readme.is_file():
+        if "readme.md" not in seen and readme.is_file():
             markdown.append((readme, readable_text(readme)))
         for path, text in markdown:
             check_links(root, path, text)
         check_task_statuses(root)
     if maintenance:
         # 显式维护模式，避免把业务项目同名目录或历史快照当成活跃任务板。
+        check_maintenance_seeds(root)
         for name in ("README.md", "CURRENT.md", "COORDINATION.md"):
             path = safe_path(root, "docs/maintenance/" + name)
             check_links(root, path, readable_text(path))

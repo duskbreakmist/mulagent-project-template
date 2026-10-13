@@ -209,6 +209,8 @@ class Workbench:
                 implementation = self.row(conn, "tasks", subject)
                 if implementation["kind"] != "development":
                     raise ValueError("测试 subject 必须是开发任务")
+                if implementation["status"] == "done":
+                    raise ValueError("已验收开发任务需要新建修订任务，不能事后追加验收门槛")
                 if subject not in dependencies:
                     dependencies.append(subject)
             elif subject is not None:
@@ -302,6 +304,9 @@ class Workbench:
             result = {key: item[key] for key in ("id", "title", "kind", "mode", "epoch", "contract")}
             result["checkpoint"] = json.loads(item["checkpoint"])
             result["scopes"] = json.loads(item["scopes"])
+            pending = json.loads(item["result"]).get("pending_adapter_result")
+            if pending is not None:
+                result["pending_result"] = pending
             if item["subject"]:
                 subject = self.row(conn, "tasks", item["subject"])
                 result["implementation"] = {"task": subject["id"], "contract": subject["contract"],
@@ -342,8 +347,15 @@ class Workbench:
                 text(result.get("feedback"), "测试反馈")
                 if agent in json.loads(subject["developers"]):
                     raise ValueError("不能验收自己开发过的功能")
-                conn.execute("UPDATE tasks SET status=? WHERE id=?",
-                             ("done" if result["passed"] else "todo", subject["id"]))
+                # 所有关联测试都结束才解封该版本，避免首个结果让其他在途测试失效。
+                peers = list(conn.execute("SELECT status,result FROM tasks WHERE subject=? AND id<>?",
+                                          (subject["id"], task)))
+                finished = all(peer["status"] == "done" and
+                               json.loads(peer["result"]).get("revision") == revision for peer in peers)
+                passed = result["passed"] and all(json.loads(peer["result"]).get("passed") is True
+                                                   for peer in peers)
+                subject_status = ("done" if passed else "todo") if finished else "awaiting_review"
+                conn.execute("UPDATE tasks SET status=? WHERE id=?", (subject_status, subject["id"]))
                 # 隐藏用例留在测试任务；反馈路由只发送显式复现和结论。
                 public = {key: result[key] for key in ("revision", "passed", "feedback")}
                 for developer in json.loads(subject["developers"]):
@@ -404,6 +416,11 @@ class Workbench:
                 members = set(json.loads(run["participants"]))
                 members.update(row[0] for row in conn.execute(
                     "SELECT owner FROM tasks WHERE run_id=? AND owner IS NOT NULL", (run["id"],)))
+                # 交稿或接力后 owner 会清空，历史作者仍受本轮封存约束。
+                members.update(row[0] for row in conn.execute(
+                    "SELECT author FROM reports WHERE run=?", (run["id"],)))
+                for row in conn.execute("SELECT developers FROM tasks WHERE run_id=?", (run["id"],)):
+                    members.update(json.loads(row[0]))
                 if sender in members and (recipient in members or recipient == run["integrator"]):
                     raise ValueError("调研首稿封存阶段不转发参与者之间的自由文本")
             return {"id": self.message(conn, sender, recipient, task, body)}
@@ -598,12 +615,14 @@ class Workbench:
                        AGENT_WORKBENCH_EPOCH=str(selected["epoch"]))
             result = None
             runner_error = None
+            process_started = False
             stderr_path = self.directory / (task + "-" + str(selected["epoch"]) + "-stderr.log")
             try:
                 with stderr_path.open("w", encoding="utf-8") as stderr:
                     # shell=False 避免把用户配置的参数重新解释成 shell 命令。
                     with subprocess.Popen(command, cwd=actor["workspace"], env=env, stdout=subprocess.PIPE,
                                           stderr=stderr, text=True, encoding="utf-8") as process:
+                        process_started = True
                         for line in process.stdout:
                             self.heartbeat(selected["agent"])
                             try:
@@ -622,7 +641,8 @@ class Workbench:
                                 runner_error = str(error)
                         returncode = process.wait()
             except OSError as error:
-                self.adapter_stop(task, selected, "adapter_error", True)
+                self.adapter_stop(task, selected, "adapter_error",
+                                  not process_started or bool(actor["foreground"]))
                 return {"status": "adapter_error", "error": str(error)}
             if returncode in json.loads(actor["quota_codes"]):
                 outcome = self.adapter_stop(task, selected, "quota_exhausted", bool(actor["foreground"]))
@@ -636,6 +656,8 @@ class Workbench:
                 return {"status": "adapter_error", "exit_code": returncode,
                         "error": runner_error or "适配器没有成功提交 result"}
             try:
+                if not actor["foreground"]:
+                    return self._hold_adapter_result(task, selected, result)
                 return self.finish(task, selected["agent"], selected["epoch"], result)
             except ValueError as error:
                 outcome = self.adapter_stop(task, selected, "adapter_error", bool(actor["foreground"]))
@@ -643,6 +665,18 @@ class Workbench:
                     return outcome
                 return {"status": "adapter_error", "error": str(error)}
         return {"status": "waiting", "reason": "达到本轮接力次数上限"}
+
+    def _hold_adapter_result(self, task, claim, result):
+        if not isinstance(result, dict) or len(dump(result)) > 64000:
+            raise ValueError("result 必须是小型 JSON 对象")
+        with self.connection(True) as conn:
+            self._owned(conn, task, claim["agent"], claim["epoch"])
+            # 成功退出也不证明后台写者已停；保存候选并撤销旧代次，继续占用 scope。
+            pending = {"pending_adapter_result": result}
+            conn.execute("UPDATE tasks SET status='stopping',epoch=epoch+1,result=? WHERE id=?",
+                         (dump(pending), task))
+            self.event(conn, "stop", task, "适配器有候选结果，等待人工确认所有写者停止")
+        return {"status": "stopping", "reason": "确认实际停写后 takeover，审查 context.pending_result 再 finish"}
 
     def adapter_stop(self, task, claim, reason, stopped):
         try:

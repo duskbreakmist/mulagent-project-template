@@ -162,6 +162,42 @@ class WorkbenchTests(unittest.TestCase):
                       {"revision": "commit-b", "passed": True, "feedback": "验收通过"})
         self.assertEqual(["done", "done"], [x["status"] for x in self.w.status()["tasks"]])
 
+    def test_all_tests_finish_before_acceptance_or_revision_is_released(self):
+        self.implement()
+        self.w.join("tester2", "第二独立测试", ["tester"])
+        self.w.create_task("T2", "补充验收", "test", [], "另一验收维度", subject="D1")
+        first = self.w.claim("T1", "tester")
+        second = self.w.claim("T2", "tester2")
+        self.w.finish("T1", "tester", first["epoch"],
+                      {"revision": "commit-a", "passed": True, "feedback": "通过"})
+        self.assertEqual("awaiting_review", self.w.status()["tasks"][0]["status"])
+        self.w.finish("T2", "tester2", second["epoch"],
+                      {"revision": "commit-a", "passed": False, "feedback": "发现边界错误"})
+        self.assertEqual(["todo", "done", "done"], [x["status"] for x in self.w.status()["tasks"]])
+        self.assertTrue(all(x["owner"] is None for x in self.w.status()["tasks"]))
+        revision = self.w.claim("D1", "backup")
+        self.w.finish("D1", "backup", revision["epoch"], {"revision": "commit-b"})
+        for task, agent in (("T1", "tester"), ("T2", "tester2")):
+            claim = self.w.claim(task, agent)
+            self.w.finish(task, agent, claim["epoch"],
+                          {"revision": "commit-b", "passed": True, "feedback": "修订通过"})
+        self.assertEqual(["done", "done", "done"], [x["status"] for x in self.w.status()["tasks"]])
+        with self.assertRaisesRegex(ValueError, "修订任务"):
+            self.w.create_task("T3", "迟到验收", "test", [], "新维度", subject="D1")
+
+    def test_failed_test_keeps_revision_frozen_until_pending_test_finishes(self):
+        self.implement()
+        self.w.create_task("T2", "补充验收", "test", [], "稍后开始", subject="D1")
+        first = self.w.claim("T1", "tester")
+        self.w.finish("T1", "tester", first["epoch"],
+                      {"revision": "commit-a", "passed": False, "feedback": "需要修复"})
+        with self.assertRaises(ValueError):
+            self.w.claim("D1", "backup")
+        second = self.w.claim("T2", "tester")
+        self.w.finish("T2", "tester", second["epoch"],
+                      {"revision": "commit-a", "passed": True, "feedback": "本项通过"})
+        self.assertEqual("todo", self.w.status()["tasks"][0]["status"])
+
     def test_research_stays_sealed_until_close_then_designated_synthesis(self):
         self.research()
         self.w.submit_report("R1", "r1", self.report("unique-first-draft"))
@@ -237,6 +273,22 @@ print(json.dumps({"type":"result","data":{"revision":"resumed-commit"}}),flush=T
         self.assertEqual("unknown", self.w.status()["tasks"][0]["owner"])
         self.assertEqual([], self.w.inbox("backup"))
 
+    def test_successful_unknown_lifetime_holds_scope_and_result_for_human(self):
+        command = self.adapter("unknown-success", 'import json\n'
+                               'print(json.dumps({"type":"result","data":{"revision":"candidate"}}))\n')
+        self.w.join("unknown", "生命周期未验证", ["developer"], command)
+        self.task(backups=["unknown", "backup"])
+        self.assertEqual("stopping", self.w.dispatch("D1")["status"])
+        self.assertEqual("unknown", self.w.status()["tasks"][0]["owner"])
+        self.task("D2", ["src/auth/file.py"])
+        with self.assertRaisesRegex(ValueError, "重叠"):
+            self.w.claim("D2", "backup")
+        self.assertEqual("candidate", self.w.context("D1", "unknown")["pending_result"]["revision"])
+        human = self.w.takeover("D1", "human", stopped=True)
+        pending = self.w.context("D1", "human")["pending_result"]
+        self.assertEqual("awaiting_review", self.w.finish("D1", "human", human["epoch"], pending)["status"])
+        self.w.claim("D2", "backup")
+
     def test_unclassified_failure_is_not_quota_and_manual_transport_is_explicit(self):
         command = self.adapter("failure", "import sys\nsys.exit(9)\n")
         self.w.join("failure", "未知错误适配器", ["developer"], command, [75], foreground=True)
@@ -300,6 +352,9 @@ print(json.dumps({"type":"result","data":{"revision":"resumed-commit"}}),flush=T
         with self.assertRaises(ValueError):
             self.w.send("r3", "r2", "RESEARCH1", "偷看结论")
         self.w.finish("RESEARCH1", "r3", new["epoch"], {"report": self.report("接力完成候选一")})
+        for recipient in ("r2", "human"):
+            with self.subTest(recipient=recipient), self.assertRaisesRegex(ValueError, "封存"):
+                self.w.send("r3", recipient, "RESEARCH1", "交稿后仍不能转发首稿")
         self.assertEqual({}, self.w.view_run("R1", "r1")["reports"])
         self.assertEqual("r3", self.w.view_run("R1", "r3")["reports"]["r1"]["author"])
         self.w.create_task("RESEARCH2", "候选二", "research", ["results/R1/r2"],
@@ -310,6 +365,17 @@ print(json.dumps({"type":"result","data":{"revision":"resumed-commit"}}),flush=T
         self.w.finish("RESEARCH2", "r2", second["epoch"], {"report": self.report("候选二")})
         self.w.close_run("R1", "human")
         self.assertEqual("r3", self.w.view_run("R1", "human")["reports"]["r1"]["author"])
+        self.w.send("r3", "r2", "RESEARCH1", "关闭后允许讨论")
+
+    def test_stopped_research_backup_remains_sealed_before_submission(self):
+        self.research()
+        self.w.join("r3", "中途接手者", ["researcher"])
+        self.w.create_task("RESEARCH1", "候选一", "research", [], "公共问题", run="R1", slot="r1")
+        self.w.claim("RESEARCH1", "r3")
+        self.w.stop("RESEARCH1", "paused", True)
+        with self.assertRaisesRegex(ValueError, "封存"):
+            self.w.send("r3", "r2", "RESEARCH1", "中途获得的候选内容")
+        self.assertEqual([], self.w.inbox("r2"))
 
     def test_research_does_not_reuse_another_independent_candidate_as_backup(self):
         self.research()

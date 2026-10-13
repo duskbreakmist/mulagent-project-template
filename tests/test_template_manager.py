@@ -62,7 +62,7 @@ class TemplateManagerTests(unittest.TestCase):
                 for p in self.project.rglob("*") if p.is_file() and ".git" not in p.relative_to(self.project).parts}
 
     def modify_source(self, name, text):
-        (self.source / name).write_text(text, encoding="utf-8", newline="\n")
+        (self.source / name).write_bytes(text.encode("utf-8"))
         self.commit(self.source)
 
     def plan_file(self):
@@ -104,7 +104,7 @@ class TemplateManagerTests(unittest.TestCase):
         def write(name, text):
             path = project / name
             path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(text, encoding="utf-8", newline="\n")
+            path.write_bytes(text.encode("utf-8"))
 
         def execute(*args):
             return subprocess.run([sys.executable, *args], cwd=project, capture_output=True)
@@ -414,13 +414,34 @@ class LabelTests(unittest.TestCase):
     def test_manifest_rejects_runtime_records_and_path_escape(self):
         manifest = self.source / ".agents/template_manifest.json"
         original = manifest.read_text(encoding="utf-8")
-        for bad in ("../outside.md", ".agents/tasks/REAL001.md", ".git/config"):
+        for bad in ("../outside.md", ".agents/tasks/REAL001.md", ".git/config",
+                    ".GIT/config", ".AGENTS/template-state.json", "./AGENTS.md", "agents.md"):
             data = json.loads(original)
             data["required"].append(bad)
             manifest.write_text(json.dumps(data), encoding="utf-8")
             self.commit(self.source)
             with self.assertRaises(ValueError):
                 M.update(self.project, check=True)
+
+    def test_case_aliased_state_and_plan_are_rejected_before_writes(self):
+        state_path = self.project / M.STATE
+        original = state_path.read_bytes()
+        state = json.loads(original)
+        state["files"]["agents.md"] = state["files"]["AGENTS.md"]
+        state_path.write_text(json.dumps(state), encoding="utf-8")
+        with self.assertRaisesRegex(ValueError, "重复状态路径"):
+            M.read_state(self.project)
+        state_path.write_bytes(original)
+        self.modify_source("AGENTS.md", "# 新的规则\n")
+        with tempfile.TemporaryDirectory() as temp:
+            upstream = M.Upstream(temp, str(self.source), "main")
+            plan = M.make_plan(self.project, upstream, M.read_state(self.project), temp)
+            plan["entries"].append(dict(plan["entries"][0], path="agents.md"))
+            report = M.save_plan(self.project, plan)
+        before = self.digest_project()
+        with self.assertRaisesRegex(ValueError, "重复计划文件"):
+            M.apply_plan(self.project, report)
+        self.assertEqual(before, self.digest_project())
 
     def test_upstream_core_removal_is_rejected_before_installation(self):
         path = self.source / ".agents/template_manifest.json"
@@ -459,6 +480,23 @@ class LabelTests(unittest.TestCase):
                 M.update(self.project)
         for name, data in before.items():
             self.assertEqual(data, (self.project / name).read_bytes())
+
+    def test_concurrent_state_deletion_does_not_prevent_other_file_rollback(self):
+        self.modify_source("AGENTS.md", "# new rule\n")
+        self.modify_source("template_readme.md", "# new guide\n")
+        before = (self.project / "AGENTS.md").read_bytes()
+        original_write = M.atomic_write
+
+        def fail(path, data):
+            if path == self.project / "template_readme.md":
+                (self.project / M.STATE).unlink()
+                raise OSError("simulated failure after external state deletion")
+            return original_write(path, data)
+
+        with patch.object(M, "atomic_write", side_effect=fail), self.assertRaisesRegex(OSError, "external"):
+            M.update(self.project)
+        self.assertEqual(before, (self.project / "AGENTS.md").read_bytes())
+        self.assertFalse((self.project / M.STATE).exists())
 
 
     def test_relative_source_is_persisted_independently_of_cwd(self):

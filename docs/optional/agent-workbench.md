@@ -48,6 +48,12 @@ python tools/agent_workbench.py --root "ROOT" snapshot
 
 snapshot 输出方便保存为 Markdown 的进度快照；它不是第二份可写任务板。业务源码与正式报告继续通过各工程 Git 管理。运行状态保存在 ROOT/.agent-relay/workbench/state.sqlite3，沿用已有 .agent-relay 忽略规则，不把当前身份分发给其他项目。
 
+### 与正式 task 的关系
+
+启用工作台前，由任务整合者在正式 Markdown task 中确定用户授权、scope、协作模式和验收，再用同一 ID 创建工作台任务。Markdown 保存授权与交付证据；数据库保存运行中的 owner、epoch、占用范围、消息与检查点。客户端通过工作台认领，不在 Markdown 中另行抢占 owner。
+
+整合者在开工、交付、验收及交接时，把数据库结果核对后记回正式 task／索引／CURRENT。`active` 对应执行中，`awaiting_review` 对应待审查；`stopping` 表示等待确认停写，不能直接记作完成。正式任务的完成仍以其验收标准为准。两种记录当前没有自动同步；数据库丢失时必须先确认实际写者已停，再按 Git 中的交付记录恢复，不能仅凭旧快照释放占用。
+
 ## 快速演示
 
 先创建一个新的演示目录，并放置 .agents/PROTOCOL.md（可复制当前协议）。不要对真实运行目录执行 demo：
@@ -148,7 +154,9 @@ join.json：
 2. 测试任务 kind=test、subject=AUTH001，contract 存独立测试计划。此 subject 自动成为依赖；只有交付冻结后能领取测试。
 3. 开发参与历史中的任何会话，即使具有 tester 角色，也不能测试自己的功能。
 4. 测试 result 必须含与交付相同的 revision、布尔 passed、明确 feedback。可选 private 保存隐藏用例信息。
-5. 只把 revision／passed／feedback 路由给开发者，private 与测试计划不自动转发。失败将开发任务恢复 todo；新 revision 提交后旧测试任务重置，必须重新验收。
+5. 只把 revision／passed／feedback 路由给开发者，private 与测试计划不自动转发。本轮测试全部结束且包含失败时，开发任务恢复 todo；新 revision 提交后旧测试任务重置，必须重新验收。
+
+同一开发任务可关联多个独立测试，所有测试都必须完成同一 revision，才结束该轮验收。尚有未完成测试时保留 awaiting_review；全部通过才为 done，任一失败则在全部结束后恢复 todo。可以在其余测试未开始前先提交失败反馈，但开发修订须等待本轮结束。已验收为 done 后要补充新的验收目标，应创建修订任务。
 
 “避免隐式泄露”在本原型中指默认上下文和 API 发布门槛：它不继承开发者完整对话，也不把隐藏内容塞进状态摘要。它不是文件系统保密沙箱。数据库文件、任意自报 Agent ID 和本地管理 URL 都属于同一受信任用户的管理边界；真实盲测／隐藏用例要给客户端配置独立上下文、隔离测试资料和必要的文件访问权限。worktree 只隔离修改，不阻止读取其他目录。
 
@@ -195,6 +203,8 @@ python tools/agent_workbench.py --root "ROOT" dispatch --task AUTH001 --max-hops
 监督器按任务 backups 顺序选择可用、角色匹配且无在途任务的会话。它将任务简报路径和 root／task／agent／epoch 放在 AGENT_WORKBENCH_* 环境变量，不把 API Key 放进记录。收到明确额度退出且确认停写，禁用耗尽会话并尝试下一位；保留最新 checkpoint。没有 command 的接手者进入 manual，工作台发本地通知并给出 context，由人启动客户端。
 
 未知错误返回 adapter_error，不能当成余额耗尽自动轮换；未知进程生命周期进入 stopping 并继续占用范围。长时间无心跳仅显示需核查，不自动释放占用。监督器只自动执行已由操作者注册的参数数组和有序备用名单，不会驱动当前桌面会话、发送邮件或读取账户凭据。
+
+未知生命周期的适配器即使成功返回结果，也进入 stopping，保留候选为 `context.pending_result`。确认所有写者已停后，用 `takeover(stopped=true)` 接手、检查候选对应的代码与版本，再通过 `finish` 正式交付；成功退出本身不作为后台写者停写证明。调研的备用作者在停止或交稿后仍属于该轮封存成员，轮次关闭前不能通过消息接口向其他候选或汇总者发送自由文本。
 
 ## 验证与下一步
 
