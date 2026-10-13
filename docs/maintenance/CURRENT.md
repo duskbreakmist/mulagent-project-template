@@ -2,9 +2,10 @@
 
 写入前先 git status 确认 HEAD 未变；提交只 add 自己改动的文件，不用 git add .。
 
-## 母模板与业务 README 分离（进行中）
+## 母模板与业务 README 分离（已完成）
 
-2026-10-13 [DOC005-CODEX](tasks/DOC005-CODEX.md) / codex-bootstrap-integrator-20261011：用户授权分离母README并核对相关引用；新清单34项，init独立生成业务README并随Git保存，模板使用须知保留template_readme文件名。升级仅移除旧README基线，实际文件保留；完整回归正在执行。
+2026-10-13 [DOC005-CODEX](tasks/DOC005-CODEX.md) / codex-bootstrap-integrator-20261011：母README退出新清单（34项）；init --commit另生成并提交精简业务README，不进入模板基线。template_readme保留文件名并承担模板使用须知；相关活动引用区分业务／模板／母仓库说明。
+实现b629ecf已推main，[Windows／Ubuntu完整CI](https://github.com/duskbreakmist/mulagent-project-template/actions/runs/38364780433)均成功（最终94项）。实际v0.2.0旧CLI→新CLI和新工程BOOTSTRAP演练通过；旧README／定制／删除保留，旧基线仅清理元数据，预览只读。v0.2.0标签不移动；ENG001旧摘要归入维护历史。
 
 ## 业务工程多 AI 试点验收（本轮已完成）
 
@@ -15,11 +16,6 @@
 
 2026-10-11 [REL001-CODEX](tasks/REL001-CODEX.md) / codex-bootstrap-integrator-20261011：[v0.2.0](https://github.com/duskbreakmist/mulagent-project-template/releases/tag/v0.2.0)正式发布，标签固定64a135e，Apache-2.0原文与范围说明随35项分发；补update --ref与固定版本安装／升级说明，业务根LICENSE不覆盖。
 90项本地完整回归、35项维护检查、真实标签安装／v0.1.1升级及GitHub源码归档逐文件比对通过；[Windows／Ubuntu CI](https://github.com/duskbreakmist/mulagent-project-template/actions/runs/38143819730)均成功。标准Git HTTPS在本机仍受连接限制，未宣称远端clone成功；BOOT004旧摘要归入维护历史，旧标签不移动。
-
-## 业务工程约定与小任务验收（本轮已完成）
-
-2026-10-11 [ENG001-CODEX](tasks/ENG001-CODEX.md) / codex-bootstrap-integrator-20261011：工程约定集中到README／引用文档，AGENTS与两种task格式接入，补检查边界及旧工程手工保留README的迁移说明，保持33项分发。
-独立CLI示例完成BOOTSTRAP→业务红／绿测试3项→核对提交／记录，86项完整回归通过；57ef7f1原样发布，[Windows／Ubuntu CI](https://github.com/duskbreakmist/mulagent-project-template/actions/runs/38139625505)均成功。不宣称真实产品上线或独立AI审查；BOOT001旧摘要保存到维护历史。
 
 ## 多实例同源审计轮次（已收尾）
 

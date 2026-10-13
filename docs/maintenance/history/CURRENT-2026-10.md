@@ -82,3 +82,8 @@ check 33 项与 diff 检查通过；建议均未实施，待用户确认后另�
 2026-10-11 后续应用评估：已足够作为有人监督的业务开发协作基础；业务目标、构建／测试、验收和自身CI／发布流程由目标工程定义。下一步以真实小任务验证完整交付闭环，详见task模板备注。
 
 2026-10-11 PILOT001-WB归档时仅调整相对链接并去掉CI行内链接，保留原文与当时验证语境；该闭环已由 PILOT001-WB 试点实证串行形态，后续发布见 REL001-CODEX v0.2.0。
+
+## 业务工程约定与小任务验收（本轮已完成）
+
+2026-10-11 [ENG001-CODEX](../tasks/ENG001-CODEX.md) / codex-bootstrap-integrator-20261011：工程约定集中到README／引用文档，AGENTS与两种task格式接入，补检查边界及旧工程手工保留README的迁移说明，保持33项分发。
+独立CLI示例完成BOOTSTRAP→业务红／绿测试3项→核对提交／记录，86项完整回归通过；57ef7f1原样发布，[Windows／Ubuntu CI](https://github.com/duskbreakmist/mulagent-project-template/actions/runs/38139625505)均成功。不宣称真实产品上线或独立AI审查；BOOT001旧摘要保存到维护历史。

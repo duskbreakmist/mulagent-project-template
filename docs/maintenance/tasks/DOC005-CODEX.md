@@ -1,6 +1,6 @@
 # DOC005-CODEX 分离母模板与业务README
 
-- status: in_progress
+- status: done
 - assignment: accepted
 - collaboration_mode: serial
 - mode_source: 用户2026-10-13授权实施README分离并同步相关引用，单人串行维护
@@ -25,9 +25,12 @@ template_readme保留文件名并改为模板使用须知，集中工程约定�
 
 ## Verification
 
-93项完整回归通过（243.397秒，退出0，.test-tmp/DOC005-full-tests.log）；补充元数据用例单独通过（8.687秒）。最终增加旧清单回选保护后，两个legacy_readme定向用例通过（26.124秒）；当前共94项，双平台完整CI待推送核对。
+93项完整回归通过（243.397秒，退出0，.test-tmp/DOC005-full-tests.log）；补充元数据用例单独通过（8.687秒）。最终增加旧清单回选保护后，两个legacy_readme定向用例通过（26.124秒）；最终源码共94项；[Windows／Ubuntu完整CI](https://github.com/duskbreakmist/mulagent-project-template/actions/runs/38364780433)均成功。
 新工程README正常由BOOTSTRAP提交、不会出现在模板基线；母README独立变化不影响业务文件；旧清单升级保留业务定制、实际删除及回选旧清单不恢复README；仅元数据迁移预览只读。34项维护结构／编码／链接与diff检查通过。
+
+实际Git快照CLI演练：以v0.2.0安装旧工程，改业务README并保存，再用其自带旧CLI切到本次main提交；内容不变、旧基线项如预期暂留。提交后用已更新CLI预览／实际清理（0文件变更），基线项移除且业务内容保留；最终34项检查与独立Git干净。新版空工程init --commit生成精简README，Git确认跟踪且模板基线不含它，34项检查通过。
+实现提交b629ecf2715c27a1ef422e8c12be45cc9f0bdc76通过官方API原样推送，逐项核对32个Git对象且非强制更新；包含此前用户授权的PILOT001文档提交并保留其作者与历史。已核对远端main与本地提交一致，不移动任何发布标签。
 
 ## Remaining
 
-本地实施与验证完成；沿用用户此前合理改动并推送测试授权，显式暂存审查、推送main并核对最终提交CI。已发布v0.2.0标签不移动，不将本次新行为声称为旧标签已生效。
+本次目标完成，收尾仅保存维护记录。新版行为在main提交生效；已发布v0.2.0标签及已有业务工程未改，不自动升级它们或生成新release。实际网络Git clone仍未复验，本地版本演练使用与公开标签一致的Git快照。
