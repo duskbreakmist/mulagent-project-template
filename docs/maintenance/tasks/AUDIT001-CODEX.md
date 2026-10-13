@@ -1,6 +1,6 @@
 # AUDIT001-CODEX 全面审查与缺陷修复
 
-- status: in_progress
+- status: done
 - assignment: accepted
 - collaboration_mode: serial
 - mode_source: 用户 2026-10-13 要求全面细致分析当前项目不足、需求满足程度和可维护性，并解决问题
@@ -16,7 +16,7 @@
 
 ## Objective
 
-按母仓库 [维护约定](../README.md) 审查需求、协议、安装升级、检查器、可选工具及测试维护能力；修复已确认缺陷，交付可追溯的评估、回归结果和本地提交。
+按母仓库 [维护约定](../README.md) 审查需求、协议、安装升级、检查器、可选工具及测试维护能力；修复已确认缺陷，交付可追溯的评估、回归结果和提交。用户随后追加授权推送指定仓库main并完成CI验收。
 
 ## Mode Decision
 
@@ -44,11 +44,11 @@
 - 修复后定向验证：路径交叉 2 项、工作台 22 项（5.847 秒）、检查器 25 项（23.036 秒），全部通过。
 - 最终 `python -m unittest discover -s tests -q`：104 项，477.953 秒，退出 0；本机日志 `.test-tmp/AUDIT001-full-tests.log`（忽略，不进入分发）。
 - 最终维护检查 `TEMPLATE_OK files=34`；10 份活动 Python／测试文件按 Python 3.9 语法解析通过，报告本地链接与 `git diff --check` 通过。语法解析不代替最低版本运行时验收。
-- 当前 owner 审查实际 diff；按本仓库规则显式暂存并保存本地提交。真实客户端、跨机器、浏览器 UI 及本轮远端四组合 CI 未重验，不引用历史 CI 代替当前结果。
+- 当前 owner 审查实际 diff；按本仓库规则显式暂存并保存本地提交。本地阶段未验远端CI，用户追加授权后的结果见下节；真实客户端、跨机器、浏览器 UI 未重验，不引用历史结果代替当前验证。
 
 ## Remaining
 
-本地审查与修复阶段已完成；用户追加推送与测试要求，远端四组合 CI 正在验收。真实客户端／worktree 实机整合／跨机器／权限隔离的后续验收见评估报告，需要具体场景，不属于本轮已完成验证。
+本轮审查、修复和追加的远端四组合 CI 验收均已完成。真实客户端／worktree 实机整合／跨机器／权限隔离的后续验收见评估报告，需要具体场景，不属于本轮已完成验证。
 
 ## 推送与 CI 验收（2026-10-14）
 
@@ -56,6 +56,16 @@
 - [首轮CI](https://github.com/duskbreakmist/mulagent-project-template/actions/runs/38432155172)：Ubuntu 3.9／3.13、Windows 3.13成功；Windows 3.9.13运行104项后仅相对源测试报错，四组模板完整性检查均通过。
 - 失败测试只mock `os.getcwd`，没有改变实际进程目录；改为以明确 `cwd` 的CLI子进程执行相对源初始化，并在目标目录执行更新预览。保留来源绝对路径断言，不跳过测试、不修改产品路径逻辑。
 - 修改范围：`tests/test_template_manager.py` 与本目录维护协调、CURRENT、task及评估记录；定向相对源回归1项通过（9.457秒），维护检查34项与 `git diff --check` 通过。最低版本运行时结果以修复提交的远端CI为准，当前不冒充本机已运行Python 3.9。
+- 测试修复提交 `c4d9f5aedfb518e4475a28ea1bed4fe093cd65e6` 已正常推送；[修复后CI](https://github.com/duskbreakmist/mulagent-project-template/actions/runs/38433606962)四组均成功，日志逐组确认104项回归与 `TEMPLATE_OK files=34`，没有跳过相对源用例。
+
+| CI环境 | 实际Python | unittest结果 |
+| --- | --- | --- |
+| Ubuntu | 3.9.25 | 104项，20.544秒，OK |
+| Ubuntu | 3.13.16 | 104项，16.171秒，OK |
+| Windows | 3.9.13 | 104项，169.066秒，OK |
+| Windows | 3.13.15 | 104项，172.402秒，OK |
+
+本节验收对应上述修复提交。后续仅补维护记录，交付前仍按最终推送SHA核对CI，不以记录更新替代测试，也不递归提交每次文档提交的CI结果。
 
 ## Problems
 
