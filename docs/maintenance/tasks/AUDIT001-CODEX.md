@@ -1,6 +1,6 @@
 # AUDIT001-CODEX 全面审查与缺陷修复
 
-- status: done
+- status: in_progress
 - assignment: accepted
 - collaboration_mode: serial
 - mode_source: 用户 2026-10-13 要求全面细致分析当前项目不足、需求满足程度和可维护性，并解决问题
@@ -48,7 +48,14 @@
 
 ## Remaining
 
-本轮审查与修复无剩余实现。真实客户端／worktree 实机整合／跨机器／权限隔离／远端 CI 的后续验收见评估报告；需要具体场景或新一轮发布授权，不属于本轮已完成验证。
+本地审查与修复阶段已完成；用户追加推送与测试要求，远端四组合 CI 正在验收。真实客户端／worktree 实机整合／跨机器／权限隔离的后续验收见评估报告，需要具体场景，不属于本轮已完成验证。
+
+## 推送与 CI 验收（2026-10-14）
+
+- 用户明确授权将37ab41a及必要CI修复／验证记录正常推送到 `https://github.com/duskbreakmist/mulagent-project-template` 的 main；首次推送已成功，不强推、不改标签。
+- [首轮CI](https://github.com/duskbreakmist/mulagent-project-template/actions/runs/38432155172)：Ubuntu 3.9／3.13、Windows 3.13成功；Windows 3.9.13运行104项后仅相对源测试报错，四组模板完整性检查均通过。
+- 失败测试只mock `os.getcwd`，没有改变实际进程目录；改为以明确 `cwd` 的CLI子进程执行相对源初始化，并在目标目录执行更新预览。保留来源绝对路径断言，不跳过测试、不修改产品路径逻辑。
+- 修改范围：`tests/test_template_manager.py` 与本目录维护协调、CURRENT、task及评估记录；定向相对源回归1项通过（9.457秒），维护检查34项与 `git diff --check` 通过。最低版本运行时结果以修复提交的远端CI为准，当前不冒充本机已运行Python 3.9。
 
 ## Problems
 

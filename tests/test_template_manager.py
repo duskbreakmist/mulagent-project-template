@@ -504,12 +504,17 @@ class LabelTests(unittest.TestCase):
         target.mkdir()
         self.git(target, "init", "-b", "main")
         self.identity(target)
-        with patch("os.getcwd", return_value=str(self.folder)):
-            M.initialize(target, "source", "main", no_git=True)
+        # Windows 旧版 pathlib 不一定经过 os.getcwd；用真实子进程目录验证 CLI。
+        command = [sys.executable, str(SOURCE / "tools/template_manager.py")]
+        initialized = subprocess.run(
+            command + ["init", "--root", target.name, "--source", "source", "--ref", "main", "--no-git"],
+            cwd=self.folder, capture_output=True)
+        self.assertEqual(0, initialized.returncode, initialized.stdout + initialized.stderr)
         self.commit(target)
         self.assertEqual(str(self.source.resolve()), M.read_state(target)["source"])
-        with patch("os.getcwd", return_value=str(target)):
-            self.assertEqual(0, M.update(target, check=True))
+        updated = subprocess.run(command + ["update", "--check"],
+                                 cwd=target, capture_output=True)
+        self.assertEqual(0, updated.returncode, updated.stdout + updated.stderr)
 
     def test_explicit_source_recovers_legacy_metadata_without_preview_writes(self):
         state = M.read_state(self.project)

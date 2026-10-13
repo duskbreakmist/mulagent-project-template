@@ -12,7 +12,7 @@
 
 ## 共享写入范围
 
-维护 CURRENT、当前审查与修复的任务记录、测试和相关使用说明；具体范围见 [AUDIT001-CODEX](tasks/AUDIT001-CODEX.md)。本轮只授权本地修复与提交，未获得新一轮推送／发布授权；此前整合与发布事实保留在历史 task 和 Git 中。
+维护 CURRENT、当前审查与修复的任务记录、测试和相关使用说明；具体范围见 [AUDIT001-CODEX](tasks/AUDIT001-CODEX.md)。用户于2026-10-14明确确认将37ab41a及必要CI修复／验证记录正常推送到 duskbreakmist/mulagent-project-template 的 main 并测试；不强推、不发布或移动版本标签。此前整合与发布事实保留在历史 task 和 Git 中。
 同一共享文件由实际整合者串行写入，worker 只写已接受 scope。active 表示当前职责，不表示进程在线、后台监控或自动调度；文件本身不是锁，也不自动通知其他客户端。
 
 ## 维护与分发
