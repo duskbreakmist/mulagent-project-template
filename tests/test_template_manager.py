@@ -217,6 +217,9 @@ class LabelTests(unittest.TestCase):
         text = (self.project / "README.md").read_text(encoding="utf-8")
         self.assertEqual(M.PROJECT_README, text)
         self.assertIn("## 工程约定", text)
+        self.assertIn("## 项目概述", text)
+        self.assertIn("## 运行与验证", text)
+        self.assertNotIn("本文属于业务工程", text)
         # 母仓库README即使存在且后来改动，也不会进入安装／更新。
         self.modify_source("README.md", "# 母模板维护专用说明\n")
         self.assertEqual(0, M.update(self.project))
@@ -465,6 +468,153 @@ class LabelTests(unittest.TestCase):
         before = self.digest_project()
         self.assertEqual(0, M.update(self.project))
         self.assertEqual(before, self.digest_project())
+
+    def test_cli_update_commits_only_template_paths_and_is_idempotent(self):
+        business = "# 标签服务\n\n规范化用户标签的业务工具。\n"
+        (self.project / "README.md").write_text(business, encoding="utf-8")
+        self.commit(self.project)
+        head = self.git(self.project, "rev-parse", "HEAD")
+        name = ".agents/guides/[update].md"
+        (self.source / name).write_text("# 新规则\n", encoding="utf-8")
+        manifest = self.source / ".agents/template_manifest.json"
+        data = json.loads(manifest.read_text(encoding="utf-8"))
+        data["required"].append(name)
+        manifest.write_text(json.dumps(data), encoding="utf-8")
+        self.modify_source("AGENTS.md", "# 更新入口\n")
+        command = [sys.executable, str(SOURCE / "tools/template_manager.py"),
+                   "update", "--root", str(self.project)]
+        preview = subprocess.run(command + ["--check"], capture_output=True)
+        self.assertEqual(0, preview.returncode, preview.stdout + preview.stderr)
+        self.assertEqual(head, self.git(self.project, "rev-parse", "HEAD"))
+        applied = subprocess.run(command, capture_output=True)
+        self.assertEqual(0, applied.returncode, applied.stdout + applied.stderr)
+        self.assertIn(b"COMMITTED", applied.stdout)
+        saved = self.git(self.project, "rev-parse", "HEAD")
+        self.assertNotEqual(head, saved)
+        paths = self.git(self.project, "diff-tree", "--no-commit-id", "--name-only", "-r", "HEAD").splitlines()
+        self.assertEqual({"AGENTS.md", name, ".agents/template_manifest.json", M.STATE}, set(paths))
+        self.assertEqual("", self.git(self.project, "status", "--porcelain"))
+        self.assertEqual(business, (self.project / "README.md").read_text(encoding="utf-8"))
+        repeated = subprocess.run(command, capture_output=True)
+        self.assertEqual(0, repeated.returncode, repeated.stdout + repeated.stderr)
+        self.assertIn(b"ALREADY_CURRENT", repeated.stdout)
+        self.assertEqual(saved, self.git(self.project, "rev-parse", "HEAD"))
+
+    def test_cli_no_commit_keeps_applied_changes_for_review(self):
+        head = self.git(self.project, "rev-parse", "HEAD")
+        self.modify_source("AGENTS.md", "# 手动审阅更新\n")
+        result = subprocess.run([sys.executable, str(SOURCE / "tools/template_manager.py"),
+                                 "update", "--root", str(self.project), "--no-commit"], capture_output=True)
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+        self.assertEqual(head, self.git(self.project, "rev-parse", "HEAD"))
+        self.assertEqual("# 手动审阅更新\n", (self.project / "AGENTS.md").read_text(encoding="utf-8"))
+        self.assertTrue(self.git(self.project, "status", "--porcelain"))
+        self.assertEqual("", self.git(self.project, "diff", "--cached", "--name-only"))
+
+    def test_metadata_only_update_is_committed(self):
+        self.git(self.source, "tag", "v-metadata")
+        self.assertEqual(0, M.update(self.project, ref="v-metadata", commit=True))
+        self.assertEqual("v-metadata", M.read_state(self.project)["ref"])
+        self.assertEqual([M.STATE], self.git(self.project, "diff-tree", "--no-commit-id",
+                                           "--name-only", "-r", "HEAD").splitlines())
+        self.assertEqual("", self.git(self.project, "status", "--porcelain"))
+
+    def test_non_git_project_can_only_apply_without_automatic_commit(self):
+        self.modify_source("AGENTS.md", "# 无Git工程更新\n")
+        # 系统临时目录位于工程外，避免父仓库被误认为目标的Git仓库。
+        with tempfile.TemporaryDirectory() as temp:
+            target = Path(temp) / "project"
+            shutil.copytree(self.project, target, ignore=shutil.ignore_patterns(".git"))
+            before = (target / "AGENTS.md").read_bytes(), (target / M.STATE).read_bytes()
+            command = [sys.executable, str(SOURCE / "tools/template_manager.py"),
+                       "update", "--root", str(target)]
+            result = subprocess.run(command, capture_output=True)
+            self.assertEqual(1, result.returncode, result.stdout + result.stderr)
+            self.assertEqual(before, ((target / "AGENTS.md").read_bytes(), (target / M.STATE).read_bytes()))
+            self.assertFalse((target / M.REPORTS).exists())
+            manual = subprocess.run(command + ["--no-commit"], capture_output=True)
+            self.assertEqual(0, manual.returncode, manual.stdout + manual.stderr)
+            self.assertEqual("# 无Git工程更新\n", (target / "AGENTS.md").read_text(encoding="utf-8"))
+            self.assertFalse((target / ".git").exists())
+
+    def test_conflict_does_not_commit_and_reviewed_apply_can_commit(self):
+        (self.project / "AGENTS.md").write_text("# 本地定制\n", encoding="utf-8")
+        self.commit(self.project)
+        before = self.digest_project()
+        head = self.git(self.project, "rev-parse", "HEAD")
+        self.modify_source("AGENTS.md", "# 上游替换\n")
+        self.assertEqual(2, M.update(self.project, commit=True))
+        self.assertEqual(head, self.git(self.project, "rev-parse", "HEAD"))
+        after = self.digest_project()
+        self.assertEqual(before, {name: after[name] for name in before})
+        plan = self.plan_file()
+        (plan.parent / "proposed/AGENTS.md").write_text("# 已审查合并\n", encoding="utf-8")
+        result = subprocess.run([sys.executable, str(SOURCE / "tools/template_manager.py"),
+                                 "apply", "--root", str(self.project), "--plan", str(plan), "--commit"],
+                                capture_output=True)
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+        self.assertNotEqual(head, self.git(self.project, "rev-parse", "HEAD"))
+        self.assertEqual("", self.git(self.project, "status", "--porcelain"))
+
+    def test_missing_commit_identity_is_rejected_before_template_writes(self):
+        self.modify_source("AGENTS.md", "# 需要提交身份\n")
+        before = self.digest_project()
+        run_git = M.run_git
+        def missing_identity(*args, **options):
+            if args[:2] == ("var", "GIT_AUTHOR_IDENT"):
+                raise ValueError("identity missing")
+            return run_git(*args, **options)
+        with patch.object(M, "run_git", side_effect=missing_identity), self.assertRaisesRegex(ValueError, "identity"):
+            M.update(self.project, commit=True)
+        self.assertEqual(before, self.digest_project())
+        self.assertFalse((self.project / M.REPORTS).exists())
+
+    def test_staged_report_and_git_operation_block_automatic_commit(self):
+        self.modify_source("AGENTS.md", "# 新提交\n")
+        report = self.project / M.REPORTS / "existing.md"
+        report.parent.mkdir(parents=True)
+        report.write_text("# 先前暂存的报告\n", encoding="utf-8")
+        self.git(self.project, "add", "-f", "--", str(report))
+        before = (self.project / "AGENTS.md").read_bytes()
+        with self.assertRaisesRegex(ValueError, "暂存区"):
+            M.update(self.project, commit=True)
+        self.assertEqual(before, (self.project / "AGENTS.md").read_bytes())
+        self.commit(self.project)
+        marker = self.project / ".git/MERGE_HEAD"
+        marker.write_text(self.git(self.project, "rev-parse", "HEAD") + "\n", encoding="ascii")
+        with self.assertRaisesRegex(ValueError, "Git 正在"):
+            M.update(self.project, commit=True)
+        self.assertEqual(before, (self.project / "AGENTS.md").read_bytes())
+
+    def test_concurrent_business_staging_is_excluded_from_template_commit(self):
+        self.modify_source("AGENTS.md", "# 模板变更\n")
+        apply = M.apply_plan
+        def concurrent_business_edit(*args):
+            plan = apply(*args)
+            (self.project / "business.py").write_text("print('business')\n", encoding="utf-8")
+            self.git(self.project, "add", "--", "business.py")
+            return plan
+        with patch.object(M, "apply_plan", side_effect=concurrent_business_edit):
+            self.assertEqual(0, M.update(self.project, commit=True))
+        committed = self.git(self.project, "diff-tree", "--no-commit-id", "--name-only", "-r", "HEAD")
+        self.assertEqual({"AGENTS.md", M.STATE}, set(committed.splitlines()))
+        self.assertEqual("business.py", self.git(self.project, "diff", "--cached", "--name-only"))
+
+    def test_commit_failure_keeps_applied_files_and_report_for_recovery(self):
+        self.modify_source("AGENTS.md", "# 提交失败后保留\n")
+        head = self.git(self.project, "rev-parse", "HEAD")
+        run_git = M.run_git
+        def failed_commit(*args, **options):
+            if args[:2] == ("--literal-pathspecs", "commit"):
+                raise ValueError("simulated commit hook failure")
+            return run_git(*args, **options)
+        with patch.object(M, "run_git", side_effect=failed_commit), self.assertRaisesRegex(ValueError, "模板已应用"):
+            M.update(self.project, commit=True)
+        self.assertEqual(head, self.git(self.project, "rev-parse", "HEAD"))
+        self.assertEqual("# 提交失败后保留\n", (self.project / "AGENTS.md").read_text(encoding="utf-8"))
+        self.assertTrue(self.plan_file().is_file())
+        self.commit(self.project)
+        self.assertEqual(0, M.update(self.project, commit=True))
 
     def test_write_failure_rolls_back_earlier_files(self):
         self.modify_source("AGENTS.md", "# new rule\n")

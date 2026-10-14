@@ -8,7 +8,7 @@
 
 本页属于母模板仓库的介绍、开发和发布入口，不由新分发清单复制到业务工程。[模板使用须知](template_readme.md)随模板分发，[安装与更新说明](docs/template-usage.md)提供具体命令。
 
-init为新的空业务工程独立生成精简README.md，保留六项工程约定入口与导航；该文件由业务自己的Git保存，不写入模板文件基线。已有工程的README保留，升级不覆盖、不删除，也不重建业务自行删除的README。
+init为新的空业务工程独立生成精简README.md，包含项目概述、运行与验证、六项工程约定和导航；AI根据实际需求与实现主动填写，并随功能和命令变化维护项目说明。该文件由业务自己的Git保存，不写入模板文件基线。已有工程的README保留，升级不覆盖、不删除，也不重建业务自行删除的README。
 
 当前main分发34项，init另生成1份业务README；已发布v0.2.0按当时35项旧清单安装，旧标签不变。升级到本次新清单时，更新器只移除旧README基线项，实际业务文件保留。
 
@@ -56,10 +56,10 @@ python tools/check_template.py --root .
 python tools/template_manager.py update --check
 python tools/template_manager.py update
 python tools/check_template.py --root .
-git diff
+git show --stat HEAD
 ```
 
-检查无误并运行工程测试后，提交这次模板更新。工程状态始终保留；定制规则尝试三方合并，冲突时不写原文件，按报告手工处理。
+`update` 成功后默认只提交本次变更的模板文件与安装基线，无更新时不创建空提交。更新后审阅提交并运行工程测试；需要先审阅／测试再提交时使用 `update --no-commit`。工程状态始终保留；定制规则尝试三方合并，冲突时不写原文件，按报告手工处理。AI读取规则后，也可在聊天中用 `update` 请求执行该命令。
 
 升级旧工程到当前 main 开发版本时，先提交当前业务改动，再用最新同级工具仓库执行：
 
@@ -68,7 +68,7 @@ python ../agent-template-tools/tools/template_manager.py update --root . --ref m
 python ../agent-template-tools/tools/template_manager.py update --root . --ref main
 ```
 
-旧工程内的 updater 可能尚不支持 --ref，因此先用同级工具；成功更新后可继续用工程自身工具。冲突按安装说明审查后 apply，完成后运行工程测试并提交。
+旧工程内的 updater 可能尚不支持 --ref 或默认自动提交，因此先用最新同级工具；成功更新后可继续用工程自身工具。冲突按安装说明审查后 `apply --commit`，完成后运行工程测试并核对提交。
 
 [安装、旧工程接入与冲突处理](docs/template-usage.md) · [模板结构与原理](template_readme.md)
 

@@ -20,7 +20,7 @@ python tools/check_template.py --root .
 
 ### 业务代码开工前
 
-将业务自己的README写成项目说明，集中填写“工程约定”六项或链接已有规范；登记实际参与者，在 .agents/coordination.md 记录已授权整合者与实际协作模式。先确认客户端读到了规则，再按task引用相关工程约定。技术栈／命令尚不明确时先做调查任务，不猜配置。
+AI首次明确业务需求后主动将业务README写成项目概述，说明用途、目标用户、实际功能和运行／验证入口；功能、目录与命令变化时同步维护。集中填写“工程约定”六项或链接已有规范；登记实际参与者，在 .agents/coordination.md 记录已授权整合者与实际协作模式。先确认客户端读到了规则，再按task引用相关工程约定。技术栈／命令尚不明确时先做调查任务，不猜配置。保留业务现有说明；模板使用说明放在template_readme.md。
 已有工程README属于业务文档，旧清单中的README仍受兼容保护；update不自动加入本节、创建或恢复业务README，迁移时只从新基线移除旧README条目；在保留业务说明的前提下手工添加约定或已有规范链接即可，不覆盖整份README。
 从旧版迁入本次README分离规则时，用最新版同级工具执行update。若已用旧updater完成首次升级，它可能保留旧README基线项；提交这次更新后，再用工程内已更新的updater执行一次update即可清理该元数据。实际业务README始终保留。
 新工程的最小验收流程为：init→自身check→建立lite task→实现一个明确小功能→运行业务测试与相关构建→审查diff→更新task／索引／CURRENT→显式提交。失败用例修复后重跑，记录实际命令、结果和未测项。已有工程保留并引用现有约定。
@@ -55,8 +55,16 @@ python ../agent-template-tools/tools/agent_workbench.py --root . serve
 python tools/template_manager.py update --check
 python tools/template_manager.py update
 python tools/check_template.py --root .
-git diff
+git show --stat HEAD
 ```
+
+`update` 默认应用更新并自动创建 `[TEMPLATE][update]` Git提交，范围只有本次变更的模板文件与 `.agents/template-state.json`，包括新文件及仅基线变化的更新。无更新时不创建空提交；冲突时不应用、不提交。沿用业务仓库身份与当前分支，不推送。
+
+需要在提交前手动审查或运行业务测试时使用 `python tools/template_manager.py update --no-commit`，之后自行审查、测试和提交。`--commit` 可显式选择默认自动提交行为。`--check` 始终只读，优先于提交选项。
+
+自动提交前必须已有独立Git仓库、干净工作区和空暂存区，Git身份有效且没有进行中的合并／变基等操作；否则在应用模板前报错。无Git工程使用 `--no-commit`。若提交钩子等在应用后失败，命令退出1，保留更新文件、基线、暂存内容与备份报告，核对 `git diff`／`git diff --cached` 后手动完成提交；不自动撤销其他进程的新改动。
+
+在已经读取本模板规则的AI聊天中输入 `update`，表示请AI执行上述默认更新命令，并报告提交SHA、冲突或失败及相关验证结果。旧工程先通过最新版同级工具升级，取得支持这些选项的管理器与新规则。
 
 --check 对工程只读，不建锁、状态或报告；仍会访问 Git，并在临时目录读取快照。状态基线在 .agents/template-state.json，包含 source、ref、提交与各文件基线哈希，需要随业务工程 Git 保存。不把清单的格式 version 当发布版本。省略 --ref 时沿用原分支／固定标签；要升级到已存在的发布标签，用最新同级工具执行：
 
@@ -80,7 +88,7 @@ python tools/check_template.py --root .
 | 上游删除的文件 | 不自动删本地，报告提示，由你确认 |
 | 原来不存在的新组成文件 | 可新增；已有同名非基线文件形成冲突，不直接覆盖 |
 
-三方文本合并采用 [git merge-file](https://git-scm.com/docs/git-merge-file)。它不能保证语义正确；更新后仍审阅 Git diff 和运行工程验证。工具不运行远端脚本，也不代你提交更新。
+三方文本合并采用 [git merge-file](https://git-scm.com/docs/git-merge-file)。它不能保证语义正确；自动提交后审阅 `git show HEAD` 并运行工程验证，手动模式则审阅 `git diff`。工具只读取上游Git对象并解析候选内容，不执行下载的脚本；自动提交也不代替业务验收。
 
 ## 3. 发生冲突
 
@@ -89,10 +97,10 @@ python tools/check_template.py --root .
 编辑 proposed 中的冲突文件，保留需要的双方改动、移除冲突标记，再执行：
 
 ```powershell
-python tools/template_manager.py apply --plan ".agents/template-updates/<报告目录>/plan.json"
+python tools/template_manager.py apply --plan ".agents/template-updates/<报告目录>/plan.json" --commit
 ```
 
-没有额外确认弹窗，此命令表示你已经审查候选。工具验证文件与状态自生成计划后未改变，拒绝仍带冲突标记、非法 JSON／Python 语法的候选。随后检查模板与工程，提交模板更新和基线。
+没有额外确认弹窗，此命令表示你已经审查候选。工具验证文件与状态自生成计划后未改变，拒绝仍带冲突标记、非法 JSON／Python 语法的候选。`apply --commit` 应用后限定模板路径自动提交；省略 `--commit` 保留原来的手动提交方式。随后检查模板与工程，并核对提交或未提交改动。
 
 生成报告后若原文件改变，重新运行 update 生成新计划，不修改计划中的哈希绕过核对。报告包含备份且被 .gitignore 排除，仍可手工恢复；写入异常会尝试恢复仍属于本工具的改动，不覆盖其他执行者的新内容。
 
@@ -143,10 +151,10 @@ git config --get agent.coordinationRoot
 python tools/template_manager.py update --source "../agent-template-tools" --check
 python tools/template_manager.py update --source "../agent-template-tools"
 python tools/check_template.py --root .
-git diff
+git show --stat HEAD
 ```
 
---source 对URL与Git scp写法保留原含义；本地路径按此次调用目录解析。--check 不改基线；实际 update 成功后保存新来源。ref 沿用既有基线；新来源若没有旧提交，未知旧基线会形成待人工处理候选。审阅规则和新 .agents/template-state.json 后一起提交，不手改文件哈希。远端URL来源也可明确切换，但应先核对仓库和版本。
+--source 对URL与Git scp写法保留原含义；本地路径按此次调用目录解析。--check 不改基线；实际 update 成功后保存新来源。ref 沿用既有基线；新来源若没有旧提交，未知旧基线会形成待人工处理候选。审阅规则和新 .agents/template-state.json 的自动提交；使用 --no-commit 时自行一起提交，不手改文件哈希。远端URL来源也可明确切换，但应先核对仓库和版本。
 旧安装器尚不支持 --source 时，先更新第1节的同级工具仓库，再用 `python ../agent-template-tools/tools/template_manager.py update --root . --source "../agent-template-tools" --check` 预览，并以同一路径执行实际 update。
 
 ## 7. 将业务副本整理为新的分发来源

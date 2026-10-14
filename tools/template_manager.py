@@ -30,9 +30,15 @@ CORE_FILES = {"AGENTS.md", ".agents/PROTOCOL.md", ".agents/coordination.md",
               ".agents/guides/git.md", ".agents/guides/modes.md",
               ".agents/tasks/TEMPLATE-lite.md", ".agents/template_manifest.json",
               "tools/check_template.py", "tools/template_manager.py"}
-PROJECT_README = """# 项目说明
+PROJECT_README = """# 项目名称
 
-填写本项目的用途、运行方式与验收标准。本文属于业务工程，由工程自己的 Git 保存；模板更新不覆盖它。
+## 项目概述
+
+待根据实际需求与实现补充项目用途、目标用户和当前功能。
+
+## 运行与验证
+
+待调查后填写实际安装、启动、构建与测试命令。
 
 ## 工程约定
 
@@ -262,6 +268,42 @@ def require_clean(root):
             if name == LOCK or name.startswith(REPORTS + "/"):
                 continue  # 旧模板未忽略这些辅助路径时，也不能被本工具自己的锁／报告挡住。
             raise ValueError("工程有未提交改动；先保存 Git 版本，或仅用 update --check 预览")
+
+
+def require_update_commit(root):
+    """写模板前确认提交条件，沿用工程身份与当前分支。"""
+    if git_root(root) != root:
+        raise ValueError("自动提交需要工程根的 Git 仓库；无 Git 工程使用 --no-commit")
+    git_dir = Path(run_git("rev-parse", "--absolute-git-dir", cwd=root).stdout.decode().strip())
+    if any((git_dir / name).exists() for name in
+           ("MERGE_HEAD", "CHERRY_PICK_HEAD", "REVERT_HEAD", "rebase-merge", "rebase-apply", "sequencer")):
+        raise ValueError("Git 正在合并／变基／接续提交；先完成当前操作再更新模板")
+    # 锁和报告虽允许留在工作区，也不能把已暂存的这些内容带入自动提交。
+    if run_git("diff", "--cached", "--quiet", cwd=root, check=False).returncode:
+        raise ValueError("暂存区不是空的；先保存或处理已有暂存内容")
+    run_git("var", "GIT_AUTHOR_IDENT", cwd=root)
+    run_git("var", "GIT_COMMITTER_IDENT", cwd=root)
+
+
+def commit_template_update(root, plan):
+    # 字面路径避免方括号等被Git当作匹配式；--only不带入后来暂存的业务文件。
+    paths = sorted({entry["path"] for entry in plan["entries"]} | {STATE})
+    try:
+        run_git("--literal-pathspecs", "add", "--", *paths, cwd=root)
+        changed = run_git("--literal-pathspecs", "diff", "--cached", "--quiet", "--", *paths,
+                          cwd=root, check=False)
+        if changed.returncode == 0:
+            print("NO_COMMIT_NEEDED")
+            return
+        if changed.returncode != 1:
+            raise ValueError("无法检查模板暂存差异")
+        run_git("--literal-pathspecs", "commit", "--only", "-m",
+                "[TEMPLATE][update] update to " + plan["revision"][:12],
+                "--", *paths, cwd=root)
+    except (ValueError, OSError) as error:
+        # 写入已经成功；提交失败时保留改动与备份，供用户核对后重试提交。
+        raise ValueError("模板已应用，但自动提交失败；改动与更新报告已保留：" + str(error)) from error
+    print("COMMITTED", run_git("rev-parse", "HEAD", cwd=root).stdout.decode().strip())
 
 
 def initialize(root, source, ref, no_git=False, commit=False):
@@ -501,7 +543,7 @@ def apply_plan(root, plan_path):
     return plan
 
 
-def update(root, check=False, source=None, ref=None):
+def update(root, check=False, source=None, ref=None, commit=False):
     root = Path(root).resolve()
     state = read_state(root)
     if source is None and not remote_source(state["source"]) and not Path(state["source"]).is_absolute():
@@ -524,12 +566,18 @@ def update(root, check=False, source=None, ref=None):
         if not plan["entries"] and plan["next_state"] == state:
             print("ALREADY_CURRENT")
             return 0
+        if commit and not plan["conflicts"]:
+            require_update_commit(root)
         report = save_plan(root, plan)
         if plan["conflicts"]:
             print("NO_FILES_APPLIED", report, "edit proposed files, then use apply --plan")
             return 2
-        apply_plan(root, report)
-        print("Review git diff, run project checks, then commit the update.")
+        applied = apply_plan(root, report)
+        if commit:
+            commit_template_update(root, applied)
+            print("Review git show HEAD and run project checks.")
+        else:
+            print("Review git diff, run project checks, then commit the update.")
         return 0
 
 
@@ -547,10 +595,15 @@ def main():
             command.add_argument("--commit", action="store_true")
         if name == "update":
             command.add_argument("--check", action="store_true")
+            commits = command.add_mutually_exclusive_group()
+            commits.add_argument("--commit", dest="commit", action="store_true", help="更新成功后提交（默认）")
+            commits.add_argument("--no-commit", dest="commit", action="store_false", help="应用更新后保留改动，手动提交")
+            command.set_defaults(commit=True)
             command.add_argument("--source", help="明确恢复或更换来源；预览不写基线，实际更新才保存")
             command.add_argument("--ref", help="明确切换到已有分支／标签；成功应用后保存新引用")
         if name == "apply":
             command.add_argument("--plan", required=True)
+            command.add_argument("--commit", action="store_true", help="应用已审阅的冲突候选后提交")
     args = parser.parse_args()
     try:
         if args.command == "init":
@@ -561,12 +614,16 @@ def main():
             if args.check:
                 return update(args.root, True, args.source, args.ref)
             with write_lock(Path(args.root).resolve()):
-                return update(args.root, source=args.source, ref=args.ref)
+                return update(args.root, source=args.source, ref=args.ref, commit=args.commit)
         else:
             root = Path(args.root).resolve()
             with write_lock(root):
                 require_clean(root)
-                apply_plan(root, args.plan)
+                if args.commit:
+                    require_update_commit(root)
+                applied = apply_plan(root, args.plan)
+                if args.commit:
+                    commit_template_update(root, applied)
         return 0
     except (ValueError, OSError, SyntaxError, json.JSONDecodeError) as error:
         print("ERROR:", error)

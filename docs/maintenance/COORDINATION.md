@@ -1,7 +1,7 @@
 # 母模板维护协调
 
 - shared_integrator: codex-audit-20261013
-- selection_source: 用户2026-10-13授权当前会话全面分析并解决项目不足，随后明确单人串行；本轮负责修复及维护记录整合
+- selection_source: 用户2026-10-13选择单人串行；2026-10-14继续授权当前会话实现更新自动提交与业务README维护规则
 - state: active
 - default_collaboration_mode: unset
 - default_mode_source: unset（本次串行实现不构成全工程默认）
@@ -12,7 +12,7 @@
 
 ## 共享写入范围
 
-维护 CURRENT、当前审查与修复的任务记录、测试和相关使用说明；具体范围见 [AUDIT001-CODEX](tasks/AUDIT001-CODEX.md)。用户于2026-10-14明确确认将37ab41a及必要CI修复／验证记录正常推送到 duskbreakmist/mulagent-project-template 的 main 并测试；不强推、不发布或移动版本标签。此前整合与发布事实保留在历史 task 和 Git 中。
+维护 CURRENT、当前实现的任务记录、管理器、测试和相关使用说明；本轮范围见 [UPDATE001-CODEX](tasks/UPDATE001-CODEX.md)。此前用户授权的审查提交及CI修复／验证记录已正常推main，见 [AUDIT001-CODEX](tasks/AUDIT001-CODEX.md)；本轮新增功能保存本地提交，未扩大为新的发布授权。
 同一共享文件由实际整合者串行写入，worker 只写已接受 scope。active 表示当前职责，不表示进程在线、后台监控或自动调度；文件本身不是锁，也不自动通知其他客户端。
 
 ## 维护与分发
