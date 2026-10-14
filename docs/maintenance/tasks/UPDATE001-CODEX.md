@@ -31,9 +31,24 @@
 
 - 初版管理器43项回归通过（355.516秒）。补强字面路径与非Git用例后，在Windows／Python 3.13.8执行完整113项回归（366.283秒）；112项通过，唯一失败为AGENTS从15行增至17行的短入口断言，生产更新逻辑及其44项管理器用例全部通过。
 - 将两项新增规则合并回既有入口、详细要求保留在按需说明后，`python -X utf8 -m unittest discover -s tests -p test_project_template.py -v`：25项全部通过（14.347秒）。此后仅收尾文档变化；未再次重复运行未受影响的完整套件。日志 `.test-tmp/UPDATE001-full-tests.log` 与 `.test-tmp/UPDATE001-protocol-retest.log` 忽略保存。
-- 维护检查 `TEMPLATE_OK files=34`、修改文档本地链接及两份Python的3.9语法解析通过；语法解析不代替3.9运行时测试。本轮没有远端CI与Linux／Python 3.9运行时结果，不引用旧提交的CI作本轮验收。
+- 维护检查 `TEMPLATE_OK files=34`、修改文档本地链接及两份Python的3.9语法解析通过；语法解析不代替3.9运行时测试。本地阶段未取得远端CI与Linux／Python 3.9运行时结果，追加推送后的实际结果见下节。
 - 已审查实际实现与文档diff；根四份状态种子内容不变，默认分发仍为34项。旧CURRENT完成摘要保留到维护history；按项目规则显式暂存并保存本地提交。
 
 ## Remaining
 
-本轮实现与可行验证已完成。新功能保存本地提交，未推送或发布；真实AI客户端是否自动读取并执行新规则需在业务工程中验收。现有业务工程及已发布标签未改，新行为须使用新版工具与规则。
+本轮实现、上传与远端四组合CI验收已完成。真实AI客户端是否自动读取并执行新规则需在业务工程中验收。现有业务工程及已发布标签未改，新行为须使用新版工具与规则。
+
+## 推送与 CI（2026-10-14）
+
+- 用户明确要求上传刚完成的新功能；实现提交 `923f2324fa03cc38ef03d5bbf471bb404b400484` 已正常推送到 `https://github.com/duskbreakmist/mulagent-project-template` 的main。
+- 标准HTTPS推送先后超时／连接重置；读取Windows现有系统代理后，仅对本次命令使用 `git -c http.proxy=http://127.0.0.1:7197 -c http.version=HTTP/1.1 push origin main` 成功，没有修改持久Git配置。
+- [实现CI](https://github.com/duskbreakmist/mulagent-project-template/actions/runs/38510819401)对应923f232；四组全部成功，逐组日志确认113项测试与 `TEMPLATE_OK files=34`，入口长度修正也在完整套件中重新通过。
+
+| 环境 | 实际Python | 完整unittest |
+| --- | --- | --- |
+| Ubuntu | 3.9.25 | 113项，22.841秒，OK |
+| Ubuntu | 3.13.16 | 113项，30.956秒，OK |
+| Windows | 3.9.13 | 113项，237.171秒，OK |
+| Windows | 3.13.15 | 113项，252.118秒，OK |
+
+仅补充维护授权与验收记录后再正常推送，交付前按最终SHA核对CI；不递归追加每次文档提交的CI记录。

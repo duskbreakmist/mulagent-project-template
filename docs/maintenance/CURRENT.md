@@ -5,7 +5,7 @@
 ## 更新自动提交与业务README维护（已完成）
 
 2026-10-14 [UPDATE001-CODEX](tasks/UPDATE001-CODEX.md) / codex-audit-20261013：现有Python更新命令默认仅提交本次模板变更与基线，保留 `--no-commit`；新增身份／Git操作检查、字面路径及提交失败恢复说明，`apply --commit`支持已审阅候选。AI按实际业务维护README概述、功能与运行方式，模板说明独立；默认34项与四份状态种子不变。
-完整113项执行112项通过，唯一短入口长度失败修正后，相关25项复测全过；管理器44项通过，维护检查与链接／diff通过。仅本地保存，未推送本轮新功能；旧PILOT摘要保留到维护历史。
+本地完整113项执行的短入口长度失败修正后，相关25项复测全过。用户追加上传要求后923f232已推main，[Windows／Ubuntu × Python 3.9／3.13 CI](https://github.com/duskbreakmist/mulagent-project-template/actions/runs/38510819401)四组全部通过，每组113项测试与34项模板检查；旧PILOT摘要保留到维护历史。
 
 ## 全面审查与修复（已完成）
 
