@@ -130,3 +130,12 @@ v0.1.1 已发布，实际安装／跨版本更新及双平台 CI 成功；完整
 
 2026-10-11 [PILOT001-WB](../tasks/PILOT001-WB.md) / wb-hy4-20261011：只读评审用户在 H:/Project/test_template_a 的真实试点（基于 f290f2a 可移植流程安装）：dsh-1／wb-1／zcode-1 三 harness 串行接力交付俄罗斯方块 4 功能（FEAT-001–004），跨 AI 代码续写成立，任务内含失败→修复→复测。
 独立复验：33 项模板检查、网页逻辑测试、桌面版 `--selftest` 48 项与 `--storage-selftest` 全过；登记／任务板／CURRENT 按协议执行，模板备注反馈通道生效。BOOT004 候选 5 在串行接力层面实证；并行 worktree／真实适配器／跨机器／并发写仍未覆盖，用户预告交由 codex 后续改进。BOOT005 旧摘要归入维护历史。
+
+## DOC006 归档的旧完成摘要
+
+2026-10-18从维护CURRENT移入以下原文，仅调整相对任务链接，保留原验证语境。
+
+## 母模板与业务 README 分离（已完成）
+
+2026-10-13 [DOC005-CODEX](../tasks/DOC005-CODEX.md) / codex-bootstrap-integrator-20261011：母README退出新清单（34项）；init --commit另生成并提交精简业务README，不进入模板基线。template_readme保留文件名并承担模板使用须知；相关活动引用区分业务／模板／母仓库说明。
+实现b629ecf已推main，[Windows／Ubuntu完整CI](https://github.com/duskbreakmist/mulagent-project-template/actions/runs/38364780433)均成功（最终94项）。实际v0.2.0旧CLI→新CLI和新工程BOOTSTRAP演练通过；旧README／定制／删除保留，旧基线仅清理元数据，预览只读。v0.2.0标签不移动；ENG001旧摘要归入维护历史。
