@@ -63,6 +63,17 @@ python ../agent-template-tools/tools/template_manager.py init --root . --ref v0.
 
 固定版本内的工具行为以对应版本为准。来源切换、离线安装、冲突处理和手动提交见[完整安装与更新说明](docs/template-usage.md)。
 
+## 可选旁路安装
+
+已有 Git 业务工程可选[旁路安装](docs/sidecar.md)，默认安装方式不变。新 Agent 打开独立协作文件夹，首次显示该目录性质及指向的业务路径；协作记录与业务代码分别提交：
+
+```powershell
+python agent-template-tools/tools/template_manager.py init --mode sidecar --root my-app-collab --project-root my-app --ref main --commit
+python my-app-collab/tools/template_manager.py entry --root my-app-collab
+```
+
+以上命令在两个目录的父目录执行；业务仓库须已有提交，协作目录须为空。绑定恢复、双目录权限与首次提示边界见旁路说明。
+
 ## 可选协作工作台
 
 在业务工程根目录运行同级工具中的工作台：
@@ -84,7 +95,7 @@ python ../agent-template-tools/tools/agent_workbench.py --root . serve
 | [.agents/template_manifest.json](.agents/template_manifest.json) | 默认分发清单；仅包含通用骨架 |
 | [docs/maintenance/](docs/maintenance/README.md) | 母模板开发、测试与维护记录 |
 
-默认分发 34 项，init 另生成业务 README。母仓库介绍、测试、CI、维护历史和可选工作台不由安装器复制到业务工程。`TEMPLATE_OK` 表示模板检查通过，业务功能仍需自身构建与测试验收。
+默认分发 35 项，init 另生成业务 README。母仓库介绍、测试、CI、维护历史和可选工作台不由安装器复制到业务工程。`TEMPLATE_OK` 表示模板检查通过，业务功能仍需自身构建与测试验收。
 
 ## 母模板维护与许可
 

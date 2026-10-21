@@ -69,6 +69,8 @@ demo 创建五个明确标注为演示的 Agent 加一个 human，两个正在�
 
 新工程先用 template_manager init 安装协议；工作台不需要复制到业务工程，可以一直从母仓库脚本运行，并传入业务工程 --root。不能把母模板目录当作五个业务 Agent 的任务板。所有 worktree 通过 Git 的 agent.coordinationRoot 指向同一业务主目录。
 
+可选[旁路安装](../sidecar.md)时，工作台 `--root` 改为协作目录；启动前运行该目录的 `entry` 验证双根绑定，实例 `workspace` 填实际业务 worktree。工作台本身不读取旁路绑定或代替首次提示，也不将代码复制到协作目录。
+
 各客户端开新会话时可复制下面提示词，替换全部占位符；同客户端多个实例也使用不同会话 ID：
 
 ~~~text

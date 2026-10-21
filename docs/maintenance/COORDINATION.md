@@ -1,18 +1,18 @@
 # 母模板维护协调
 
-- shared_integrator: codex-audit-20261013
-- selection_source: 用户2026-10-13选择单人串行；2026-10-18继续授权当前会话补充非固定版本说明并精简README
+- shared_integrator: codex-sidecar-20261021
+- selection_source: 用户2026-10-21授权当前实例实现可选旁路安装
 - state: active
 - default_collaboration_mode: unset
 - default_mode_source: unset（本次串行实现不构成全工程默认）
 - backup_authorization: 无
-- previous_integrator: codex-bootstrap-integrator-20261011
+- previous_integrator: codex-audit-20261013
 - last_handoff: 无
-- updated: 2026-10-18
+- updated: 2026-10-21
 
 ## 共享写入范围
 
-本轮写入根README与必要维护记录，范围见 [DOC006-CODEX](tasks/DOC006-CODEX.md)。沿用本会话用户对同一仓库main的上传要求，验证后保存提交并正常推送，不移动发布标签。此前功能上传与CI事实见 [UPDATE001-CODEX](tasks/UPDATE001-CODEX.md)，审查推送事实见 [AUDIT001-CODEX](tasks/AUDIT001-CODEX.md)。
+本轮范围见 [SIDECAR001-CODEX](tasks/SIDECAR001-CODEX.md)：安装器、检查器、回归和旁路使用说明；验证后本地提交，未获本轮推送授权。此前维护与上传事实保留在 [DOC006-CODEX](tasks/DOC006-CODEX.md)、[UPDATE001-CODEX](tasks/UPDATE001-CODEX.md) 和 [AUDIT001-CODEX](tasks/AUDIT001-CODEX.md)。
 同一共享文件由实际整合者串行写入，worker 只写已接受 scope。active 表示当前职责，不表示进程在线、后台监控或自动调度；文件本身不是锁，也不自动通知其他客户端。
 
 ## 维护与分发

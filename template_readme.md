@@ -8,7 +8,7 @@
 
 母仓库README.md只留在母仓库；本文件是分发给业务工程的模板说明。业务README由init独立生成，属于业务文档，不在新清单或template-state文件基线中，仍应由业务Git正常记录。
 
-当前新清单为34项，init另生成精简README；手工只复制清单时须自己建立业务README。更新不为已有工程新建README；旧基线里的README迁出管理范围，但文件及业务定制保留。旧版清单仍按原发布版本兼容。
+当前新清单为35项，init另生成精简README；手工只复制清单时须自己建立业务README。更新不为已有工程新建README；旧基线里的README迁出管理范围，但文件及业务定制保留。旧版清单仍按原发布版本兼容。
 
 ## 工程约定
 
@@ -42,6 +42,8 @@ python tools/check_template.py --root .
 检查工具需要 Python 3.9+，使用标准库，只读校验v2核心协议／工具锚点、受管理Python语法、本地链接和业务任务状态，不执行被检查代码或生成安装基线。母仓库使用 --maintenance 额外检查维护入口、记录链接与任务状态；实际协调状态在 docs/maintenance/COORDINATION.md。缺少文件时手工补回，保留已有实际工作。
 
 ## 2. 放入已有工程
+
+需要将记录与代码分开时，可选择[旁路安装](docs/sidecar.md)。模板装入独立协作 Git，新 Agent 默认打开协作文件夹，首次提示指向的业务路径；业务源码与文档仍在原仓库。旁路使用协作 README，业务 README 维护要求作用于绑定的业务仓库。
 
 先比较现有规则与路径。业务README保留并自行补工程约定引用；AGENTS.md、.gitignore、.gitattributes、agents_list.md、docs/CURRENT.md 可能已存在，**合并所需条目，不直接覆盖**。当前工程若已经使用其他任务目录或记录路径，要同步调整入口和协议。
 

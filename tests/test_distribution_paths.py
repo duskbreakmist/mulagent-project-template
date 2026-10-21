@@ -20,6 +20,7 @@ class DistributionPathTests(unittest.TestCase):
     def test_aliases_and_reserved_paths_are_rejected_by_both_entry_points(self):
         names = (".git/config", ".GIT/config", "src/.Git/config", ".git./config",
                  ".AGENTS/template-state.json", ".agents/.TEMPLATE-UPDATE.LOCK",
+                 ".AGENTS/SIDECAR.JSON", ".agents/sidecar.json/child",
                  ".agents/TEMPLATE-UPDATES/plan.json", "./AGENTS.md", "a//b.md",
                  "a/./b.md", "a/../b.md", "C:/outside", "/absolute", "a\\b.md",
                  "aux.txt", "COM1", "NUL.md", "docs./a.md", "docs /a.md", "a.md ",

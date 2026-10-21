@@ -2,7 +2,7 @@
 
 - 默认中文；业务代码修改前读业务工程 README.md 的工程约定或其引用文档（模板使用须知不代替业务规范），缺项先调查补齐；并按[README约定](template_readme.md#工程约定)主动维护业务项目概述；文档按[写作规范](.agents/guides/documentation.md)；修改前读实现，关键设计／边界写简洁中文注释，完成后检查并如实记未验证项。
 - 用户当前授权优先；保留已有产出，不记录内部思考链。
-- 新会话先读 [.agents/PROTOCOL.md](.agents/PROTOCOL.md)。同一会话规则未变时不必反复全文读取。
+- 新会话先读 [.agents/PROTOCOL.md](.agents/PROTOCOL.md)；若有 `.agents/sidecar.json`，先在协作目录运行 `python tools/template_manager.py entry --root .`，首次回复必须提示“当前是协作文件夹”及协作／业务实际路径；失败时显示原因并停止业务写入，恢复见 [旁路说明](docs/sidecar.md)。同一会话规则未变时不必反复全文读取。
 - 确认主协作目录。明确维护母模板，或 origin 指向 duskbreakmist/mulagent-project-template 时，先读 docs/maintenance/README.md 与 docs/maintenance/CURRENT.md，实际维护任务写 docs/maintenance/tasks/；其他工程读取主目录的 [登记表](agents_list.md) 与 [.agents/tasks](.agents/tasks/README.md)。
 - 模式按当前指令、明确父任务或已授权工程默认确定；仍未定才由 integrator 询问，已有来源不重复问，细节见 [模式指南](.agents/guides/modes.md)。
 - 独立对照时各写 results/<TASK-ID>/<RUN-ID>/<agent-id>/，首稿提交前不读其他候选；任务状态与协作模式分开。

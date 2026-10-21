@@ -5,6 +5,7 @@ import hashlib
 import json
 from pathlib import Path, PurePosixPath
 import re
+import subprocess
 from urllib.parse import unquote, urlsplit
 
 TASK_STATUSES = {"todo", "in_progress", "blocked", "review", "done"}
@@ -37,7 +38,8 @@ def path_key(name):
     key = name.casefold()
     if (any(part.casefold() == ".git" for part in relative.parts) or
             key in (".agents/template-state.json", ".agents/.template-update.lock",
-                    ".agents/template-updates") or key.startswith(".agents/template-updates/")):
+                    ".agents/template-updates", ".agents/sidecar.json") or
+            key.startswith((".agents/template-updates/", ".agents/sidecar.json/"))):
         raise ValueError("保留路径: " + name)
     return key
 
@@ -164,8 +166,64 @@ def check_maintenance_seeds(root):
         raise ValueError("母模板根任务目录不能保存实际维护任务")
 
 
+def check_sidecar(root):
+    """独立核对本机双根绑定；不导入、执行待检查目录中的管理器。"""
+    marker = safe_path(root, ".agents/sidecar.json")
+    state_path = safe_path(root, ".agents/template-state.json")
+    state = json.loads(readable_text(state_path)) if state_path.exists() else {}
+    mode = state.get("installation_mode", "in-tree")
+    if mode not in ("in-tree", "sidecar") or (mode != "sidecar" and marker.exists()):
+        raise ValueError("旁路描述与安装模式不一致")
+    if mode != "sidecar":
+        return
+    descriptor = json.loads(readable_text(marker))
+    if (not isinstance(descriptor, dict) or descriptor.get("version") != 1 or
+            not re.fullmatch(r"[0-9a-f]{32}", str(descriptor.get("id", ""))) or
+            not re.fullmatch(r"[0-9a-f]{40,64}", str(descriptor.get("project_base_commit", "")))):
+        raise ValueError("不支持的旁路描述")
+
+    def git(repo, *args):
+        result = subprocess.run(["git", *args], cwd=repo, capture_output=True)
+        if result.returncode:
+            raise ValueError("旁路 Git 检查失败；使用 bind 显式恢复: " +
+                             result.stderr.decode("utf-8", "replace").strip())
+        return result.stdout.decode("utf-8").strip()
+
+    def config(repo, key):
+        values = git(repo, "config", "--local", "--get-all", key).splitlines()
+        if len(values) != 1:
+            raise ValueError("旁路 Git 绑定缺失或重复: " + key)
+        return values[0]
+
+    project_path = config(root, "agent.projectRoot")
+    if not Path(project_path).is_absolute():
+        raise ValueError("旁路业务路径必须是本机绝对路径；使用 bind 恢复")
+    project = Path(project_path).resolve()
+    if root.is_relative_to(project) or project.is_relative_to(root):
+        raise ValueError("协作与业务目录相同或嵌套")
+    if not project.is_dir():
+        raise ValueError("旁路业务目录不可达；使用 bind 显式恢复")
+    if (project / ".agents/PROTOCOL.md").exists() or (project / ".agents/template-state.json").exists():
+        raise ValueError("业务目录存在另一份模板任务板")
+    common = []
+    for repo in (root, project):
+        if Path(git(repo, "rev-parse", "--show-toplevel")).resolve() != repo:
+            raise ValueError("旁路绑定不是实际 Git 工作树根")
+        pointer = config(repo, "agent.coordinationRoot")
+        if not Path(pointer).is_absolute() or Path(pointer).resolve() != root:
+            raise ValueError("旁路主协作目录绑定失效；使用 bind 显式恢复")
+        common.append((repo / git(repo, "rev-parse", "--git-common-dir")).resolve())
+    if common[0] == common[1]:
+        raise ValueError("旁路需要两个独立 Git 仓库")
+    git(project, "rev-parse", "--verify", "HEAD^{commit}")
+    git(project, "cat-file", "-e", descriptor["project_base_commit"] + "^{commit}")
+    if config(project, "agent.sidecarId") != descriptor["id"]:
+        raise ValueError("旁路身份绑定失效；使用 bind 显式恢复")
+
+
 def validate(root, maintenance=False):
     root = Path(root).resolve()
+    check_sidecar(root)
     manifest_path = safe_path(root, ".agents/template_manifest.json")
     manifest = json.loads(readable_text(manifest_path))
     version = manifest.get("version")

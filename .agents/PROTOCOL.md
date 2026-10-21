@@ -2,7 +2,7 @@
 
 ## 每轮工作
 
-1. 确认唯一主协作目录；多 worktree 从 git config --get agent.coordinationRoot 读取。不可达时先做独占草稿／只读调查，不建立第二个任务板。
+1. 确认唯一主协作目录；多 worktree 从 git config --get agent.coordinationRoot 读取。旁路模式默认打开协作文件夹，先运行 entry 并在首次回复显示协作性质与业务实际路径，按[旁路说明](../docs/sidecar.md)区分记录根与代码根。不可达时先做独占草稿／只读调查，不建立第二个任务板。
 2. 读登记、任务索引、当前 task 和它引用的消息／交接，再读相关实现与 Git 历史；无需遍历全部任务与可选机制。
 3. 单人串行用 [精简模板](tasks/TEMPLATE-lite.md)，owner 兼任 task integrator；多人／对照用完整模板，明确唯一 owner、scope、依赖和验收。
 4. 模式依据当前用户指令、明确父任务或**已授权工程默认**确定；仍不明确时只由 integrator 询问。具体见 [模式指南](guides/modes.md)。

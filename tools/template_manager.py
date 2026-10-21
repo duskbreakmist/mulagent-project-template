@@ -18,6 +18,16 @@ DEFAULT_SOURCE = "https://github.com/duskbreakmist/mulagent-project-template.git
 STATE = ".agents/template-state.json"
 LOCK = ".agents/.template-update.lock"
 REPORTS = ".agents/template-updates"
+SIDECAR = ".agents/sidecar.json"
+SIDECAR_README = """# 业务工程协作记录
+
+本仓库保存模板规则、任务、交接和验证证据；源码、业务 README 和业务测试保存在绑定的业务仓库。
+
+启动前执行 `python tools/template_manager.py entry --root .`，将输出的提示词交给 AI，并确认它能读写两个目录。
+本机业务路径由 `git config --local --get agent.projectRoot` 查询，不提交机器绝对路径。
+
+[Agent规则](AGENTS.md) · [当前工作](docs/CURRENT.md) · [旁路安装与恢复](docs/sidecar.md)
+"""
 # README仅为旧清单保留保护规则；新工程的业务README独立生成，不进入模板基线。
 SEEDS = {"README.md", "agents_list.md", ".agents/coordination.md",
          ".agents/tasks/README.md", "docs/CURRENT.md"}
@@ -94,7 +104,8 @@ def path_key(name):
             raise ValueError("不可移植的模板路径: " + name)
     key = name.casefold()
     if (any(part.casefold() == ".git" for part in relative.parts) or
-            key in (STATE, LOCK, REPORTS) or key.startswith(REPORTS + "/")):
+            key in (STATE, LOCK, REPORTS, SIDECAR) or
+            key.startswith((REPORTS + "/", SIDECAR + "/"))):
         raise ValueError("保留路径: " + name)
     return key
 
@@ -250,6 +261,159 @@ def git_root(root):
     return Path(result.stdout.decode().strip()).resolve() if result.returncode == 0 else None
 
 
+def local_config(root, key):
+    result = run_git("config", "--local", "--get-all", key, cwd=root, check=False)
+    if result.returncode not in (0, 1):
+        raise ValueError("无法读取本地 Git 绑定: " + key)
+    values = result.stdout.decode("utf-8").splitlines()
+    if len(values) > 1:
+        raise ValueError("Git 绑定存在重复值: " + key)
+    return values[0] if values else None
+
+
+def sidecar_descriptor(root):
+    path = root / SIDECAR
+    if not path.resolve().is_relative_to(root):
+        raise ValueError("旁路描述路径逃逸")
+    value = json.loads(path.read_text(encoding="utf-8"))
+    if (not isinstance(value, dict) or value.get("version") != 1 or
+            not re.fullmatch(r"[0-9a-f]{32}", str(value.get("id", ""))) or
+            not re.fullmatch(r"[0-9a-f]{40,64}", str(value.get("project_base_commit", "")))):
+        raise ValueError("不支持的旁路描述")
+    return value
+
+
+def sidecar_project(root, project):
+    project = Path(project).resolve()
+    if root.is_relative_to(project) or project.is_relative_to(root):
+        raise ValueError("协作目录与业务目录必须分离，不能相同或互相嵌套")
+    if not project.is_dir() or git_root(project) != project:
+        raise ValueError("--project-root 必须是已有业务 Git 的实际工作树根目录")
+    run_git("rev-parse", "--verify", "HEAD^{commit}", cwd=project)
+    if (project / ".agents/PROTOCOL.md").exists() or (project / STATE).exists():
+        raise ValueError("业务目录已有模板；先明确迁移现有记录，不创建第二份任务板")
+    return project
+
+
+def validate_binding_target(root, project, descriptor):
+    project = sidecar_project(root, project)
+    if root.is_dir() and git_root(root) == root:
+        def common(repo):
+            value = run_git("rev-parse", "--git-common-dir", cwd=repo).stdout.decode().strip()
+            return (repo / value).resolve()
+        if common(root) == common(project):
+            raise ValueError("协作与业务目录不能是同一 Git 仓库的两个 worktree")
+    run_git("cat-file", "-e", descriptor["project_base_commit"] + "^{commit}", cwd=project)
+    identity = local_config(project, "agent.sidecarId")
+    if identity and identity != descriptor["id"]:
+        raise ValueError("业务仓库已经绑定另一协作仓库")
+    pointer = local_config(project, "agent.coordinationRoot")
+    if pointer and Path(pointer).resolve() != root and Path(pointer).exists():
+        raise ValueError("业务仓库已有可达主协作目录；拒绝接管或建立第二份任务板")
+    return project
+
+
+def bind_sidecar(root, project):
+    """只绑定本机路径；Git 配置失败时恢复本次写入，不撤销他人配置。"""
+    root = Path(root).resolve()
+    if git_root(root) != root:
+        raise ValueError("旁路协作目录必须是独立 Git 工作树根目录")
+    if read_state(root).get("installation_mode") != "sidecar":
+        raise ValueError("bind 只用于旁路安装")
+    descriptor = sidecar_descriptor(root)
+    project = sidecar_project(root, project)
+    common = Path(run_git("rev-parse", "--git-common-dir", cwd=project).stdout.decode().strip())
+    common = (project / common).resolve()
+    previous_project = local_config(root, "agent.projectRoot")
+    if previous_project and Path(previous_project).exists():
+        previous_root = Path(previous_project).resolve()
+        if not previous_root.is_dir() or git_root(previous_root) != previous_root:
+            raise ValueError("旧业务路径已被其他内容占用；先核对并清除旧 agent.projectRoot")
+        old_common = run_git("rev-parse", "--git-common-dir", cwd=previous_root).stdout.decode().strip()
+        if (previous_root / old_common).resolve() != common:
+            raise ValueError("协作仓库已绑定另一可达业务仓库；先明确迁移，不保留双向歧义")
+    # 同一业务仓库的多个 worktree 共用绑定锁；它不替代代码开发的隔离或互斥。
+    lock = common / "agent-sidecar.lock"
+    try:
+        stream = lock.open("x", encoding="utf-8")
+    except FileExistsError as error:
+        raise ValueError("业务绑定锁已存在；确认持有者停写后再处理，不自动删锁") from error
+    try:
+        with stream:
+            json.dump({"pid": os.getpid(), "host": socket.gethostname()}, stream)
+        validate_binding_target(root, project, descriptor)
+        updates = [(project, "agent.sidecarId", descriptor["id"]),
+                   (project, "agent.coordinationRoot", str(root)),
+                   (root, "agent.coordinationRoot", str(root)),
+                   (root, "agent.projectRoot", str(project))]
+        previous = [(repo, key, value, local_config(repo, key)) for repo, key, value in updates]
+        written = []
+        try:
+            for repo, key, value, old in previous:
+                if local_config(repo, key) != old:
+                    raise ValueError("绑定配置发生并发变化: " + key)
+                run_git("config", "--local", key, value, cwd=repo)
+                written.append((repo, key, value, old))
+        except Exception as error:
+            failures = []
+            for repo, key, value, old in reversed(written):
+                try:
+                    if local_config(repo, key) != value:
+                        failures.append(key + " 已被其他执行者修改")
+                    elif old is None:
+                        run_git("config", "--local", "--unset-all", key, cwd=repo)
+                    else:
+                        run_git("config", "--local", key, old, cwd=repo)
+                except (ValueError, OSError) as recovery_error:
+                    failures.append(str(recovery_error))
+            if failures:
+                raise ValueError("绑定失败，部分配置未恢复: " + "; ".join(failures)) from error
+            raise
+    finally:
+        lock.unlink(missing_ok=True)
+    print("BOUND", root, "PROJECT", project)
+
+
+def check_sidecar(root, state=None):
+    state = read_state(root) if state is None else state
+    marker = root / SIDECAR
+    if state.get("installation_mode", "in-tree") not in ("in-tree", "sidecar"):
+        raise ValueError("未知安装模式")
+    if state.get("installation_mode") != "sidecar":
+        if marker.exists():
+            raise ValueError("旁路描述与安装模式不一致")
+        return None
+    if git_root(root) != root:
+        raise ValueError("旁路协作 Git 根无效")
+    descriptor = sidecar_descriptor(root)
+    project_path = local_config(root, "agent.projectRoot")
+    if not project_path or not Path(project_path).is_absolute():
+        raise ValueError("旁路业务路径未绑定；使用 bind --root COLLAB --project-root PROJECT")
+    project = validate_binding_target(root, project_path, descriptor)
+    for repo in (root, project):
+        pointer = local_config(repo, "agent.coordinationRoot")
+        if not pointer or not Path(pointer).is_absolute() or Path(pointer).resolve() != root:
+            raise ValueError("旁路主目录绑定失效；使用 bind 显式恢复")
+    if local_config(project, "agent.sidecarId") != descriptor["id"]:
+        raise ValueError("旁路身份绑定失效；使用 bind 显式恢复")
+    return project
+
+
+def entry(root):
+    root = Path(root).resolve()
+    print("【旁路模式：当前文件夹是协作文件夹】")
+    print("协作文件夹：", root)
+    project = check_sidecar(root)
+    if project is None:
+        raise ValueError("entry 只用于旁路安装")
+    print("指向的业务文件夹：", project)
+    print("新 Agent 默认打开协作文件夹；首次回复必须向用户显示以上说明与两个实际路径。")
+    print("先读取以下协作入口：", root / "AGENTS.md")
+    print("同时读取业务目录现有规则与 README 工程约定；任务、消息、交接和执行证据写协作目录。")
+    print("源码、业务文档、构建和测试在业务工作树；两仓库分别审查提交，task 记录业务基线与交付 SHA。")
+    print("核对两个目录的实际访问权限；并行代码开发使用业务仓库的独立 worktree。")
+
+
 def require_clean(root):
     existing = git_root(root)
     if existing and existing != root:
@@ -306,13 +470,27 @@ def commit_template_update(root, plan):
     print("COMMITTED", run_git("rev-parse", "HEAD", cwd=root).stdout.decode().strip())
 
 
-def initialize(root, source, ref, no_git=False, commit=False):
+def initialize(root, source, ref, no_git=False, commit=False, mode="in-tree", project_root=None):
     root = Path(root).resolve()
+    if mode not in ("in-tree", "sidecar"):
+        raise ValueError("未知安装模式")
+    descriptor = None
+    if mode == "sidecar":
+        if no_git or project_root is None:
+            raise ValueError("旁路安装需要 --project-root 且不能 --no-git")
+        project_root = sidecar_project(root, project_root)
+        descriptor = {"version": 1, "id": uuid.uuid4().hex, "project_base_commit":
+                      run_git("rev-parse", "HEAD", cwd=project_root).stdout.decode().strip()}
+        validate_binding_target(root, project_root, descriptor)
+    elif project_root is not None:
+        raise ValueError("--project-root 仅用于 --mode sidecar")
     if commit and no_git:
         raise ValueError("--commit 与 --no-git 不兼容")
     # 先下载并验证；网络失败不留下一个让下次 init 被拒绝的半空工程。
     with tempfile.TemporaryDirectory() as temp:
         upstream = Upstream(temp, source, ref)
+        if descriptor and "docs/sidecar.md" not in upstream.files:
+            raise ValueError("该来源版本不支持旁路模式；请选择支持旁路的版本")
         root.mkdir(parents=True, exist_ok=True)
         if any(path.name != ".git" for path in root.iterdir()):
             raise ValueError("init 只接受空目录；已有工程使用 adopt")
@@ -326,19 +504,30 @@ def initialize(root, source, ref, no_git=False, commit=False):
             installed = dict(upstream.files)
             if "README.md" not in installed:
                 installed["README.md"] = PROJECT_README
+            if descriptor:
+                installed["README.md"] = SIDECAR_README
             state = {"version": 1, "source": upstream.source, "ref": ref, "revision": upstream.revision,
                      "files": {name: baseline(upstream, text) for name, text in upstream.files.items()}}
+            if descriptor:
+                state["installation_mode"] = "sidecar"
             for name, text in installed.items():
                 atomic_write(safe_path(root, name), text.encode("utf-8"))
             atomic_write(root / STATE, (json.dumps(state, ensure_ascii=False, indent=2) + "\n").encode())
+            if descriptor:
+                atomic_write(root / SIDECAR, (json.dumps(descriptor, indent=2) + "\n").encode())
             if not no_git:
                 if not existing:
                     run_git("init", "-b", "main", cwd=root)
                 run_git("config", "--local", "agent.coordinationRoot", root, cwd=root)
+                if descriptor:
+                    bind_sidecar(root, project_root)
                 if commit:
-                    run_git("add", "--", *installed, STATE, cwd=root)
+                    run_git("--literal-pathspecs", "add", "--", *installed, STATE,
+                            *([SIDECAR] if descriptor else []), cwd=root)
                     run_git("commit", "-m", "[BOOTSTRAP][template] initialize project template", cwd=root)
             print("INITIALIZED", root, upstream.revision)
+            if descriptor:
+                entry(root)
             return state
 
 
@@ -375,6 +564,8 @@ def three_way(current, base, incoming, directory):
 
 
 def make_plan(root, upstream, state, temp):
+    if state.get("installation_mode") == "sidecar" and "docs/sidecar.md" not in upstream.files:
+        raise ValueError("旁路安装不能更新到不支持旁路的来源版本")
     changed, conflicts, skipped = [], [], []
     new_state = json.loads(json.dumps(state))
     new_state.update(revision=upstream.revision, source=upstream.source, ref=upstream.ref)
@@ -467,6 +658,8 @@ def validate_proposal(name, data):
 
 def apply_plan(root, plan_path):
     root = Path(root).resolve()
+    current_state = read_state(root)
+    check_sidecar(root, current_state)
     plan_path = Path(plan_path).resolve()
     if not plan_path.is_relative_to(root / REPORTS):
         raise ValueError("计划必须位于本工程的更新报告中")
@@ -498,6 +691,8 @@ def apply_plan(root, plan_path):
     state_path = root / STATE
     before_state = state_path.read_bytes()
     next_state = plan["next_state"]
+    if next_state.get("installation_mode") != current_state.get("installation_mode"):
+        raise ValueError("更新计划不能切换安装模式")
     state_seen = set()
     for name in next_state["files"]:
         safe_path(root, name)
@@ -546,6 +741,7 @@ def apply_plan(root, plan_path):
 def update(root, check=False, source=None, ref=None, commit=False):
     root = Path(root).resolve()
     state = read_state(root)
+    check_sidecar(root, state)
     if source is None and not remote_source(state["source"]) and not Path(state["source"]).is_absolute():
         # 旧相对来源的原始调用目录不可恢复；要求明确选择，不猜一个新的仓库。
         raise ValueError("旧基线使用相对本地来源；请用 update --source 明确原Git来源")
@@ -593,6 +789,9 @@ def main():
         if name == "init":
             command.add_argument("--no-git", action="store_true")
             command.add_argument("--commit", action="store_true")
+            command.add_argument("--mode", choices=("in-tree", "sidecar"), default="in-tree",
+                                 help="默认工程内安装；sidecar 在独立协作目录安装")
+            command.add_argument("--project-root", help="旁路模式绑定的已有业务 Git 工作树根")
         if name == "update":
             command.add_argument("--check", action="store_true")
             commits = command.add_mutually_exclusive_group()
@@ -604,10 +803,16 @@ def main():
         if name == "apply":
             command.add_argument("--plan", required=True)
             command.add_argument("--commit", action="store_true", help="应用已审阅的冲突候选后提交")
+    for name in ("bind", "entry"):
+        command = sub.add_parser(name)
+        command.add_argument("--root", default=".", help="旁路协作目录")
+        if name == "bind":
+            command.add_argument("--project-root", required=True, help="明确恢复绑定的业务工作树根")
     args = parser.parse_args()
     try:
         if args.command == "init":
-            initialize(args.root, args.source, args.ref, args.no_git, args.commit)
+            initialize(args.root, args.source, args.ref, args.no_git, args.commit,
+                       args.mode, args.project_root)
         elif args.command == "adopt":
             adopt(args.root, args.source, args.ref)
         elif args.command == "update":
@@ -615,6 +820,13 @@ def main():
                 return update(args.root, True, args.source, args.ref)
             with write_lock(Path(args.root).resolve()):
                 return update(args.root, source=args.source, ref=args.ref, commit=args.commit)
+        elif args.command == "bind":
+            root = Path(args.root).resolve()
+            with write_lock(root):
+                bind_sidecar(root, args.project_root)
+            entry(root)
+        elif args.command == "entry":
+            entry(args.root)
         else:
             root = Path(args.root).resolve()
             with write_lock(root):
