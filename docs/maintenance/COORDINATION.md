@@ -12,7 +12,7 @@
 
 ## 共享写入范围
 
-本轮范围见 [SIDECAR001-CODEX](tasks/SIDECAR001-CODEX.md)：安装器、检查器、回归和旁路使用说明；验证后本地提交，未获本轮推送授权。此前维护与上传事实保留在 [DOC006-CODEX](tasks/DOC006-CODEX.md)、[UPDATE001-CODEX](tasks/UPDATE001-CODEX.md) 和 [AUDIT001-CODEX](tasks/AUDIT001-CODEX.md)。
+本轮范围见 [SIDECAR001-CODEX](tasks/SIDECAR001-CODEX.md)：安装器、检查器、回归和旁路使用说明。用户2026-10-21随后明确要求“推送”，授权将本轮实现及必要维护记录正常推送既有origin/main；不移动标签。此前维护与上传事实保留在 [DOC006-CODEX](tasks/DOC006-CODEX.md)、[UPDATE001-CODEX](tasks/UPDATE001-CODEX.md) 和 [AUDIT001-CODEX](tasks/AUDIT001-CODEX.md)。
 同一共享文件由实际整合者串行写入，worker 只写已接受 scope。active 表示当前职责，不表示进程在线、后台监控或自动调度；文件本身不是锁，也不自动通知其他客户端。
 
 ## 维护与分发

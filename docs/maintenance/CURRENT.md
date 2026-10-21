@@ -5,7 +5,7 @@
 ## 可选旁路安装（已完成）
 
 2026-10-21 [SIDECAR001-CODEX](tasks/SIDECAR001-CODEX.md) / codex-sidecar-20261021：新增显式sidecar安装、entry首次提示与bind恢复；新Agent打开协作目录，显示指向的业务路径。双仓库边界、配置回滚与检查接入，默认安装不变；清单35项，根种子不变。
-Windows／Python 3.13.8完整128项通过（506.774秒，含旁路15项），维护与diff检查通过。未验证Linux／3.9、跨机跨盘和真实客户端首次加载；原生弹窗未接入。仅本地提交，未推送／未跑本轮远端CI；AUDIT001摘要移入维护历史。
+Windows／Python 3.13.8完整128项通过（506.774秒，含旁路15项），维护与diff检查通过。用户追加授权后d364245已推main，GitHub API核对分支SHA一致；[对应CI](https://github.com/duskbreakmist/mulagent-project-template/actions/runs/39617107436)已触发，核验时queued，未记为通过。Linux／3.9、跨机跨盘和真实客户端首次加载仍未完成本轮验收；原生弹窗未接入；AUDIT001摘要移入维护历史。
 
 ## README非固定版本说明与精简（已完成）
 
